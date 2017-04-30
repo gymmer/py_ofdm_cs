@@ -16,7 +16,7 @@ def sampling(sampling_period,sampling_time,user_id):
     返回值：         RSSI采样序列。一共有time/period个采样点。如period=1，time=25，共采样25*1000/1=25000个RSSI
     '''
     try:
-        conn = sql.connect(host='localhost',user='root',passwd='11223',db='rssi',port=3306)
+        conn = sql.connect(host='localhost',user='root',passwd='402402',db='rssi',port=3306)
         cur = conn.cursor()
         sampling_num = sampling_time*1000/sampling_period
         sql_script = 'select rssi%d from omni_16dbm where id>0 and id<=%d'%(user_id,sampling_num) 

@@ -22,13 +22,13 @@ plt.close('all')
 L = 50                      # 信道长度
 K = 6                       # 稀疏度/多径数，满足:K<<L
 N = 512                     # 训练序列长度/载波数,满足：L<=N
-Ncp = 60                    # 循环前缀的长度,Ncp>L
+Ncp = 64                    # 循环前缀的长度,Ncp>L
 P = [36,103]                # 导频数，P<N
 SNR = [0,5,10,15,20,25,30]  # AWGN信道信噪比
 
 ''' 比较不同的信噪比SNR '''
 SNR_num = len(SNR)
-gro_num = 10        # 进行多组取平均
+gro_num = 1        # 进行多组取平均
 CS_MSE  = zeros((gro_num,SNR_num))
 LS_MSE  = zeros((gro_num,SNR_num))
 eva_MSE = zeros((gro_num,SNR_num))

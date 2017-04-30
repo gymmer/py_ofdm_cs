@@ -7,6 +7,7 @@ Created on Sat Mar 19 14:08:54 2016
 import numpy as np
 from numpy import array,size
 from from_to import from2seq_to10
+from function import exist
 
 def LFSR_work(seq,sign):
     LFSR_num = size(seq)
@@ -58,7 +59,7 @@ def A51(bit_stream,P):
         
         if key_bit%9==0:                    # 如果N=512,则导频位置的取值范围[0,512]，需要对9位二进制转成十进制。
             new_pos = from2seq_to10(key_stream[-9:])  # 密钥流每读入9个比特，则计算一次新产生的导频位置
-            if new_pos not in pos:          # 如果新增导频不在我的已有导频列表中，则加入这个导频
+            if not exist(pos, new_pos):     # 如果新增导频不在我的已有导频列表中，则加入这个导频
                 pos = np.r_[pos,new_pos]    # 如果已有导频列表中已有该导频，则放弃。防止重复加入多个相同的同频位置
                 pos_num += 1                # 修改已产生的导频位置数
             
