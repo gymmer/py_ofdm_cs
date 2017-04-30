@@ -42,7 +42,9 @@ def MSE_SER_calc(H,re_H,X,Y,N):
     ''' calculate MSE and SER '''
     
     ''' MSE '''
-    MSE = mean(abs(H-re_H)**2,0)
+    MSE = mean(abs(H-re_H)**2,0)    # 常规计算
+    MSE = MSE / mean(abs(H**2),0)   # 归一化
+    MSE = 10*math.log10(MSE)        # 取dB
     
     ''' SER '''
     # re_X代表判决矩阵,根据接收到的信号Y和信道估计量re_H,反推导出观测矩阵的估计量re_X 

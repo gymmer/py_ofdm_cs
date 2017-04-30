@@ -29,7 +29,7 @@ def channel(L,K):
 
     h = np.zeros(L)+1j*0                # 信道的冲激响应是一个复数
     for i in range(K):
-        h[tau[i]] = exp(-tau[i]/taumax)*ampli[i]   # ?? 为什么要将幅度值衰减成指数下降？衰落么？ 
+        h[tau[i]] = exp(-tau[i]/taumax)*ampli[i]   # 指数衰落
     return h
 
 '''

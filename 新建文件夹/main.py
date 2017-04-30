@@ -7,8 +7,12 @@ Created on Fri Mar 11 13:06:28 2016
 
 import os
 import matplotlib.pyplot as plt
-from channel import channel
-from channelEstimation import channelEstimation
+from sender import sender
+from transmission import transmission
+from receiver import receiver
+from receiver_eva import receiver_eva
+from plot import plot
+from function import MSE
 
 os.system('cls')
 plt.close('all')
@@ -17,33 +21,38 @@ plt.close('all')
 L = 50                      # 信道长度
 K = 6                       # 稀疏度/多径数，满足:K<<L
 N = 128                     # 训练序列长度/载波数,满足：L<=N
+P = 36                      # 导频数，P<N
 SNR = [0,5,10,15,20,25,30]  # AWGN信道信噪比
 
-''' 时域的信道脉冲响应'''
-h = channel(L, K)
+''' 发送端 '''
+Xn,pos = sender (N,P)
 
+''' 信道传输 '''
+h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[6])
+
+''' 接收端 信道估计'''
+h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,pos,L,N,K)
+
+''' 非法用户 '''
+re_h_eva,re_H_eva = receiver_eva(Y,W,N,K,P)
+
+''' 画图 '''
+plot(h,H,h_cs,H_cs,re_h_eva,re_H_eva,Xn,Y,No)
+
+''' 评价性能：MSE '''
+CS_MSE = MSE(H,H_cs)
+LS_MSE = MSE(H,H_ls)
+            
 ''' LS/MMSE/CS信道估计，得MSE/SER
     比较不同的信噪比SNR '''
-(CS_MSE,CS_SER,LS_MSE,LS_SER,MMSE_MSE,MMSE_SER)= channelEstimation(K,h,SNR,N)
+
     
 plt.figure(figsize=(8,5))
 plt.plot(SNR,CS_MSE,'ro-',linewidth=1,label='CS')
 plt.plot(SNR,LS_MSE,'bp-',linewidth=1,label='LS')
-plt.plot(SNR,MMSE_MSE,'gs-',linewidth=1,label='MMSE')
 plt.xlabel('SNR(dB)')
 plt.ylabel('MSE(dB)')
 plt.title('MSE of CS/LS/MMSE')
 plt.legend()
 
-''' SER存在问题，具体见function.py。此部分作图暂时取消。但是其他文件仍然保留SER部分，
-留作接口。以后调试好SER后，可以减少代码的修改。
-plt.figure(figsize=(8,5))
-plt.semilogy(SNR,CS_SER,'ro-',linewidth=1,label='CS')
-plt.semilogy(SNR,LS_SER,'bo-',linewidth=1,label='LS')
-plt.semilogy(SNR,MMSE_SER,'go-',linewidth=1,label='MMSE')
-plt.xlabel('SNR(dB)')
-plt.ylabel('SER')
-plt.title('SER of LS/MMSE')
-plt.legend()
-'''
 print 'Program Finished'
