@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 12 14:31:08 2016
+
+@author: My402
+"""
+
+import numpy as np
+from numpy import zeros,empty,dot,transpose,size,conjugate
+from numpy.linalg import inv
+
+def omp(K,s,Phi,Psi):
+    
+    '''
+    s  = Phi*Psi*x
+    Y  = X  *W  *h + N
+       = X * H + N
+    '''                                       
+
+    #正交匹配追踪法重构信号(本质上是L_1范数最优化问题)
+    #匹配追踪：找到一个其标记看上去与收集到的数据相关的小波；在数据中去除这个标记的所有印迹；不断重复直到我们能用小波标记“解释”收集到的所有数据。
+    m = 2*K                             # 算法迭代次数(m>=K)，设x是K-sparse的
+    T = dot(Phi,Psi)                    # 恢复矩阵(测量矩阵*正交反变换矩阵)
+    M = size(T,0)
+    N = size(T,1)
+    
+    hat_y = zeros((1,N),np.complex)     # 待重构的谱域(变换域)向量                     
+    Aug_t = empty([M,1])                # 增量矩阵(初始值为空矩阵)
+    r_n   = s                           # 残差值
+    pos_array = zeros((m,1))            # 最大投影系数的位置                          
+    product   = zeros((1,N))
+    
+    for times in range(m):              # 迭代次数(有噪声的情况下,该迭代次数为K)
+        for col in range(N):            # 恢复矩阵的所有列向量
+            product[0,col] = np.abs(dot(conjugate(T[:,col]),r_n)) # 恢复矩阵的列向量和残差的投影系数(内积值) 
+        
+        pos   = np.argmax(product)      # 最大投影系数对应的位置，即找到一个其标记看上去与收集到的数据相关的小波                   
+        Aug_t = np.c_[Aug_t,T[:,pos]]   # 矩阵扩充
+        if times==0:
+            Aug_t = Aug_t[:,1]
+            Aug_t.shape = (M,1)
+           
+        T[:,pos] = zeros(M)                     # 选中的列置零（实质上应该去掉，为了简单我把它置零），在数据中去除这个标记的所有印迹
+        Aug_t_tr = conjugate(transpose(Aug_t))  # 共轭转置    
+        inverse  = inv(dot(Aug_t_tr,Aug_t))
+        aug_y    = dot(dot(inverse,Aug_t_tr),s) # 最小二乘,使残差最小          
+        r_n      = s-dot(Aug_t,aug_y)           # 残差
+        pos_array[times] = pos                  # 纪录最大投影系数的位置
+        
+    for i in range(m):                          # 重构的谱域向量
+        pos = np.int(pos_array[i])
+        hat_y[:,pos] = aug_y[i]                 
+    hat_H = dot(Psi,transpose(hat_y))           # 做傅里叶变换重构得到原信号  
+  
+    return hat_H
