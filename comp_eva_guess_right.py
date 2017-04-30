@@ -33,13 +33,13 @@ eva_MSE = zeros((gro_num,P))
 for i in range(gro_num):
     for j in range(P):
         ''' 发送端 '''
-        Xn,pos = sender (N,P,'random')
+        Xn,pos = sender (N,P,'random',i*j)
         
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR)
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,pos,L,N,K)
+        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P,K,'random',i*j)
         
         ''' 非法用户 '''
         h_eva,H_eva = receiver_eva(Y,W,N,K,P,pos,'%d'%(j))
@@ -74,7 +74,6 @@ plt.plot(maxright,pro[maxright],'ro')
 plt.xlabel('number of right pilots')
 plt.ylabel('probability')
 plt.title('Probability of the number of right pilots')
-plt.legend()
 
 ''' 比较不同的信噪比SNR '''
 SNR = [0,5,10,15,20,25,30]  # AWGN信道信噪比
@@ -91,13 +90,13 @@ eva_MSE_35 = zeros((gro_num,SNR_num))
 for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
-        Xn,pos = sender (N,P,'random')
+        Xn,pos = sender (N,P,'random',i*j)
         
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,pos,L,N,K)
+        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P,K,'random',i*j)
         
         ''' 非法用户 '''
         h_eva_r,H_eva_r = receiver_eva(Y,W,N,K,P,pos,'random')

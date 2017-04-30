@@ -5,13 +5,23 @@ Created on Thu Mar 17 13:06:33 2016
 @author: My402
 """
 
-from numpy import dot,transpose,eye
+from numpy import dot,transpose,eye,arange
 from numpy.linalg import inv
 from OMP import OMP
 from function import ifftMatrix,interpolation
+from RSSI import sampling,quantization_lossy
+from A51 import A51
 
-def receiver(X,Y,W,pos,L,N,K):
+def receiver(X,Y,W,L,N,P,K,ptype,seed):
 
+    ''' 导频位置 '''
+    if ptype=='random':     # 随机，根据RSSI生成导频位置        
+        RSSI = sampling(200,seed,5,-70,-60)
+        bit = quantization_lossy(RSSI)
+        pos = A51(N,P,bit)
+    elif ptype == 'even':   # 均匀
+        pos = arange(P)*5   # 导频插入的位置。每5个插入一个导频。取值{0，5，10，...，510}，共P=103个
+    
     ''' 导频选择矩阵 '''
     I = eye(N,N)    # NxN的单位矩阵
     S = I[pos,:]    # PxN的导频选择矩阵，从NxN的单位矩阵选取与导频位置对应的P行，用于从N个子载波中选择出P个导频位置

@@ -34,13 +34,13 @@ eva_MSE = zeros((gro_num,SNR_num))
 for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
-        Xn,pos = sender (N,P[0],'random')
+        Xn,pos = sender (N,P[0],'random',i*j)
         
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,pos,L,N,K)
+        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P[0],K,'random',i*j)
         
         ''' 非法用户 '''
         h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')
@@ -62,36 +62,36 @@ eva_MSE_0 = mean(eva_MSE,0)
 for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
-        Xn,pos = sender (N,P[1],'even')
+        Xn,pos = sender (N,P[1],'even',i*j)
         
         ''' 信道传输 ''' 
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计''' 
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,pos,L,N,K)
+        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P[1],K,'even',i*j)
         
-        ''' 非法用户 '''
-        h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')
+        #''' 非法用户 '''
+        #h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')
         
         ''' 评价性能：MSE '''
         CS_MSE[i,j] = MSE(H,H_cs)
         LS_MSE[i,j] = MSE(H,H_ls)
         
-        ''' 画图 '''
+        #''' 画图 '''
         # 只画某一组中，指定SNR时的h,H,X,Y
-        if i==9 and j==6:
-            plot(h,H,h_ls,H_ls,h_eva,H_eva,Xn,Y,No)
+        #if i==9 and j==6:
+        #    plot(h,H,h_ls,H_ls,h_eva,H_eva,Xn,Y,No)
 
 ''' 多组取平均 '''
 CS_MSE_1 = mean(CS_MSE,0)
 LS_MSE_1 = mean(LS_MSE,0)
 
 plt.figure(figsize=(8,5))
-plt.plot(SNR,CS_MSE_0,'ro-',label='CS,P=%d,random'%(P[0]))
+plt.plot(SNR,CS_MSE_0,'go-',label='CS,P=%d,random'%(P[0]))
 plt.plot(SNR,LS_MSE_0,'bo-',label='LS,P=%d,random'%(P[0]))
-plt.plot(SNR,eva_MSE_0,'yo-',label='eva,P=%d,random'%(P[0]))
-plt.plot(SNR,CS_MSE_1,'rp-',label='CS,P=%d,even'%(P[1]))
-plt.plot(SNR,LS_MSE_1,'bp-',label='LS,P=%d,even'%(P[1]))
+plt.plot(SNR,eva_MSE_0,'ro-',label='eva,P=%d,random'%(P[0]))
+plt.plot(SNR,CS_MSE_1,'gp-.',label='CS,P=%d,even'%(P[1]))
+plt.plot(SNR,LS_MSE_1,'bp-.',label='LS,P=%d,even'%(P[1]))
 plt.xlabel('SNR(dB)')
 plt.ylabel('MSE(dB)')
 plt.title('MSE of CS/LS')

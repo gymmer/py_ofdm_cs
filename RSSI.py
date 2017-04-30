@@ -6,9 +6,9 @@ Created on Sat Mar 19 14:08:54 2016
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy import *
+from numpy import random,size,array,mean,std,zeros
 from A51 import A51
-import pdb
+
 plt.close('all')
 
 def sampling(N,seed,std,l_mean,r_mean):   
@@ -104,19 +104,26 @@ def BMR(bitA,bitB):
 
 BMR_AB = zeros(20)
 BMR_AE = zeros(20)
+BMR_AE1 = zeros(20)
 for i in range(20):
     RSSI_A = sampling(200,i,3,-63,-53)
     RSSI_B = sampling(200,i,5,-70,-60)
     RSSI_E = sampling(200,i+5,5,-70,-60)
+    
     bit_A = quantization_lossy(RSSI_A)
     bit_B = quantization_lossy(RSSI_B)
-    bit_B[0] = bit_B[0]^1  # 假设弄错了一位，更假设就弄错了第一位
     bit_E = quantization_lossy(RSSI_E)
+    bit_E_err1 = bit_B.copy();          # 假设非法用户只弄错了一位，更假设就弄错了第一位
+    bit_E_err1[0] = bit_E_err1[0]^1 
+    
     posA = A51(512,36,bit_A)
     posB = A51(512,36,bit_B)
-    BMR_AB[i] = BMR(bit_A,bit_B)
     posE = A51(512,36,bit_E)
+    posE_err1 = A51(512,36,bit_E_err1)
+    
+    BMR_AB[i] = BMR(bit_A,bit_B)
     BMR_AE[i] = BMR(bit_A,bit_E)
+    BMR_AE1[i] = BMR(bit_A,bit_E_err1)
     
 plt.figure(figsize=(8,5))
 plt.plot(RSSI_A,'bo-',label='Sender device')
@@ -128,8 +135,9 @@ plt.ylabel('RSSI(dBm)')
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.plot(BMR_AB,'bo-',label='BMR of receiver')
-plt.plot(BMR_AE,'go-',label='BMR of eavesdropper')
+plt.plot(BMR_AB,'go-',label='BMR of receiver')
+plt.plot(BMR_AE,'ro-',label='BMR of eavesdropper')
+plt.plot(BMR_AE1,'mo-',label='BMR of eavesdropper\n(1 bit error)')
 plt.title('BMR performance')
 plt.xlabel('Group')
 plt.ylabel('BMR')

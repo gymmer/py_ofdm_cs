@@ -53,11 +53,10 @@ def A51(N,P,bit_stream):
     P： 导频数
     bit_stream：输入比特流(64位)
     '''
-    
     X_bit,Y_bit,Z_bit = 19,22,23            # 寄存器X、Y、Z分别有19、22、23位
     seed_bit = X_bit+Y_bit+Z_bit            # 寄存器初始种子一共64位
     key_stream = array([],dtype=np.int32)   # 密钥流
-    pos = array([])                         # 导频的位置序列
+    pos = array([],dtype=np.int32)          # 导频的位置序列
    
     seed = bit_stream.copy()                # 初始种子一共64位，取64位输入比特流作为种子
     X = seed[0:X_bit]                       # 分别用充当三个移位寄存器的初始值
