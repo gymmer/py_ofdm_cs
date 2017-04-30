@@ -6,7 +6,7 @@ Created on Sat Mar 12 14:31:08 2016
 """
 
 import numpy as np
-from numpy import zeros,empty,dot,transpose,size,conjugate
+from numpy import zeros,dot,transpose,size,conjugate
 from numpy.linalg import inv
 
 def OMP(K,y,Phi,Psi):
@@ -25,7 +25,6 @@ def OMP(K,y,Phi,Psi):
     N = size(T,1)
     
     hat_X = zeros((1,N),np.complex)     # 待重构的谱域(变换域)向量                     
-    Aug_t = empty([M,1])                # 增量矩阵(初始值为空矩阵)
     r_n   = y                           # 残差值
     pos_array = zeros((m,1))            # 最大投影系数的位置                          
     product   = zeros((1,N))
@@ -35,10 +34,10 @@ def OMP(K,y,Phi,Psi):
             product[0,col] = np.abs(dot(conjugate(T[:,col]),r_n)) # 恢复矩阵的列向量和残差的投影系数(内积值) 
         
         pos   = np.argmax(product)      # 最大投影系数对应的位置，即找到一个其标记看上去与收集到的数据相关的小波                   
-        Aug_t = np.c_[Aug_t,T[:,pos]]   # 矩阵扩充
         if times==0:
-            Aug_t = Aug_t[:,1]
-            Aug_t.shape = (M,1)
+            Aug_t = T[:,pos].copy().reshape(M,1)# 增量矩阵
+        else:
+            Aug_t = np.c_[Aug_t,T[:,pos]]       # 矩阵扩充
            
         T[:,pos] = zeros(M)                     # 选中的列置零（实质上应该去掉，为了简单我把它置零），在数据中去除这个标记的所有印迹
         Aug_t_tr = conjugate(transpose(Aug_t))  # 共轭转置    

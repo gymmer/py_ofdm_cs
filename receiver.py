@@ -36,9 +36,8 @@ def receiver(X,Y,W,pos,L,N,K):
     H_cs = dot(W,h_cs)          # 傅里叶变换，得到频域的H
            
     ''' LS信道估计 '''
-    
     Hp_ls = dot(inv(Xp),Yp)             # LS、MMSE是频域估计算法，得到导频处的Hp    
-    H_ls = interpolation(Hp_ls,pos,N)   # 根据导频处Hp进行插值，恢复信道的H
+    H_ls = interpolation(Hp_ls,pos,N)   # 根据导频处Hp进行插值，恢复信道的H     
     h_ls = dot(ifftMatrix(L,N),H_ls)    # 傅里叶逆变换，得到时域的h
         
     return h_cs,H_cs,h_ls,H_ls
