@@ -34,7 +34,7 @@ def channel(L,K):
     ampli = randn(K) + 1j*randn(K)
     ampli = ampli/np.abs(ampli)
 
-    h = zeros((L,1),dtype=np.complex)               # 信道的冲激响应是一个复数
+    h = zeros(L,dtype=np.complex)               # 信道的冲激响应是一个复数
     for i in range(K):
         h[tau[i]] = exp(-tau[i]/taumax)*ampli[i]    # 路径复增益的功率指数衰落
     return h
@@ -49,44 +49,73 @@ def awgn(X,SNR):
         Y[i]=X[i]+No[i]
     return Y
     
-def transmission(x,L,K,N,M,Ncp,SNR):
+def transmission(SEND,L,K,N,M,Ncp,Nt,Nr,SNR):
     
     ''' 
-    x: 发送端的发送信号
+    SEND: 发送端的发送信号
     L: 信道长度
     K: 稀疏度
     N: 子载波数
     M: 每帧的OFDM符号数
     Ncp: 循环前缀长度
+    Nt: 发送天线数
+    Nr: 接收天线数
     SNR: 信噪比
     '''
     
     ''' 时域的信道脉冲响应'''
-    # 对于慢时变信道，在多个OFDM符号周期内，信道冲激响应保持不变
-    h = channel(L,K)            # 1个符号周期内信道脉冲响应
+    h = zeros((Nr,Nt,L),dtype=np.complex)
+    H = zeros((Nr,Nt,N),dtype=np.complex)
+    for r in range(Nr):
+        for t in range(Nt):
+            h[r,t,:] = channel(L,K)     # 第r个接收天线，与第t个发送天线的1个符号周期内的信道脉冲响应
+            H[r,t,:] = dot(fftMatrix(N,L),h[r,t,:])     # 信道频率响应
      
-    ''' 信道频率响应H '''
-    W = fftMatrix(N+Ncp,L)      # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基
-    H = dot(W,h)                # 1个符号周期内频率的冲激响应
-    H_M = H                     # 在M个符号周期内，H保持不变，因此将H做M次重复
+    ''' 傅里叶正变换矩阵 '''
+    W = fftMatrix((N+Ncp),L)            # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基
+    W_M = W                             # 对于慢时变信道，在M个符号周期内，H保持不变。相当于对W做M次重复
     for i in range(M-1):
-        H_M = np.r_[H_M,H]            
+        W_M = np.r_[W_M,W]    
     
-    ''' 将时域的发送信号，变换到频域 '''
-    X = fft(x,axis=0)
+    for t in range(Nt):
+        
+        ''' 第t个天线的发送数据 '''
+        x = SEND[:,t]
+        
+        ''' 将时域的发送信号，变换到频域 '''
+        X = fft(x)
+        
+        ''' 测量矩阵 '''
+        # 将发送信号作为观测矩阵的对角元素,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵
+        X = diag(X)
+        
+        if t==0:
+            X_wave = dot(X,W_M)
+        else:
+            X_wave = np.c_[X_wave,dot(X,W_M)]
     
-    ''' 测量矩阵 '''
-    # 将发送信号作为观测矩阵的对角元素,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵
-    X = diag(X.reshape(-1))
+    ''' X_wave与Nr*Nr单位矩阵的克罗内克积 '''    
+    Kronecker = X_wave
+    for r in range(Nr-1):
+        Kronecker = np.c_[Kronecker,X_wave]
+    for r in range(Nr-1):
+        Kronecker = np.r_[Kronecker,Kronecker[0:(N+Ncp)*M,:]]
     
+    ''' Nt*Nr*L的信道脉冲响应向量 '''
+    for r in range(Nr):
+        for t in range(Nt):
+            h_rt = h[r,t,:].reshape(-1,1)   # 第r个接收天线，与第t个发送天线的1个符号周期内的信道脉冲响应
+            if r==0 and t==0:
+                h_vector = h_rt
+            else:
+                h_vector = np.r_[h_vector,h_rt]
+
     ''' 理想信道传输 '''
-    X_H = dot(X,H_M)
+    Y = dot(Kronecker,h_vector)
     
-    ''' 添加高斯白噪声，得接收信号向量Y '''
-    Y  = awgn(X_H,SNR)    # 加入复高斯白噪声,得到接收到的信号（频域表示）
-    #No = Y-X_H                # Y = X*H + No
-    
-    ''' 将频域的接收信号，变换到时域 '''
+    ''' AWGN '''
+    Y = awgn(Y,SNR)    
     y = ifft(Y,axis=0)
-    
-    return h,H,y
+    RECEIVE = y.reshape(-1,Nr)
+        
+    return h,H,RECEIVE
