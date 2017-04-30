@@ -10,22 +10,22 @@ import numpy as np
 from numpy import zeros,size
 from function import BMR
 from universal_statistical_test import Entropy
-from RSSI import sampling,quantization_even,quantization_thre,remain
-from part_transmission import awgn
+from security_sampling import sampling
+from security_quantize import quantization_even,quantization_thre,remain
 import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
-sampling_time = 40
+sampling_time = 2
 SNR = 30
 qtype = 'gray'
 order = 2
 block_size = 200
 coef = 0.8
 
-group_num = 2
+group_num = 10
 condi_num = 3
 bmr = zeros((group_num,condi_num))
 bgr = zeros((group_num,condi_num))
@@ -34,20 +34,19 @@ ent = zeros((group_num,condi_num))
 for i in range(group_num):
     print 'Running group:',i
     
-    rssi_A = sampling(sampling_period,sampling_time,1)
-    rssi_B = awgn(rssi_A,SNR)
+    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.7,0.4)
     
-    bitsA = quantization_even(rssi_A,block_size,qtype,order)
-    bitsB = quantization_even(rssi_B,block_size,qtype,order)
+    bitsA = quantization_even('RSSI',rssi_A,block_size,qtype,order)
+    bitsB = quantization_even('RSSI',rssi_B,block_size,qtype,order)
     bmr[i,0] = BMR(bitsA,bitsB)
     bgr[i,0] = size(bitsA)/(sampling_time/sampling_period*1000.0)
-    ent[i,0] = Entropy(bitsA)
+    #ent[i,0] = Entropy(bitsA)
     
-    bitsA = quantization_even(rssi_A,size(rssi_A),qtype,order)
-    bitsB = quantization_even(rssi_B,size(rssi_A),qtype,order)
+    bitsA = quantization_even('RSSI',rssi_A,size(rssi_A),qtype,order)
+    bitsB = quantization_even('RSSI',rssi_B,size(rssi_A),qtype,order)
     bmr[i,1] = BMR(bitsA,bitsB)
     bgr[i,1] = size(bitsA)/(sampling_time/sampling_period*1000.0)
-    ent[i,1] = Entropy(bitsA)
+    #ent[i,1] = Entropy(bitsA)
     
     bitsA,drop_listA = quantization_thre(rssi_A,block_size,coef)
     bitsB,drop_listB = quantization_thre(rssi_B,block_size,coef)
@@ -55,7 +54,7 @@ for i in range(group_num):
     bitsB = remain(bitsB,drop_listA,drop_listB)
     bmr[i,2] = BMR(bitsA,bitsB)
     bgr[i,2] = size(bitsA)/(sampling_time/sampling_period*1000.0)
-    ent[i,2] = Entropy(bitsA)
+    #ent[i,2] = Entropy(bitsA)
     
 plt.figure(figsize=(8,5))
 plt.plot(bmr[:,0],'ro-' ,label='Lightweight(%dbit %s,bl=%d)'%(order,qtype,block_size))

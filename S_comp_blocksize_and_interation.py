@@ -9,23 +9,23 @@ import os
 import numpy as np
 from numpy import zeros,size,mean
 from function import BMR
+from security_sampling import sampling
+from security_quantize import quantization_thre,remain
+from security_winnow   import winnow
 from universal_statistical_test import Entropy
-from RSSI import sampling,quantization_thre,remain
-from part_transmission import awgn
-from winnow import winnow
 import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
-sampling_time = 40
+sampling_time = 2
 SNR = 30
 block_size = [10,50,100,150,200,250,300]
 coef = 0.8
 iteration = [0,1,2,3,4]
 
-group_num = 1
+group_num = 100
 condi_num = size(block_size)
 inter_num = size(iteration)
 bmr = zeros((group_num,condi_num,inter_num))
@@ -37,9 +37,7 @@ for i in range(group_num):
         for k in range(inter_num):
             print 'Running group:',i,j,k
             
-            rssi_A = sampling(sampling_period,sampling_time,1)
-            rssi_B = awgn(rssi_A,SNR)        
-            
+            rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.7,0.4)            
             bitsA,drop_listA = quantization_thre(rssi_A,block_size[j],coef)
             bitsB,drop_listB = quantization_thre(rssi_B,block_size[j],coef)
             bitsA = remain(bitsA,drop_listA,drop_listB)
@@ -48,7 +46,7 @@ for i in range(group_num):
             
             bmr[i,j,k] = BMR(bitsA,bitsB)
             bgr[i,j,k] = size(bitsA)/(sampling_time/sampling_period*1000.0)
-            ent[i,j,k] = Entropy(bitsA)
+            #ent[i,j,k] = Entropy(bitsA)
 
 bmr = mean(bmr,0)
 bgr = mean(bgr,0)

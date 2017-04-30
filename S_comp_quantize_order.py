@@ -9,21 +9,21 @@ import os
 import numpy as np
 from numpy import zeros,size,mean,mod,pi
 from function import BMR
+from security_sampling import sampling
+from security_quantize import quantization_even
 from universal_statistical_test import Entropy
-from Phase import sampling,quantization_even
-from part_transmission import awgn
 import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')
 
 sampling_period = 10     # 采样周期1ms
-sampling_time = 300
+sampling_time = 20
 SNR = 30
 order = [1,2,3,4]
 qtype = ['natural','gray']
 
-group_num = 5
+group_num = 100
 condi_num = size(order)
 qtype_num = size(qtype)
 bmr = zeros((group_num,condi_num,qtype_num))
@@ -35,14 +35,13 @@ for i in range(group_num):
         for k in range(qtype_num):
             print 'Running group:',i,j,k
         
-            phase_A = sampling(sampling_period,sampling_time)
-            phase_B = mod(awgn(phase_A,SNR),2*pi)
-        
-            bitsA = quantization_even(phase_A,qtype[k],order[j])
-            bitsB = quantization_even(phase_B,qtype[k],order[j])        
+            phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4), 2*pi)
+
+            bitsA = quantization_even('Phase',phase_A,size(phase_A),qtype[k],order[j])
+            bitsB = quantization_even('Phase',phase_B,size(phase_A),qtype[k],order[j])        
             bmr[i,j,k] = BMR(bitsA,bitsB)
             bgr[i,j,k] = size(bitsA)/(sampling_time/sampling_period*1000.0)
-            ent[i,j,k] = Entropy(bitsA)
+            #ent[i,j,k] = Entropy(bitsA)
 
 bmr = mean(bmr,0)
 bgr = mean(bgr,0)

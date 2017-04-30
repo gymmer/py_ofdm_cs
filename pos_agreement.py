@@ -5,14 +5,13 @@ Created on Wed Apr 27 14:20:11 2016
 @author: My402
 """    
 import numpy as np
-from numpy import corrcoef,mod,array,floor,ceil,pi
+from numpy import corrcoef,mod,array,floor,ceil,pi,size
 from function import BMR
-import RSSI
-import Phase
-from part_transmission import awgn
+from security_sampling import sampling
+from security_quantize import quantization_thre,quantization_even,remain
+from security_winnow import winnow
 from from_to import from2seq_to10
-from winnow import winnow
-    
+
 def get_pos_from_bits(bits,P,pos):
     pos_num = 0                             # 已生成的导频数。初始时未生成导频，为0
     index = 0
@@ -27,8 +26,8 @@ def get_pos_from_bits(bits,P,pos):
 
 def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
     pos = array([],dtype=np.int32)                      # 初始化导频图样pos为空
-    pos = get_pos_from_bits(bits_rssi, P_rssi, pos)     # 从RSSI的密钥流产生导频，追加到pos中
     pos = get_pos_from_bits(bits_phase,P_phase,pos)     # 从Phase的密钥流产生导频，追加到pos中
+    pos = get_pos_from_bits(bits_rssi, P_rssi, pos)     # 从RSSI的密钥流产生导频，追加到pos中
     pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
     return pos
     
@@ -38,7 +37,6 @@ def agreement(sampling_time,P,weight,iteration=3):
     P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P)
     
     ''' 采样参数'''
-    SNR = 30
     sampling_period_rssi  = 1
     sampling_period_phase = 10
     
@@ -51,28 +49,27 @@ def agreement(sampling_time,P,weight,iteration=3):
     ''' winnow最大迭代次数'''
     #iteration = 3
     
-    ''' RSSI 采样'''        
-    rssi_A = RSSI.sampling(sampling_period_rssi,sampling_time,1)
-    rssi_B = awgn(rssi_A,SNR)
-    rssi_E = RSSI.sampling(sampling_period_rssi,sampling_time,3)  
-    
-    ''' Phase 采样'''    
-    phase_A = Phase.sampling(sampling_period_phase,sampling_time)
-    phase_B = mod(awgn(phase_A,SNR),2*pi)
-    phase_E = Phase.sampling(sampling_period_phase,sampling_time)
+    ''' 采样'''        
+    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period_rssi,sampling_time,0.7,0.4)  
+    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period_phase,sampling_time,0.9,0.4),2*pi)    
+    #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]            
+    print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]   
     
     ''' RSSI量化'''
-    bits_A_rssi,drop_listA = RSSI.quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_listB = RSSI.quantization_thre(rssi_B,block_size,coef)
-    bits_E_rssi,drop_listE = RSSI.quantization_thre(rssi_E,block_size,coef)
-    bits_A_rssi = RSSI.remain(bits_A_rssi,drop_listA,drop_listB)
-    bits_B_rssi = RSSI.remain(bits_B_rssi,drop_listA,drop_listB)
-    bits_E_rssi = RSSI.remain(bits_E_rssi,array([]),drop_listE)
+    bits_A_rssi,drop_listA = quantization_thre(rssi_A,block_size,coef)
+    bits_B_rssi,drop_listB = quantization_thre(rssi_B,block_size,coef)
+    bits_E_rssi,drop_listE = quantization_thre(rssi_E,block_size,coef)
+    bits_A_rssi = remain(bits_A_rssi,drop_listA,drop_listB)
+    bits_B_rssi = remain(bits_B_rssi,drop_listA,drop_listB)
+    #bits_E_rssi = remain(bits_E_rssi,array([]),drop_listE)
+    bits_E_rssi = remain(bits_E_rssi,drop_listA,drop_listE)
+    #print bits_A_rssi.shape,bits_B_rssi.shape,bits_E_rssi.shape
     
     ''' Phase量化'''
-    bits_A_phase = Phase.quantization_even(phase_A,qtype,order)
-    bits_B_phase = Phase.quantization_even(phase_B,qtype,order)
-    bits_E_phase = Phase.quantization_even(phase_E,qtype,order)
+    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
+    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
+    bits_E_phase = quantization_even('Phase',phase_E,size(phase_E),qtype,order)
+    #print 'BMR of phase before winnow between AB and AE:',BMR(bits_A_phase,bits_B_phase),BMR(bits_A_phase,bits_E_phase)
     
     ''' winnow信息协调'''
     bits_A_rssi, bits_B_rssi  = winnow(bits_A_rssi, bits_B_rssi ,iteration)
@@ -81,10 +78,13 @@ def agreement(sampling_time,P,weight,iteration=3):
     ''' 生成导频 '''
     posA = generate_pos(bits_A_rssi,bits_A_phase,P_rssi,P_phase)
     posB = generate_pos(bits_B_rssi,bits_B_phase,P_rssi,P_phase)
-    posE = generate_pos(bits_E_rssi,bits_E_phase,P_rssi,P_phase)
-    
-    #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]            
-    #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]   
+    posE = generate_pos(bits_E_rssi,bits_E_phase,P_rssi,P_phase)    
     #print 'BMR of rssi and phase after winnow between AB:',BMR(bits_A_rssi,bits_B_rssi),BMR(bits_A_phase,bits_B_phase)
     
     return posA,posB,posE
+
+if __name__=='__main__':
+    posA,posB,posE = agreement(2,36,0.5)
+    from comp_all_pilot_right_probability import how_many_right
+    print how_many_right(posA,posB)
+    print how_many_right(posA,posE)

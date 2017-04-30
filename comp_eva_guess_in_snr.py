@@ -25,7 +25,7 @@ P = 36                      # 导频数，P<N
 SNR = range(0,31,5)         # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 right = [2,10,20,35]        # 非法用户猜对导频数
-gro_num = 100                # 进行多组取平均
+gro_num = 10                # 进行多组取平均
 
 ''' 比较不同的信噪比SNR '''
 SNR_num = len(SNR)
@@ -51,22 +51,25 @@ for i in range(gro_num):
             bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
             
             ''' 信道传输 '''
-            h,H,y = transmission(x,L,K,N,Ncp,SNR[j])
+            h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR[j])
             
             ''' 理想条件下的信道估计'''
             # 合法用户确切知道发送端导频
-            h_lx,H_lx,bits_lx,diagram_lx = receiver(y,L,K,N,Ncp,pos_A,modulate_type,'CS','from_pos')
+            h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type,'CS','from_pos')
         
             ''' 接收端 信道估计'''
-            h_cs,H_cs,bits_cs,diagram_cs = receiver(y,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
+            h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
+            
+            ''' 窃听信道 '''
+            h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR[j])
             
             ''' 非法用户 '''
-            h_eva, H_eva, bits_eva, diagram = receiver(y,L,K,N,Ncp,pos_A,modulate_type,'CS','%d'%(right[r]))
+            h_eva, H_eva, bits_eva, diagram = receiver(y_e,L,K,N,Ncp,pos_A,modulate_type,'CS','%d'%(right[r]))
             
             ''' 评价性能 '''
-            lx_MSE[i,j,r]  = MSE(H,H_lx)
-            CS_MSE[i,j,r]  = MSE(H,H_cs)
-            eva_MSE[i,j,r] = MSE(H,H_eva)   
+            lx_MSE[i,j,r]  = MSE(H_ab,H_lx)
+            CS_MSE[i,j,r]  = MSE(H_ab,H_cs)
+            eva_MSE[i,j,r] = MSE(H_ae,H_eva)   
             lx_BER[i,j,r]  = BMR(bits_A,bits_lx)
             CS_BER[i,j,r]  = BMR(bits_A,bits_cs)
             eva_BER[i,j,r] = BMR(bits_A,bits_eva)

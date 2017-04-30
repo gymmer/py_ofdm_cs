@@ -5,7 +5,6 @@ Created on Fri Mar 25 00:02:45 2016
 @author: gymmer
 """
 
-import numpy as np
 from numpy import array
 
 def grayCode_4bit(minimum,interval,value):

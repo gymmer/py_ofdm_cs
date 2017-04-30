@@ -14,23 +14,24 @@ def how_many_right(posA,posB):
         if pos in posB:
             right += 1
     return right
-
-P = 36
-group = 1000
-iteration = [0,1,2,3,4]
-probability = []
-
-for i in range(len(iteration)):
-    allright = 0.0
-    for j in range(group):   
-        print 'running group...',i,j
-        posA,posB,posE = agreement(2,P,0.5,iteration[i])
-        if how_many_right(posA,posB) == P:
-            allright += 1
-    probability.append(allright/group)
-
-plt.figure(figsize=(8,5))
-plt.plot(iteration,probability,'bo-')
-plt.xlabel('Iteration')
-plt.ylabel('Probability')
-plt.title('Probability of all pilots right')
+    
+if __name__ == '__main__':
+    P = 36
+    group = 100
+    iteration = [0,1,2,3,4]
+    probability = []
+    
+    for i in range(len(iteration)):
+        allright = 0.0
+        for j in range(group):   
+            print 'running group...',i,j
+            posA,posB,posE = agreement(2,P,0.5,iteration[i])
+            if how_many_right(posA,posB) == P:
+                allright += 1
+        probability.append(allright/group)
+    
+    plt.figure(figsize=(8,5))
+    plt.plot(iteration,probability,'bo-')
+    plt.xlabel('Iteration')
+    plt.ylabel('Probability')
+    plt.title('Probability of all pilots right')

@@ -7,7 +7,6 @@ Created on Wed Apr 27 10:26:24 2016
 import numpy as np
 from numpy import size,array,transpose,zeros,shape,mod,split,hstack
 from from_to import from2seq_to10
-from function import BMR
 import random
 
 def xor_dot(seq,matrix):
@@ -73,12 +72,12 @@ def winnow(bitsA,bitsB,iteration):
         # 迭代停止的条件：
         # 1.达到指定的迭代次数。此时bitsA与bitsB仍有可能存在误码
         # 2.BMR=0。说明bitsB的误比特已经被改正，不必再进行后续迭代。
-        if BMR(bitsA,bitsB)==0:
-            return bitsA,bitsB
+        #if BMR(bitsA,bitsB)==0:
+        #    return bitsA,bitsB
         
         ''' 进行第inter次迭代 '''
 
-        # 二进制序列按照相同的随机顺序惊醒排序，使错误均匀地随机分布
+        # 二进制序列按照相同的随机顺序进行排序，使错误均匀地随机分布
         order = random.sample(range(size(bitsA)),size(bitsA))
         bitsA = reorgnize_bits(bitsA,order)
         bitsB = reorgnize_bits(bitsB,order)
