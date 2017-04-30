@@ -31,13 +31,10 @@ def guess_pos(N,P,pos,right_num):
 def receiver_eva(Y,W,N,K,P,pos,guess_type):
     
     ''' 假设非法用户用另一个导频图样进行解码 '''
-    if guess_type=='random':
-        # 非法用户随机猜测的导频位置
-        pos_eva = random.sample(range(N),P)     # 导频插入的位置。取值范围[0,N-1]，不重复的P个随机整数
-        pos_eva.sort()
-    else:
-        # 与合法用户的导频图样pos相比，非法用户猜对了right_num个
-        right_num = int(guess_type)
+    if guess_type=='from_pos':  # 非法用户使用传入的pos作为导频图样（RSSI量化得到，或均匀放置）       
+        pos_eva = pos
+    else:                       # 非法用户随机猜测导频位置。此时传入的pos为发送端的导频图样
+        right_num = int(guess_type)                 # 与pos相比，非法用户猜对了right_num个
         pos_eva = guess_pos(N,P,pos,right_num)
 
     ''' 导频选择矩阵 '''

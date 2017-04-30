@@ -39,7 +39,7 @@ def BMR(bitA,bitB):
     return BMR
     
 def exist(seq,ele):
-    # 判断序列中是否存在某个元素。如果存在，返回1；否则返回0
+    ''' 判断序列中是否存在某个元素。如果存在，返回1；否则返回0 '''
     for i in range(size(seq)):
         if seq[i]==ele:
             return 1

@@ -6,27 +6,12 @@ Created on Thu Mar 17 13:06:33 2016
 """
 
 import numpy as np
-from numpy import dot,transpose,eye,arange
+from numpy import dot,transpose,eye
 from numpy.linalg import inv
 from OMP import OMP
 from function import ifftMatrix,interpolation
-from RSSI import sampling,quantization,hash_tiger
-from RC4 import RC4
 
-def receiver(Y,W,L,N,P,K,ptype,pos_sender):
-
-    ''' 导频位置 '''
-    if ptype=='random':     # 随机，根据RSSI生成导频位置
-        ''' 导频位置应该从RSSI得到，但是RSSI部分尚未完善，导频误差很大。此处先临时用sender的导频图样
-        应当保证sender的key和receiver的key完全一样
-        RSSI = sampling(1,1,1)+np.random.randint(0,2,size=(1000,1))
-        bit = quantization(RSSI,2,1)
-        key = hash_tiger(bit)
-        pos = RC4(key,P) 
-        '''
-        pos = pos_sender
-    elif ptype == 'even':   # 均匀
-        pos = arange(P)*5   # 导频插入的位置。每5个插入一个导频。取值{0，5，10，...，510}，共P=103个
+def receiver(Y,W,L,N,P,K,pos):
 
     ''' 导频选择矩阵 '''
     I = eye(N,N)    # NxN的单位矩阵

@@ -98,5 +98,5 @@ def cascade(bit_A,bit_B):
         last_k = ki
         last_Ki_A = Ki_A
         last_Ki_B = Ki_B
-    
+    # cascade 后，被改正的Ki_A(或Ki_B)与原始的bit_A(或bit_B)相比，被打乱了顺序
     return Ki_A,Ki_B

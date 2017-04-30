@@ -19,12 +19,12 @@ def plot(h,H,re_h,re_H,re_h_eva,re_H_eva,Xn,Y,No):
 
     plt.subplot(312)
     plt.stem(np.abs(re_h),'g')
-    plt.title('Reconstruct h after Channel Estimation')
+    plt.title('Reconstruct h after Channel Estimation(CS/LS)')
     plt.show()
     
     plt.subplot(313)
     plt.stem(np.abs(re_h_eva),'r')
-    plt.title('Reconstruct h of Invalid User')
+    plt.title('Reconstruct h of Invalid User(CS)')
     plt.xlabel('Sampling Point(Time Delay)')
     plt.show()
     
@@ -38,12 +38,12 @@ def plot(h,H,re_h,re_H,re_h_eva,re_H_eva,Xn,Y,No):
     
     plt.subplot(312)
     plt.plot(np.abs(re_H),'go-')        
-    plt.title('Reconstruct H after Channel Estimation')
+    plt.title('Reconstruct H after Channel Estimation(CS/LS)')
     plt.show()
        
     plt.subplot(313)
     plt.plot(np.abs(re_H_eva),'ro-')
-    plt.title('Reconstruct H of Invalid User')
+    plt.title('Reconstruct H of Invalid User(CS)')
     plt.xlabel('Subcarrier Index')
     plt.show()
     
