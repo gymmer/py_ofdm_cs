@@ -28,9 +28,9 @@ def agreement(sampling_time,order,P):
     # 总的RSSI采样点为：采样时间/采样周期。每经过一个采样时间，更换一次密钥/导频图样。
     sampling_period = 1     # 采样周期1ms
     RSSI_A = sampling(sampling_period,sampling_time,1)
-    RSSI_B = sampling(sampling_period,sampling_time,1)+np.random.randint(0,2,size=(sampling_time/sampling_period*1000,1))
+    RSSI_B = sampling(sampling_period,sampling_time,1)+np.random.randint(1,3,size=(sampling_time/sampling_period*1000,1))
     RSSI_E = sampling(sampling_period,sampling_time,1)+np.random.randint(-4,-2,size=(sampling_time/sampling_period*1000,1))
-    
+
     ''' 预处理，滤除均值附近的RSSI样本点 '''
     a=0.3
     strategy_list_A = get_strategy_list(RSSI_A,a)
@@ -55,7 +55,7 @@ def agreement(sampling_time,order,P):
     # A与E不会进行信息交互，E不可能指望通过cascade降低误比特率
     # 经过cascade，bit_A与bit_B的误比特率降为0.但是被改正的bit与原始的bit相比，被打乱了顺序。总位数不变
     bit_A,bit_B = cascade(bit_A,bit_B)
-    
+
     #print '\nAfter cascade:\nBMR_AB = %f'%(BMR(bit_A,bit_B))
     
     ''' 密性放大。采用tiger哈希函数，任意位输入，输出192位密钥 '''
@@ -80,3 +80,5 @@ def agreement(sampling_time,order,P):
     plt.legend()'''
     
     return pos_A,pos_B,pos_E
+    
+agreement(1,2,36)

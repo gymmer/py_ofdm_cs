@@ -8,7 +8,7 @@ Created on Thu Mar 17 13:37:31 2016
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot(h,H,re_h,re_H,re_h_eva,re_H_eva,Xn,Y,No):
+def plot(h,H,re_h,re_H,re_h_eva,re_H_eva):
     ''' 信道冲激响应 '''
     plt.figure(figsize=(10,9))
     plt.subplot(311)
@@ -47,7 +47,7 @@ def plot(h,H,re_h,re_H,re_h_eva,re_H_eva,Xn,Y,No):
     plt.xlabel('Subcarrier Index')
     plt.show()
     
-    ''' 发送、接收序列 '''
+    ''' 发送、接收序列 
     plt.figure(figsize=(10,9))
     plt.subplot(221)
     plt.plot(np.abs(Xn),'bo-')
@@ -71,4 +71,4 @@ def plot(h,H,re_h,re_H,re_h_eva,re_H_eva,Xn,Y,No):
     plt.plot(np.abs(Y),'go-')
     plt.title('Y=X*H+No')
     plt.xlabel('Frequency')
-    plt.show()
+    plt.show()'''
