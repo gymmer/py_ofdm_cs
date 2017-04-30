@@ -12,6 +12,7 @@ from numpy.fft import fft
 import matplotlib.pyplot as plt
 from function import fftMatrix,ifftMatrix,interpolation
 from OFDM_OMP import OMP
+from OFDM_pilot import remove_pilot
 from OFDM_diagram import diagram_demod,normal_coef
 from OFDM_interlace import interlace_decode
 from STBC import STBC_decode
@@ -66,7 +67,7 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,esti_type):
         for t in range(Nt):
             
             ''' 第t个天线上的导频图样'''
-            pos_t = pos[t,:]
+            pos_t = pos[:,t]
             
             ''' 导频选择矩阵 '''
             P = size(pos_t)
@@ -94,18 +95,20 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,esti_type):
                 for m in range(M):                                      # 对第m个符号的Hp进行插值
                     re_H[r,t,:,m] = interpolation(Hp_ls[:,m],pos_t,N)   # 根据导频处Hp进行插值，恢复信道的H             
                     re_h[r,t,:,m] = dot(ifftMatrix(L,N),re_H[r,t,:,m])  # 傅里叶逆变换，得到时域的h        
-
+    
     ''' 空时解码 '''
-    SISO = STBC_decode(Y,re_H,N,M,Nt,Nr)
+    Y = STBC_decode(Y,re_H,N,M,Nt,Nr)
 
+    ''' 移除导频 '''   
+    Y = remove_pilot(Y,pos)
+    
     ''' 并串转换 '''
-    diagram = SISO.reshape(-1)
+    diagram = Y.reshape(-1)
     
     ''' 星座点归一化 '''
     diagram = diagram*normal_coef[demodulate_type]
     
-    ''' 画出星座图 '''
-    
+    ''' 画出星座图 '''    
     plt.figure(figsize=(8,5))
     plt.scatter(np.real(diagram),np.imag(diagram))
     plt.title('Constellation diagram of receiver')
@@ -116,6 +119,6 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,esti_type):
     bits = diagram_demod(diagram,demodulate_type)
 
     ''' 解交织 '''
-    bits = interlace_decode(bits,64,size(bits)/64)
+    bits = interlace_decode(bits,8,size(bits)/8)
     
     return re_h,re_H,bits
