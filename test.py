@@ -62,7 +62,7 @@ print BMR(bits_A,bits_cs)
 #''' 非法用户 '''
 #h_eva,H_eva,bits_eva = receiver_eva(y,L,K,N,M,Ncp,pos_E,'from_pos')
 
-''' 信道冲激响应 
+''' 信道冲激响应 '''
 plt.figure(figsize=(10,9))
 plt.subplot(311)
 plt.stem(np.abs(h[0,0,:]),'b')
@@ -80,22 +80,23 @@ plt.stem(np.abs(h_cs[0,0,:,1]),'r')
 plt.title('Reconstruct h after Channel Estimation(CS/LS)')
 plt.show()
 
-plt.figure(figsize=(10,9))
-plt.subplot(311)
-plt.stem(np.abs(h[0,1,:]),'b')
-plt.title('Wireless Sparse Mutipath Channel in T Doamin(h)')
-plt.ylabel('Channel Impulse Response-CIR')
-plt.show()
-
-plt.subplot(312)
-plt.stem(np.abs(h_cs[0,1,:,0]),'g')
-plt.title('Reconstruct h after Channel Estimation(CS/LS)')
-plt.show()
-
-plt.subplot(313)
-plt.stem(np.abs(h_cs[0,1,:,1]),'r')
-plt.title('Reconstruct h after Channel Estimation(CS/LS)')
-plt.show()'''
+if Nt==2:
+    plt.figure(figsize=(10,9))
+    plt.subplot(311)
+    plt.stem(np.abs(h[0,1,:]),'b')
+    plt.title('Wireless Sparse Mutipath Channel in T Doamin(h)')
+    plt.ylabel('Channel Impulse Response-CIR')
+    plt.show()
+    
+    plt.subplot(312)
+    plt.stem(np.abs(h_cs[0,1,:,0]),'g')
+    plt.title('Reconstruct h after Channel Estimation(CS/LS)')
+    plt.show()
+    
+    plt.subplot(313)
+    plt.stem(np.abs(h_cs[0,1,:,1]),'r')
+    plt.title('Reconstruct h after Channel Estimation(CS/LS)')
+    plt.show()
 
 ''' 信道频率响应 
 plt.figure(figsize=(10,9))

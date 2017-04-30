@@ -52,7 +52,6 @@ def sender (N,M,Ncp,Nt,Nr,pos):
         
         ''' 插入导频 '''
         # 对于频率选择性信道，选择梳状导频图样
-        #X[pos,:] = 1
         for temp in range(Nt):
             if temp==t:
                 # 第t个天线的导频位置设为1

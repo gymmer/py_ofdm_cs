@@ -7,7 +7,7 @@ Created on Thu Mar 17 13:00:09 2016
 
 import numpy as np
 import random
-from numpy import dot,diag,zeros
+from numpy import dot,diag,zeros,kron,eye
 from numpy.random import randn
 from numpy.fft import fft,ifft
 from function import fftMatrix
@@ -63,7 +63,7 @@ def transmission(SEND,L,K,N,M,Ncp,Nt,Nr,SNR):
     SNR: 信噪比
     '''
     
-    ''' 时域的信道脉冲响应'''
+    ''' 时域/频域的信道响应'''
     h = zeros((Nr,Nt,L),dtype=np.complex)
     H = zeros((Nr,Nt,N),dtype=np.complex)
     for r in range(Nr):
@@ -95,11 +95,7 @@ def transmission(SEND,L,K,N,M,Ncp,Nt,Nr,SNR):
             X_wave = np.c_[X_wave,dot(X,W_M)]
     
     ''' X_wave与Nr*Nr单位矩阵的克罗内克积 '''    
-    Kronecker = X_wave
-    for r in range(Nr-1):
-        Kronecker = np.c_[Kronecker,X_wave]
-    for r in range(Nr-1):
-        Kronecker = np.r_[Kronecker,Kronecker[0:(N+Ncp)*M,:]]
+    Kronecker = kron(eye(Nr,Nr),X_wave)
     
     ''' Nt*Nr*L的信道脉冲响应向量 '''
     for r in range(Nr):
@@ -117,5 +113,5 @@ def transmission(SEND,L,K,N,M,Ncp,Nt,Nr,SNR):
     Y = awgn(Y,SNR)    
     y = ifft(Y,axis=0)
     RECEIVE = y.reshape(-1,Nr)
-        
+    
     return h,H,RECEIVE

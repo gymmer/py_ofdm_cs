@@ -39,7 +39,7 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,etype):
     Y = zeros((N,M,Nr),dtype=np.complex)
     
     for r in range(Nr):
-
+        #pdb.set_trace()
         ''' 第r个天线的接收数据 '''
         y_r = RECEIVE[:,r]
         
@@ -70,13 +70,13 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,etype):
             Xp = eye(P,P)
             W = fftMatrix(N,L)          # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基  
             Wp = dot(S,W)               # PxL的矩阵,从W中选取与导频位置对应的P行
-                  
+    
             if etype=='CS':
                 ''' CS信道估计'''            
                 # X_wave作为密钥。若Xp是单位矩阵，则Xp*Wp=Wp，密钥取决于Wp。
                 # 而Wp又是从W中选取的与导频位置对应的P行，所以密钥取决于导频位置pos
                 for m in range(M):                                      # 第m个符号的CS重构的h。对于慢衰落信道，不同符号的重构h应该大致相同
-                    re_h[r,t,:,m] = OMP(K,Yp[:,m],Xp,Wp).reshape(L)     # OMP是时域估计算法，估计得到时域的h
+                    re_h[r,t,:,m] = OMP(K,Yp[:,m],Xp,Wp).reshape(L)     # OMP是时域估计算法，估计得到时域的h                                  
                     re_H[r,t,:,m] = dot(W,re_h[r,t,:,m])                # 傅里叶变换，得到频域的H
                 
             elif etype=='LS':       

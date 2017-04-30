@@ -40,12 +40,11 @@ def decode_Tx2_Rx2(H,toBe_decode,N):
     ''' 合并后的OFDM符号 '''
     Xe = zeros(N,dtype=np.complex)  # 合并后的第一个OFDM符号
     Xo = zeros(N,dtype=np.complex)  # 合并后的第二个OFDM符号
-    for i in range(N):
-        temp1 = R11[i]*conj(H11[i]) + conj(R12[i])*H21[i] + R21[i]*conj(H12[i]) + conj(R22[i])*H22[i]
-        temp2 = R11[i]*conj(H21[i]) - conj(R12[i])*H11[i] + R21[i]*conj(H22[i]) - conj(R22[i])*H12[i]
-        temp3 = H11[i]*conj(H11[i]) + conj(H12[i])*H12[i] + H21[i]*conj(H21[i]) + conj(H22[i])*H22[i]
-        Xe[i] = temp1/temp3
-        Xo[i] = temp2/temp3
+    temp1 = R11*conj(H11) + conj(R12)*H21 + R21*conj(H12) + conj(R22)*H22
+    temp2 = R11*conj(H21) - conj(R12)*H11 + R21*conj(H22) - conj(R22)*H12
+    temp3 = H11*conj(H11) + conj(H12)*H12 + H21*conj(H21) + conj(H22)*H22
+    Xe = temp1/temp3
+    Xo = temp2/temp3
     return 2*np.c_[Xe.reshape(N,1),Xo.reshape(N,1)]
 
 def decode_Tx2_Rx1(H,toBe_decode,N):
@@ -66,13 +65,12 @@ def decode_Tx2_Rx1(H,toBe_decode,N):
     
     ''' 合并后的OFDM符号 '''
     Xe = zeros(N,dtype=np.complex)  # 合并后的第一个OFDM符号
-    Xo = zeros(N,dtype=np.complex)  # 合并后的第二个OFDM符号
-    for i in range(N):
-        temp1 = R1[i]*conj(H1[i]) + conj(R2[i])*H2[i]
-        temp2 = R1[i]*conj(H2[i]) - conj(R2[i])*H1[i]
-        temp3 = H1[i]*conj(H1[i]) + conj(H2[i])*H2[i]
-        Xe[i] = temp1/temp3
-        Xo[i] = temp2/temp3
+    Xo = zeros(N,dtype=np.complex)  # 合并后的第二个OFDM符号     
+    temp1 = R1*conj(H1) + conj(R2)*H2
+    temp2 = R1*conj(H2) - conj(R2)*H1
+    temp3 = H1*conj(H1) + conj(H2)*H2
+    Xe = temp1/temp3
+    Xo = temp2/temp3
     return np.c_[Xe.reshape(N,1),Xo.reshape(N,1)]
     
 def STBC_code(symbol,N,M,Nt):
