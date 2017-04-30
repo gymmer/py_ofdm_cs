@@ -32,6 +32,13 @@ def MSE(H,re_H):
     MSE = MSE / mean(abs(H**2),0)   # 归一化
     MSE = 10*math.log10(MSE)        # 取dB
     return MSE
+
+def exist(seq,ele):
+    # 判断序列中是否存在某个元素。如果存在，返回1；否则返回0
+    for i in range(size(seq)):
+        if seq[i]==ele:
+            return 1
+    return 0
     
 def interpolation(Hp,pos,N):
     

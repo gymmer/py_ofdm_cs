@@ -7,19 +7,20 @@ Created on Thu Mar 17 12:53:23 2016
 
 import numpy as np
 from numpy.random import randn
-from RSSI import sampling,quantization_lossy
-from A51 import A51
+from RSSI import sampling,quantization,hash_tiger
+from RC4 import RC4
 
-def sender (N,P,ptype,seed):
+def sender (N,P,ptype):
     
     ''' 发送端序列的频谱Xn '''
     Xn = randn(N)           # 均值为0，方差为1的正态分布
     
     ''' 导频位置 '''    
     if ptype == 'random':       # 随机，根据RSSI生成导频位置
-        RSSI = sampling(200,seed,3,-63,-53)
-        bit = quantization_lossy(RSSI)
-        pos = A51(N,P,bit)
+        RSSI = sampling(1,1,1)
+        bit = quantization(RSSI,2,1)
+        key = hash_tiger(bit)
+        pos = RC4(key,P)
     elif ptype == 'even':       # 均匀
         pos = np.arange(P)*5    # 导频插入的位置。每5个插入一个导频。取值{0，5，10，...，510}，共P=103个
  

@@ -9,7 +9,7 @@ import random
 import numpy as np
 from numpy import dot,eye,array
 from OMP import OMP
-from A51 import exist
+from function import exist
 
 def guess_pos(N,P,pos,right_num):
         
@@ -46,10 +46,9 @@ def receiver_eva(Y,W,N,K,P,pos,guess_type):
     
     ''' 提取导频 '''
     Yp_eva = dot(S_eva,Y)       # Px1的导频位置的接受信号向量
-    Xp_eva = eye(P,P)           # 非法用户不知道X,但他知道，如果导频位置设为1，Xp实际上就是PxP的单位矩阵
+    Xp_eva = eye(P,P)           # 非法用户不知道X,但他知道，如果导频位置设为1，Xp实际上就是PxP的单位矩阵  
     Wp_eva = dot(S_eva,W)       # PxL的矩阵,从W中选取与导频位置对应的P行
-    
-    
+     
     ''' CS信道估计 '''
     h_eva = OMP(K,Yp_eva,Xp_eva,Wp_eva)
     H_eva = dot(W,h_eva)

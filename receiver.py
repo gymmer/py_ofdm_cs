@@ -5,30 +5,33 @@ Created on Thu Mar 17 13:06:33 2016
 @author: My402
 """
 
+import numpy as np
 from numpy import dot,transpose,eye,arange
 from numpy.linalg import inv
 from OMP import OMP
 from function import ifftMatrix,interpolation
-from RSSI import sampling,quantization_lossy
-from A51 import A51
+from RSSI import sampling,quantization,hash_tiger
+from RC4 import RC4
 
-def receiver(X,Y,W,L,N,P,K,ptype,seed):
+def receiver(Y,W,L,N,P,K,ptype):
 
     ''' 导频位置 '''
     if ptype=='random':     # 随机，根据RSSI生成导频位置        
-        RSSI = sampling(200,seed,5,-70,-60)
-        bit = quantization_lossy(RSSI)
-        pos = A51(N,P,bit)
+        RSSI = sampling(1,1,1)+np.random.randint(0,2,size=(1000,1))
+        bit = quantization(RSSI,2,1)
+        key = hash_tiger(bit)
+        pos = RC4(key,P)    
     elif ptype == 'even':   # 均匀
         pos = arange(P)*5   # 导频插入的位置。每5个插入一个导频。取值{0，5，10，...，510}，共P=103个
-    
+
     ''' 导频选择矩阵 '''
     I = eye(N,N)    # NxN的单位矩阵
     S = I[pos,:]    # PxN的导频选择矩阵，从NxN的单位矩阵选取与导频位置对应的P行，用于从N个子载波中选择出P个导频位置
     
     ''' 提取导频 ''' 
     Yp = dot(S,Y)                       # Px1的导频位置的接受信号向量
-    Xp = dot( dot(S,X), transpose(S) )  # PxP的斜对角阵，对角线元素是导频位置的X。如果导频位置设为1，则Xp实际上就是PxP的单位矩阵
+    #Xp = dot( dot(S,X), transpose(S) )  # PxP的斜对角阵，对角线元素是导频位置的X。如果导频位置设为1，则Xp实际上就是PxP的单位矩阵
+    Xp = eye(P,P)    
     Wp = dot(S,W)                       # PxL的矩阵,从W中选取与导频位置对应的P行
     
     ''' CS信道估计'''

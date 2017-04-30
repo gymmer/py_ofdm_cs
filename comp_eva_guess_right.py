@@ -33,13 +33,13 @@ eva_MSE = zeros((gro_num,P))
 for i in range(gro_num):
     for j in range(P):
         ''' 发送端 '''
-        Xn,pos = sender (N,P,'random',i*j)
+        Xn,pos = sender (N,P,'random')
         
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR)
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P,K,'random',i*j)
+        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P,K,'random')
         
         ''' 非法用户 '''
         h_eva,H_eva = receiver_eva(Y,W,N,K,P,pos,'%d'%(j))
@@ -90,13 +90,13 @@ eva_MSE_35 = zeros((gro_num,SNR_num))
 for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
-        Xn,pos = sender (N,P,'random',i*j)
+        Xn,pos = sender (N,P,'random')
         
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P,K,'random',i*j)
+        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P,K,'random')
         
         ''' 非法用户 '''
         h_eva_r,H_eva_r = receiver_eva(Y,W,N,K,P,pos,'random')

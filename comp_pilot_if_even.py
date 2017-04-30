@@ -34,13 +34,13 @@ eva_MSE = zeros((gro_num,SNR_num))
 for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
-        Xn,pos = sender (N,P[0],'random',i*j)
+        Xn,pos = sender (N,P[0],'random')
         
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P[0],K,'random',i*j)
+        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P[0],K,'random')
         
         ''' 非法用户 '''
         h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')
@@ -54,7 +54,7 @@ for i in range(gro_num):
         # 只画某一组中，指定SNR时的h,H,X,Y
         if i==9 and j==6:
             plot(h,H,h_cs,H_cs,h_eva,H_eva,Xn,Y,No)
-            
+          
 CS_MSE_0 = mean(CS_MSE,0)
 LS_MSE_0 = mean(LS_MSE,0)
 eva_MSE_0 = mean(eva_MSE,0)
@@ -62,13 +62,13 @@ eva_MSE_0 = mean(eva_MSE,0)
 for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
-        Xn,pos = sender (N,P[1],'even',i*j)
+        Xn,pos = sender (N,P[1],'even')
         
         ''' 信道传输 ''' 
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计''' 
-        h_cs,H_cs,h_ls,H_ls = receiver(X,Y,W,L,N,P[1],K,'even',i*j)
+        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P[1],K,'even')
         
         #''' 非法用户 '''
         #h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')

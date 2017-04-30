@@ -6,8 +6,8 @@ Created on Sat Mar 19 14:08:54 2016
 """
 import numpy as np
 from numpy import array,size
-
-
+from from_to import from2seq_to10
+from function import exist
 def LFSR_work(seq,sign):
     LFSR_num = size(seq)
     # 根据寄存器的类型，选择不同的新增状态
@@ -31,22 +31,7 @@ def maj(x,y,z):
     elif t==2 or t==3:
         return 1
 
-def cal_pos(seq):
-    # 将二进制序列转换成十进制
-    seq_bit = size(seq)
-    pos = 0
-    for i in range(seq_bit):
-        pos += 2**i*seq[-1-i]
-    return pos
-
-def exist(seq,ele):
-    # 判断序列中是否存在某个元素。如果存在，返回1；否则返回0
-    for i in range(size(seq)):
-        if seq[i]==ele:
-            return 1
-    return 0
-
-def A51(N,P,bit_stream):
+def A51(bit_stream,P):
     '''
     根据输入的比特流，使用线性移位寄存器产生密钥流，并从密钥流中计算导频位置
     N： 载波数
@@ -72,7 +57,7 @@ def A51(N,P,bit_stream):
         key_bit += 1                        # 修改密钥流的总比特数
         
         if key_bit%9==0:                    # 如果N=512,则导频位置的取值范围[0,512]，需要对9位二进制转成十进制。
-            new_pos = cal_pos(key_stream[-9:])  # 密钥流每读入9个比特，则计算一次新产生的导频位置
+            new_pos = from2seq_to10(key_stream[-9:])  # 密钥流每读入9个比特，则计算一次新产生的导频位置
             if not exist(pos, new_pos):     # 如果新增导频不在我的已有导频列表中，则加入这个导频
                 pos = np.r_[pos,new_pos]    # 如果已有导频列表中已有该导频，则放弃。防止重复加入多个相同的同频位置
                 pos_num += 1                # 修改已产生的导频位置数
