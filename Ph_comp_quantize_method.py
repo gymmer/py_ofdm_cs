@@ -10,17 +10,15 @@ import numpy as np
 from numpy import zeros,size,mean,mod,pi
 from function import BMR
 from universal_statistical_test import Entropy
-from Phase_sampling import sampling
-from Phase_quantization import quantization_even
+from Phase import sampling,quantization_even
 from part_transmission import awgn
 import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')
 
-sampling_period = 1     # 采样周期1ms
-sampling_time = 20
-N = sampling_time/sampling_period*1000
+sampling_period = 10     # 采样周期1ms
+sampling_time = 300
 SNR = 30
 order = [1,2,3,4]
 qtype = ['natural','gray']
@@ -37,7 +35,7 @@ for i in range(group_num):
         for k in range(qtype_num):
             print 'Running group:',i,j,k
         
-            phase_A = sampling(N)
+            phase_A = sampling(sampling_period,sampling_time)
             phase_B = mod(awgn(phase_A,SNR),2*pi)
         
             bitsA = quantization_even(phase_A,qtype[k],order[j])

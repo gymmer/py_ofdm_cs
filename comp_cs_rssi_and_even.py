@@ -29,7 +29,7 @@ gro_num = 10                # 进行多组取平均
 ''' 比较不同的信噪比SNR '''
 SNR_num = len(SNR)
 CS_MSE  = zeros((gro_num,SNR_num))
-CS_Pe   = zeros((gro_num,SNR_num))
+CS_BER  = zeros((gro_num,SNR_num))
 CS_SC   = zeros((gro_num,SNR_num))
 
 for i in range(gro_num):
@@ -43,7 +43,7 @@ for i in range(gro_num):
         bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
 
         ''' 信道传输 '''
-        h,H,W,y = transmission(x,L,K,N,Ncp,SNR[j])
+        h,H,y = transmission(x,L,K,N,Ncp,SNR[j])
         
         ''' 接收端 信道估计'''
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
@@ -53,11 +53,11 @@ for i in range(gro_num):
         
         ''' 评价性能：MSE '''
         CS_MSE[i,j] = MSE(H,H_cs)       
-        CS_Pe[i,j]  = BMR(bits_A,bits_cs)
+        CS_BER[i,j] = BMR(bits_A,bits_cs)
         CS_SC[i,j]  = SecCap(BMR(bits_A,bits_cs), BMR(bits_A,bits_eva)) 
           
 CS_MSE_0 = mean(CS_MSE,0)
-CS_Pe_0  = mean(CS_Pe,0)
+CS_BER_0 = mean(CS_BER,0)
 CS_SC_0  = mean(CS_SC,0)
 
 for i in range(gro_num):
@@ -72,19 +72,19 @@ for i in range(gro_num):
         bits_A,diagram_A,x = sender(N,Ncp,pos,modulate_type)
         
         ''' 信道传输 ''' 
-        h,H,W,y = transmission(x,L,K,N,Ncp,SNR[j])
+        h,H,y = transmission(x,L,K,N,Ncp,SNR[j])
         
         ''' 接收端 信道估计''' 
         h_cs,H_ls,bits_cs,diagram_cs = receiver(y,L,K,N,Ncp,pos,modulate_type,'CS','from_pos')
         
         ''' 评价性能 '''
-        CS_MSE[i,j]  = MSE(H,H_ls)
-        CS_Pe[i,j]  = BMR(bits_A,bits_cs)
+        CS_MSE[i,j] = MSE(H,H_ls)
+        CS_BER[i,j] = BMR(bits_A,bits_cs)
         CS_SC[i,j]  = SecCap(BMR(bits_A,bits_cs), BMR(bits_A,bits_eva)) 
 
 ''' 多组取平均 '''
 CS_MSE_1 = mean(CS_MSE,0)
-CS_Pe_1  = mean(CS_Pe,0)
+CS_BER_1 = mean(CS_BER,0)
 CS_SC_1  = mean(CS_SC,0)
 
 plt.figure(figsize=(8,5))
@@ -96,11 +96,11 @@ plt.title('MSE of CS & P=%d'%(P))
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(SNR,CS_Pe_0, 'go-' ,label='RSSI')
-plt.semilogy(SNR,CS_Pe_1, 'b+-.',label='Even')
+plt.semilogy(SNR,CS_BER_0, 'go-' ,label='RSSI')
+plt.semilogy(SNR,CS_BER_1, 'b+-.',label='Even')
 plt.xlabel('SNR(dB)')
 plt.ylabel('Probability')
-plt.title('Pe of CS & P=%d'%(P))
+plt.title('BER of CS & P=%d'%(P))
 plt.legend()
 
 plt.figure(figsize=(8,5))

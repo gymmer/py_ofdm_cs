@@ -6,9 +6,17 @@ Created on Fri Mar 25 00:02:45 2016
 """
 
 import numpy as np
-from numpy import size,array
+from numpy import size,array,pi
 from Phase_quantization_nbit import *
-  
+
+def sampling(sampling_period,sampling_time):
+    '''
+    sampling_period: 采样周期/采样间隔。单位ms。每隔一个采样周期，可采集到一个Phase样本
+    sampling_time:   采样时间。单位s。一共采样了这么长的时间，也即每隔一个采样时间，更新一次密钥/导频位置
+    '''
+    sampling_num = sampling_time*1000/sampling_period
+    return 2*pi*np.random.random(sampling_num)     # [0,2pi)之间均匀分布
+    
 def quantization_even(Phase,qtype,order):
     '''
     qtype:

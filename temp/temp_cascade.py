@@ -56,7 +56,7 @@ def cascade(bit_A,bit_B):
             BINARY(K1_A[v,:],K1_B[v,:])
     # 计算BMR        
     K1_A.shape = n
-    K1_B.shape = n    
+    K1_B.shape = n
     bmr = BMR(K1_A,K1_B)
     
     ''' 以后若干轮 '''

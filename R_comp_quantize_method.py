@@ -10,8 +10,7 @@ import numpy as np
 from numpy import zeros,size
 from function import BMR
 from universal_statistical_test import Entropy
-from RSSI_sampling import sampling
-from RSSI_quantization import quantization_even,quantization_thre,remain
+from RSSI import sampling,quantization_even,quantization_thre,remain
 from part_transmission import awgn
 import matplotlib.pyplot as plt
 
@@ -19,14 +18,14 @@ os.system('cls')
 plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
-sampling_time = 20
+sampling_time = 40
 SNR = 30
 qtype = 'gray'
-order = 3
-block_size = 250
+order = 2
+block_size = 200
 coef = 0.8
 
-group_num = 5
+group_num = 2
 condi_num = 3
 bmr = zeros((group_num,condi_num))
 bgr = zeros((group_num,condi_num))

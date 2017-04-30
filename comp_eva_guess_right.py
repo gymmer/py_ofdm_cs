@@ -30,8 +30,8 @@ gro_num = 10                # 进行多组取平均
 right_num = len(right)
 CS_MSE  = zeros((gro_num,right_num))
 eva_MSE = zeros((gro_num,right_num))
-CS_Pe   = zeros((gro_num,right_num))
-eva_Pe  = zeros((gro_num,right_num))
+CS_BER  = zeros((gro_num,right_num))
+eva_BER = zeros((gro_num,right_num))
 SC      = zeros((gro_num,right_num))
 
 for i in range(gro_num):
@@ -45,7 +45,7 @@ for i in range(gro_num):
         bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
         
         ''' 信道传输 '''
-        h,H,W,y = transmission(x,L,K,N,Ncp,SNR)
+        h,H,y = transmission(x,L,K,N,Ncp,SNR)
         
         ''' 接收端 信道估计'''
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
@@ -57,15 +57,15 @@ for i in range(gro_num):
         ''' 评价性能 '''
         CS_MSE[i,j]  = MSE(H,H_cs)
         eva_MSE[i,j] = MSE(H,H_eva)
-        CS_Pe[i,j]   = BMR(bits_A,bits_cs)
-        eva_Pe[i,j]  = BMR(bits_A,bits_eva)
-        SC[i,j]      = SecCap(CS_Pe[i,j],eva_Pe[i,j])
+        CS_BER[i,j]  = BMR(bits_A,bits_cs)
+        eva_BER[i,j] = BMR(bits_A,bits_eva)
+        SC[i,j]      = SecCap(CS_BER[i,j],eva_BER[i,j])
 
 ''' 多组取平均 '''
 CS_MSE  = mean(CS_MSE,0)
 eva_MSE = mean(eva_MSE,0)
-CS_Pe   = mean(CS_Pe,0)
-eva_Pe  = mean(eva_Pe,0)
+CS_BER  = mean(CS_BER,0)
+eva_BER = mean(eva_BER,0)
 SC      = mean(SC,0)
 
 plt.figure(figsize=(8,5))
@@ -77,11 +77,11 @@ plt.title('MSE of evasdropper by random guessing(SNR=%d)'%(SNR))
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(right,CS_Pe, 'go-',label='Valid user')
-plt.semilogy(right,eva_Pe,'ro-',label='Eevasdropper')
+plt.semilogy(right,CS_BER, 'go-',label='Valid user')
+plt.semilogy(right,eva_BER,'ro-',label='Eevasdropper')
 plt.xlabel('number of right pilots')
 plt.ylabel('Probability')
-plt.title('Pe of evasdropper by random guessing(SNR=%d)'%(SNR))
+plt.title('BER of evasdropper by random guessing(SNR=%d)'%(SNR))
 plt.legend()
 
 plt.figure(figsize=(8,5))

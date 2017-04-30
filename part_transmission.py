@@ -87,4 +87,4 @@ def transmission(x,L,K,N,Ncp,SNR):
     y = y.reshape(1,N)
     y = np.c_[y[:,-Ncp:],y]
     
-    return h,H,W,y
+    return h,H,y

@@ -30,7 +30,7 @@ gro_num = 10                # 进行多组取平均
 P_num   = len(P)
 SNR_num = len(SNR)
 CS_MSE  = zeros((gro_num,SNR_num,P_num))
-CS_Pe   = zeros((gro_num,SNR_num,P_num))
+CS_BER  = zeros((gro_num,SNR_num,P_num))
 CS_SC   = zeros((gro_num,SNR_num,P_num))
 
 for i in range(gro_num):
@@ -45,7 +45,7 @@ for i in range(gro_num):
             bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
     
             ''' 信道传输 '''
-            h,H,W,y = transmission(x,L,K,N,Ncp,SNR[j])
+            h,H,y = transmission(x,L,K,N,Ncp,SNR[j])
             
             ''' 接收端 信道估计'''
             h_cs,H_cs,bits_cs,diagram_cs = receiver(y,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
@@ -53,11 +53,11 @@ for i in range(gro_num):
             
             ''' 评价性能 '''
             CS_MSE[i,j,p] = MSE(H,H_cs)
-            CS_Pe[i,j,p]  = BMR(bits_A,bits_cs)
+            CS_BER[i,j,p] = BMR(bits_A,bits_cs)
             CS_SC[i,j,p]  = SecCap(BMR(bits_A,bits_cs), BMR(bits_A,bits_eva))
           
 CS_MSE = mean(CS_MSE,0)
-CS_Pe  = mean(CS_Pe,0)
+CS_BER = mean(CS_BER,0)
 CS_SC  = mean(CS_SC,0)
 
 plt.figure(figsize=(8,5))
@@ -72,14 +72,14 @@ plt.title('MSE of CS & RSSI')
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(SNR,CS_Pe[:,0], 'ro-' ,label='P=%d'%(P[0]))
-plt.semilogy(SNR,CS_Pe[:,1], 'y*-' ,label='P=%d'%(P[1]))
-plt.semilogy(SNR,CS_Pe[:,2], 'g+-' ,label='P=%d'%(P[2]))
-plt.semilogy(SNR,CS_Pe[:,3], 'bs-' ,label='P=%d'%(P[3]))
-plt.semilogy(SNR,CS_Pe[:,4], 'mx-' ,label='P=%d'%(P[4]))
+plt.semilogy(SNR,CS_BER[:,0], 'ro-' ,label='P=%d'%(P[0]))
+plt.semilogy(SNR,CS_BER[:,1], 'y*-' ,label='P=%d'%(P[1]))
+plt.semilogy(SNR,CS_BER[:,2], 'g+-' ,label='P=%d'%(P[2]))
+plt.semilogy(SNR,CS_BER[:,3], 'bs-' ,label='P=%d'%(P[3]))
+plt.semilogy(SNR,CS_BER[:,4], 'mx-' ,label='P=%d'%(P[4]))
 plt.xlabel('SNR(dB)')
 plt.ylabel('Probability')
-plt.title('Pe of CS & RSSI')
+plt.title('BER of CS & RSSI')
 plt.legend()
 
 plt.figure(figsize=(8,5))
