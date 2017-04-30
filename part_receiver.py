@@ -10,12 +10,12 @@ from numpy import dot,transpose,eye,size,zeros
 from numpy.linalg import inv
 from numpy.fft import fft
 import matplotlib.pyplot as plt
-from OMP import OMP
 from function import fftMatrix,ifftMatrix,interpolation
-import QAM16
-import STBC
+from OFDM_OMP import OMP
+from OFDM_diagram import diagram_demod
+from STBC import STBC_decode
 
-def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,esti_type):
+def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,esti_type):
     
     '''
     RECEIVE: 接收信号
@@ -95,7 +95,7 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,esti_type):
                     re_h[r,t,:,m] = dot(ifftMatrix(L,N),re_H[r,t,:,m])  # 傅里叶逆变换，得到时域的h        
 
     ''' 空时解码 '''
-    SISO = STBC.STBC_decode(Y,re_H,N,M,Nt,Nr)
+    SISO = STBC_decode(Y,re_H,N,M,Nt,Nr)
 
     ''' 并串转换 '''
     diagram = SISO.reshape(-1,1)
@@ -106,8 +106,8 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,esti_type):
     plt.title('Constellation diagram of receiver')
     plt.xlim(-4,4)
     plt.ylim(-4,4)
-    
+    #diagram = diagram*(np.sqrt(10))     # 归一化
     ''' 16-QAM解调 '''
-    bits = QAM16.demod(diagram)
+    bits = diagram_demod(diagram,demodulate_type)
 
     return re_h,re_H,bits

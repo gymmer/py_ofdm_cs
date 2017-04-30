@@ -9,10 +9,10 @@ import numpy as np
 from numpy.random import randint
 from numpy.fft import ifft
 import matplotlib.pyplot as plt
-import QAM16
-import STBC
+from OFDM_diagram import diagram_mod
+from STBC import STBC_code
 
-def sender (N,M,Ncp,Nt,Nr,pos):     
+def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):     
     ''' 
     N: 子载波数
     M: 每帧的OFDM符号数
@@ -20,14 +20,15 @@ def sender (N,M,Ncp,Nt,Nr,pos):
     Nt: 发送天线数
     Nr: 接收天线数
     pos: 导频图样
+    modulate_type: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
     '''
     
     ''' 二进制序列 '''
-    bit_num = N*M*4         # 总共发送的比特数。对于16QAM，每4个bit编码产生一个星座点，星座点取值[0,15]
-    bits = randint(2,size=bit_num)  #随机产生二进制序列
+    bit_num = N*M*modulate_type                         # 总共发送的比特数
+    bits = randint(2,size=bit_num)                      #随机产生二进制序列
     
     ''' 16-QAM调制 '''
-    diagram = QAM16.mod(bits)     # 16-QAM调制，共产生N个星座点
+    diagram = diagram_mod(bits,modulate_type)      # BPSK/QPSK/16QAM调制，共产生N个星座点
     
     ''' 画出星座图 
     plt.figure(figsize=(8,5))
@@ -35,6 +36,7 @@ def sender (N,M,Ncp,Nt,Nr,pos):
     plt.title('Constellation diagram of sender')
     plt.xlim(-4,4)
     plt.ylim(-4,4)'''
+    #diagram = diagram/(np.sqrt(10))     # 归一化
     
     ''' 串并转换 '''
     # 横坐标代表时域（OFDM符号），纵坐标代表频域（子载波）
@@ -42,7 +44,7 @@ def sender (N,M,Ncp,Nt,Nr,pos):
     
     ''' MIMO空时分组码'''
     # N*M*Nt,利用第三维表示不同天线发送的OFDM符号
-    MIMO = STBC.STBC_code(symbol,N,M,Nt)
+    MIMO = STBC_code(symbol,N,M,Nt)
 
     ''' 对每个天线分别进行OFDM调制 '''
     for t in range(Nt):
