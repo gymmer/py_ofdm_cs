@@ -8,6 +8,7 @@ import numpy as np
 from numpy import array,size
 from from_to import from2seq_to10
 from function import exist
+
 def LFSR_work(seq,sign):
     LFSR_num = size(seq)
     # 根据寄存器的类型，选择不同的新增状态

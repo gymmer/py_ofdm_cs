@@ -33,6 +33,11 @@ def MSE(H,re_H):
     MSE = 10*math.log10(MSE)        # 取dB
     return MSE
 
+def BMR(bitA,bitB):
+    diff = np.abs(bitA-bitB)
+    BMR = np.sum(diff)/(size(bitA)+0.0)
+    return BMR
+    
 def exist(seq,ele):
     # 判断序列中是否存在某个元素。如果存在，返回1；否则返回0
     for i in range(size(seq)):

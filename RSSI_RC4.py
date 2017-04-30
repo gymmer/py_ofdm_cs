@@ -41,13 +41,17 @@ def RC4(bit_stream,P):
     S = initial(key)                    # 初始化查找表。查找表长度为256，查找表包含0~255的8比特数的一个排列    
     pos = zeros(P,dtype=np.int32)       # 导频的位置序列
     pos_num = i = j = 0
+    highest = 0    
     
     while pos_num<P:
         i = (i+1)%256
         j = (j+S[i])%256
         swap(S,i,j)
         t = (S[i]+S[j])%256
-        new_pos = S[t]                  # RC4每次产生一个字节的密钥流，作为导频位置
+        keyStreamByte = S[t]            # RC4每次产生一个字节的密钥流，用来生成导频位置
+        new_pos = highest*2**8+keyStreamByte
+        highest = keyStreamByte%2       # 导频取值于[0,512)共需要9位二进制，而一个密钥流字节只有8位。
+                                        # 这里采用本轮密钥的奇偶，来决定下一轮导频位置的最高位。以保证pos可以取到0~512
         
         if not exist(pos, new_pos):     # 如果新增导频不在我的已有导频列表中，则加入这个导频
             pos[pos_num] = new_pos      # 如果已有导频列表中已有该导频，则放弃。防止重复加入多个相同的同频位置

@@ -35,12 +35,12 @@ for i in range(gro_num):
     for j in range(SNR_num):
         ''' 发送端 '''
         Xn,pos = sender (N,P[0],'random')
-        
+
         ''' 信道传输 '''
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P[0],K,'random')
+        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P[0],K,'random',pos)
         
         ''' 非法用户 '''
         h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')
@@ -68,7 +68,7 @@ for i in range(gro_num):
         h,H,W,X,Y,No = transmission(Xn,L,K,N,SNR[j])
         
         ''' 接收端 信道估计''' 
-        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P[1],K,'even')
+        h_cs,H_cs,h_ls,H_ls = receiver(Y,W,L,N,P[1],K,'even',pos)
         
         #''' 非法用户 '''
         #h_eva,H_eva = receiver_eva(Y,W,N,K,P[0],pos,'random')

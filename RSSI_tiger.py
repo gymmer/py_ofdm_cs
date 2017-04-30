@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import array
 import struct
-from sboxes import t1, t2, t3, t4
+import numpy as np
+from numpy import size
+from RSSI_sboxes import t1, t2, t3, t4
+from from_to import from2seq_to10seq,from16_to2seq
 
 def tiger_round(a,b,c,x,mul):
     c ^= x
@@ -92,7 +97,7 @@ def tiger_compress(str, res):
     res[1] = b
     res[2] = c
 
-def hash(str):
+def tiger_hash(str):
     i = 0
 
     res = [0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187]
@@ -129,3 +134,23 @@ def hash(str):
     tiger_compress(temp, res)
     
     return "%016X%016X%016X" % (res[0], res[1], res[2])
+
+def tiger(bit_in):
+    # 将二进制序列，以字节为单位，转换成十进制数组
+    seq10 = from2seq_to10seq(bit_in)
+    
+    # 将十进制数组的每个数，转换成ASCII字符，并拼接在一起
+    hash_in = ''
+    for i in range(size(seq10)):
+        hash_in += chr(seq10[i])
+    
+    # 经hash函数运算，得到48位的十六进制数（字符串表示）
+    hash_out = tiger_hash(hash_in)
+    
+    # 将48位的十六进制，转换成48*4=192位的二进制输出
+    bit_out = np.array([],dtype=np.int32)
+    for i in range(len(hash_out)):
+        current_char = hash_out[i]       
+        bit_out = np.r_[bit_out,from16_to2seq[current_char]]
+        
+    return bit_out
