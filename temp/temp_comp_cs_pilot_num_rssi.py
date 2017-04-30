@@ -8,7 +8,7 @@ Created on Fri Mar 11 13:06:28 2016
 import os
 from numpy import zeros,mean
 import matplotlib.pyplot as plt
-from RSSI_pos_agreement import agreement
+from pos_agreement import agreement
 from part_sender import sender
 from part_transmission import transmission
 from part_receiver import receiver
@@ -38,8 +38,8 @@ for i in range(gro_num):
         for p in range(P_num):
             print 'Running... Current group: ',i,j,p
             
-            ''' 根据RSSI产生导频图样'''
-            pos_A,pos_B,pos_E = agreement(2,2,P[p])
+            ''' 根据RSSI/Phase产生随机导频图样'''
+            pos_A,pos_B,pos_E = agreement(2,P[p],0.5)
             
             ''' 发送端 '''
             bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
@@ -68,7 +68,7 @@ plt.plot(SNR,CS_MSE[:,3], 'bs-' ,label='P=%d'%(P[3]))
 plt.plot(SNR,CS_MSE[:,4], 'mx-' ,label='P=%d'%(P[4]))
 plt.xlabel('SNR(dB)')
 plt.ylabel('MSE(dB)')
-plt.title('MSE of CS & RSSI')
+plt.title('MSE of CS & Random Pilot')
 plt.legend()
 
 plt.figure(figsize=(8,5))
@@ -78,8 +78,8 @@ plt.semilogy(SNR,CS_BER[:,2], 'g+-' ,label='P=%d'%(P[2]))
 plt.semilogy(SNR,CS_BER[:,3], 'bs-' ,label='P=%d'%(P[3]))
 plt.semilogy(SNR,CS_BER[:,4], 'mx-' ,label='P=%d'%(P[4]))
 plt.xlabel('SNR(dB)')
-plt.ylabel('Probability')
-plt.title('BER of CS & RSSI')
+plt.ylabel('BER')
+plt.title('BER of CS & Random Pilot')
 plt.legend()
 
 plt.figure(figsize=(8,5))
@@ -90,7 +90,7 @@ plt.plot(SNR,CS_SC[:,3], 'bs-' ,label='P=%d'%(P[3]))
 plt.plot(SNR,CS_SC[:,4], 'mx-' ,label='P=%d'%(P[4]))
 plt.xlabel('SNR(dB)')
 plt.ylabel('Capacity')
-plt.title('Security Capacity of CS & RSSI')
+plt.title('Security Capacity of CS & Random Pilot')
 plt.legend()
 
 print 'Program Finished'

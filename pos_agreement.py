@@ -32,7 +32,7 @@ def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
     pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
     return pos
     
-def agreement(sampling_time,P,weight):
+def agreement(sampling_time,P,weight,iteration=3):
     
     # 根据权重，计算RSSI和Phase两种方式各自产生的导频
     P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P)
@@ -48,8 +48,8 @@ def agreement(sampling_time,P,weight):
     qtype = 'gray'
     order = 2
     
-    ''' winnow迭代次数'''
-    iteration = 2
+    ''' winnow最大迭代次数'''
+    #iteration = 3
     
     ''' RSSI 采样'''        
     rssi_A = RSSI.sampling(sampling_period_rssi,sampling_time,1)
@@ -85,13 +85,6 @@ def agreement(sampling_time,P,weight):
     
     #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]            
     #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]   
-    print 'BMR of rssi and phase after winnow between AB:',BMR(bits_A_rssi,bits_B_rssi),BMR(bits_A_phase,bits_B_phase)
+    #print 'BMR of rssi and phase after winnow between AB:',BMR(bits_A_rssi,bits_B_rssi),BMR(bits_A_phase,bits_B_phase)
     
     return posA,posB,posE
-    
-posA,posB,posE = agreement(2,36,0.5)
-right = 0
-for i in posA:
-    if i in posB:
-        right+=1
-print right  

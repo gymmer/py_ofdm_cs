@@ -25,14 +25,12 @@ Ncp = 60                    # 循环前缀的长度,Ncp>L
 SNR = 30                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
        
-''' 根据RSSI产生导频图样'''
+''' 根据RSSI/Phase产生随机导频图样'''
 P = 36                      # 导频数，P<N
 pos_A,pos_B,pos_E = agreement(2,P,0.5)
-right = 0
-for i in pos_A:
-    if i in pos_B:
-        right+=1
-print right  
+#pos_B = pos_A.copy()
+#pos_B[1] = 1
+ 
 ''' 均匀的导频图样 '''
 # 导频插入的位置。每5个插入一个导频。取值{0，5，10，...，510}，共P=103个
 #P = 103                     # 导频数，P<N
