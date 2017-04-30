@@ -22,7 +22,7 @@ plt.close('all')
 L = 50                      # 信道长度
 K = 6                       # 稀疏度/多径数，满足:K<<L
 N = 512                     # 训练序列长度/载波数,满足：L<=N
-M = 2                       #
+M = 6                       # 每帧符号数
 Ncp = 64                    # 循环前缀的长度,Ncp>L
 SNR = 30                    # AWGN信道信噪比
         
@@ -51,6 +51,6 @@ h_eva,H_eva,bits_eva = receiver_eva(y,L,K,N,M,Ncp,pos_E,'from_pos')
 
 ''' 画图 '''
 # 只画某一组中，指定SNR时的h,H,X,Y
-plot(h[:,0],H[:,0],h_cs[:,0],H_cs[:,0],h_eva[:,0],H_eva[:,0])
-plot(h[:,1],H[:,1],h_cs[:,1],H_cs[:,1],h_eva[:,1],H_eva[:,1])
+plot(h,H,h_cs[:,0],H_cs[:,0],h_eva[:,0],H_eva[:,0])
+plot(h,H,h_cs[:,1],H_cs[:,1],h_eva[:,1],H_eva[:,1])
 print 'Program Finished'

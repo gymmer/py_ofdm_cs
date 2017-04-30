@@ -7,7 +7,7 @@ Created on Thu Mar 17 13:00:09 2016
 
 import numpy as np
 import random
-from numpy import dot,diag,zeros,repeat,shape
+from numpy import dot,diag,zeros
 from numpy.random import randn
 from numpy.fft import fft,ifft
 from function import fftMatrix
@@ -63,33 +63,30 @@ def transmission(x,L,K,N,M,Ncp,SNR):
     
     ''' 时域的信道脉冲响应'''
     # 对于慢时变信道，在多个OFDM符号周期内，信道冲激响应保持不变
-    h = channel(L,K)            # 1个符号周期内
-    h = repeat(h,M,axis=1)      # 在M个符号周期内，h保持不变，因此将h做M次重复
+    h = channel(L,K)            # 1个符号周期内信道脉冲响应
      
     ''' 信道频率响应H '''
-    W = fftMatrix((N+Ncp),L)    # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基
-    H = dot(W,h)                # 频率的冲激响应
+    W = fftMatrix(N+Ncp,L)      # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基
+    H = dot(W,h)                # 1个符号周期内频率的冲激响应
+    H_M = H                     # 在M个符号周期内，H保持不变，因此将H做M次重复
+    for i in range(M-1):
+        H_M = np.r_[H_M,H]            
     
     ''' 将时域的发送信号，变换到频域 '''
-    x = x.reshape(-1,M)
     X = fft(x,axis=0)
-    Y = zeros(shape(X),dtype=np.complex)
     
-    ''' 时域上分别传输M个OFDM符号 '''
-    for i in range(M):
-        ''' 测量矩阵 '''
-        # 将发送信号作为观测矩阵的对角元素,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵
-        X_diag = diag(X[:,i])
-        
-        ''' 理想信道传输 '''
-        X_H = dot(X_diag,H[:,i])
-        
-        ''' 添加高斯白噪声，得接收信号向量Y '''
-        Y[:,i]  = awgn(X_H,SNR)    # 加入复高斯白噪声,得到接收到的信号（频域表示）
-        #No = Y-X_H                # Y = X*H + No
+    ''' 测量矩阵 '''
+    # 将发送信号作为观测矩阵的对角元素,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵
+    X = diag(X.reshape(-1))
+    
+    ''' 理想信道传输 '''
+    X_H = dot(X,H_M)
+    
+    ''' 添加高斯白噪声，得接收信号向量Y '''
+    Y  = awgn(X_H,SNR)    # 加入复高斯白噪声,得到接收到的信号（频域表示）
+    #No = Y-X_H                # Y = X*H + No
     
     ''' 将频域的接收信号，变换到时域 '''
     y = ifft(Y,axis=0)
-    y = y.reshape(-1,1)
     
     return h,H,y

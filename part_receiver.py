@@ -26,7 +26,7 @@ def receiver(y,L,K,N,M,Ncp,pos,etype):
     pos: 导频图样
     etype: 'CS' 或 'LS'
     '''
-    
+
     ''' 串并转换 '''
     y = y.reshape(-1,M)
     
