@@ -4,7 +4,7 @@ import array
 import struct
 import numpy as np
 from numpy import size
-from RSSI_sboxes import t1, t2, t3, t4
+from RSSI_tiger_sboxes import t1, t2, t3, t4
 from from_to import from2seq_to10seq,from16_to2seq
 
 def tiger_round(a,b,c,x,mul):
