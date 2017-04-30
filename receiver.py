@@ -6,12 +6,12 @@ Created on Thu Mar 17 13:06:33 2016
 """
 
 from numpy import dot,transpose,eye
+from numpy.linalg import inv
 from OMP import OMP
-from function import ifftMatrix
-from LS_MMSE import LS
+from function import ifftMatrix,interpolation
 
 def receiver(X,Y,W,pos,L,N,K):
-    
+
     ''' 导频选择矩阵 '''
     I = eye(N,N)    # NxN的单位矩阵
     S = I[pos,:]    # PxN的导频选择矩阵，从NxN的单位矩阵选取与导频位置对应的P行，用于从N个子载波中选择出P个导频位置
@@ -34,9 +34,11 @@ def receiver(X,Y,W,pos,L,N,K):
     # 而Wp又是从W中选取的与导频位置对应的P行，所以密钥取决于导频位置pos
     h_cs = OMP(K,Yp,Xp,Wp)      # OMP是时域估计算法，估计得到时域的h
     H_cs = dot(W,h_cs)          # 傅里叶变换，得到频域的H
-                
+           
     ''' LS信道估计 '''
-    H_ls = LS(X,Y)                      # LS、MMSE是频域估计算法，估计得到频域的H
+    
+    Hp_ls = dot(inv(Xp),Yp)             # LS、MMSE是频域估计算法，得到导频处的Hp    
+    H_ls = interpolation(Hp_ls,pos,N)   # 根据导频处Hp进行插值，恢复信道的H
     h_ls = dot(ifftMatrix(L,N),H_ls)    # 傅里叶逆变换，得到时域的h
         
     return h_cs,H_cs,h_ls,H_ls

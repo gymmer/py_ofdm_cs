@@ -27,7 +27,7 @@ def receiver_eva(Y,W,N,K,P):
     
     
     ''' CS信道估计 '''
-    re_h_eva = OMP(K,Yp_eva,Xp_eva,Wp_eva)
-    re_H_eva = dot(W,re_h_eva)
+    h_eva = OMP(K,Yp_eva,Xp_eva,Wp_eva)
+    H_eva = dot(W,h_eva)
         
-    return re_h_eva,re_H_eva
+    return h_eva,H_eva

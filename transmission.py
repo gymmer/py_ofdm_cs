@@ -6,6 +6,7 @@ Created on Thu Mar 17 13:00:09 2016
 """
 
 import numpy as np
+import random
 from numpy import dot,diag,zeros
 from numpy.random import randn,randint
 from function import fftMatrix
@@ -21,17 +22,20 @@ def channel(L,K):
     '''
     
     # 最大时延
-    taumax = L                          # (1)
+    taumax = float(L)
     
     # 随机产生各径延时,延时的位置是各径信号到达接收端的时刻。K径产生K个时延
-    tau = randint(low=1,high=taumax,size=K)
+    tau = random.sample(range(L),K)     # 取值范围[0,L-1]，不重复的P个随机整数
+    tau.sort()
+    tau[0] = 0                          # 规定第一个路径时延为0
     
-    # 幅度
-    ampli = randn(K) + 1j*randn(K)      #（2）
+    # 每条路径的增益呈复高斯分布
+    ampli = randn(K) + 1j*randn(K)
+    ampli = ampli/np.abs(ampli)
 
-    h = zeros(L)+1j*0                # 信道的冲激响应是一个复数
+    h = zeros(L,dtype=np.complex)                   # 信道的冲激响应是一个复数
     for i in range(K):
-        h[tau[i]] = exp(-tau[i]/taumax)*ampli[i]   # 指数衰落
+        h[tau[i]] = exp(-tau[i]/taumax)*ampli[i]    # 路径复增益的功率指数衰落
     return h
     
 def awgn(X,SNR):
