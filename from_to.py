@@ -27,6 +27,7 @@ def from2seq_to10(seq2):
 
 def from2seq_to10seq(seq2):
     # 将二进制流，以字节（8位）为单位，转换成十进制数组
+    # 如果输入的二进制序列不能被8整除，则舍弃掉序列最后面的几位
     seq2_byte = size(seq2)/8  # 单位：字节
     seq10 = zeros(seq2_byte,np.int32)
     for i in range(seq2_byte):

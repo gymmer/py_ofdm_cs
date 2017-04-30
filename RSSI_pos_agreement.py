@@ -7,6 +7,7 @@ Created on Sat Mar 19 14:08:54 2016
 import numpy as np
 import matplotlib.pyplot as plt
 from RSSI_sampling import sampling
+from RSSI_preprocess import get_strategy_list,preprocess
 from RSSI_quantization import quantization
 from RSSI_cascade import cascade
 from RSSI_tiger import tiger
@@ -27,9 +28,19 @@ def agreement(sampling_time,order,P):
     # 总的RSSI采样点为：采样时间/采样周期。每经过一个采样时间，更换一次密钥/导频图样。
     sampling_period = 1     # 采样周期1ms
     RSSI_A = sampling(sampling_period,sampling_time,1)
-    RSSI_B = sampling(sampling_period,sampling_time,1)+np.random.randint(0,2,size=(1000,1))
-    RSSI_E = sampling(sampling_period,sampling_time,3)
+    RSSI_B = sampling(sampling_period,sampling_time,1)+np.random.randint(0,2,size=(sampling_time/sampling_period*1000,1))
+    RSSI_E = sampling(sampling_period,sampling_time,1)+np.random.randint(-4,-2,size=(sampling_time/sampling_period*1000,1))
     
+    ''' 预处理，滤除均值附近的RSSI样本点 '''
+    a=0.3
+    strategy_list_A = get_strategy_list(RSSI_A,a)
+    strategy_list_B = get_strategy_list(RSSI_B,a)
+    strategy_list_E = get_strategy_list(RSSI_E,a)
+    
+    RSSI_A = preprocess(RSSI_A,strategy_list_A,strategy_list_B)
+    RSSI_B = preprocess(RSSI_B,strategy_list_A,strategy_list_B)
+    RSSI_E = preprocess(RSSI_E,strategy_list_A,strategy_list_E)
+
     ''' 多比特格雷码量化'''
     # 量化后的比特位数为：RSSI采样点数*量化阶数
     block_num = 1

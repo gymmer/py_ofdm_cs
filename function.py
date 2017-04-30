@@ -38,13 +38,6 @@ def BMR(bitA,bitB):
     BMR = np.sum(diff)/(size(bitA)+0.0)
     return BMR
     
-def exist(seq,ele):
-    ''' 判断序列中是否存在某个元素。如果存在，返回1；否则返回0 '''
-    for i in range(size(seq)):
-        if seq[i]==ele:
-            return 1
-    return 0
-    
 def interpolation(Hp,pos,N):
     
     ''' 插值 

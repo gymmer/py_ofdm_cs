@@ -36,7 +36,7 @@ for i in range(gro_num):
     for j in range(SNR_num):
         
         ''' 根据RSSI产生导频图样'''
-        pos_A,pos_B,pos_E = agreement(1,2,P[0])
+        pos_A,pos_B,pos_E = agreement(2,2,P[0])
         
         ''' 发送端 '''
         Xn = sender (N,P[0],pos_A)

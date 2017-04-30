@@ -7,7 +7,6 @@ Created on Wed Mar 23 11:07:24 2016
 import numpy as np
 from numpy import zeros,size
 from from_to import from2seq_to10seq
-from function import exist
     
 def swap(seq,i,j):
     temp = seq[i]
@@ -52,7 +51,7 @@ def RC4(bit_stream,P):
         new_pos = highest*2**8+keyStreamByte
         highest = keyStreamByte%2       # 导频取值于[0,512)共需要9位二进制，而一个密钥流字节只有8位。
                                         # 这里采用本轮密钥的奇偶，来决定下一轮导频位置的最高位。以保证pos可以取到0~512
-        if not exist(pos, new_pos):     # 如果新增导频不在我的已有导频列表中，则加入这个导频
+        if new_pos not in pos:          # 如果新增导频不在我的已有导频列表中，则加入这个导频
             pos[pos_num] = new_pos      # 如果已有导频列表中已有该导频，则放弃。防止重复加入多个相同的同频位置
             pos_num += 1                # 修改已产生的导频位置数
     
