@@ -8,10 +8,12 @@ Created on Fri Mar 11 22:04:31 2016
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-from numpy import size,dot,mean,diag,zeros
+from numpy import size,dot,mean,diag,zeros,transpose,var,conjugate
 from numpy.random import randn
 from omp import omp
-from math import pi,e  
+from math import pi,e
+from LS_MSE_calc import LS_MSE_calc
+from MMSE_MSE_calc import MMSE_MSE_calc
         
 def awgn(X,snr):
     snr_log=10**(snr/10.0)
@@ -62,7 +64,31 @@ def MSE_com(K,h,SNR,N):
     ''' 测量矩阵,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵 '''
     X = diag(Xn)
     
-    cs_mse = zeros((group_num,SNR_num))
+    ''' 求h的自协方差矩阵-Rhh  '''
+    gg = diag(h)
+    
+    gg_myu = np.sum(gg,0)/L  
+    gg_myu.shape = (L,1)
+    gg_myu_t = conjugate(transpose(gg_myu))
+    
+    gg_myu_expend = gg_myu_t   # gg_myu是一个1xL行向量，gg_myu_expend是一个LxL矩阵，其每一行都是gg_myu
+    for i in range(L-1):
+        gg_myu_expend = np.r_[gg_myu_expend,gg_myu_t]
+        
+    gg_mid   = gg-gg_myu_expend
+    gg_mid_t = conjugate(transpose(gg_mid))
+    
+    sum_gg_mid = np.sum(gg_mid,0);
+    sum_gg_mid.shape = (1,L)
+    sum_gg_mid_t = conjugate(transpose(sum_gg_mid))
+    
+    Rgg = (dot(gg_mid_t,gg_mid) - dot(sum_gg_mid_t,sum_gg_mid)/L) / (L-1)
+    
+    ''' 信道估计 '''
+    cs_mse   = zeros((group_num,SNR_num))
+    ls_mse   = zeros((group_num,SNR_num))
+    mmse_mse = zeros((group_num,SNR_num))
+    
     for i in range(group_num):          # 多组实验取平均
         for j in range(SNR_num):        # 比较不同的信噪比
         
@@ -70,6 +96,7 @@ def MSE_com(K,h,SNR,N):
             X_H = dot(X,H);             # 理想信道传输,X_H = X*H
             Y = awgn(X_H,SNR[j])        # 高斯白噪声
             No = Y-X_H                  # Y = X*H + No
+            var_No = var(No);
             
             ''' CS信道估计H，得MSE'''
             # s   = Phi*Psi*x
@@ -83,8 +110,17 @@ def MSE_com(K,h,SNR,N):
             re_H = omp(K,Y,X,W)
             diff_value = np.abs(re_H-H)           
             re_error = mean((diff_value/np.abs(H))**2)
-            cs_mse[i,j] = re_error          
-    cs_mse_ave = mean(cs_mse,0)
+            cs_mse[i,j] = re_error
+            
+            ''' LS信道估计 '''
+            ls_mse[i,j] = LS_MSE_calc(X,H,Y,N)
+            
+            ''' MMSE信道估计 '''
+            mmse_mse[i,j] = MMSE_MSE_calc(X,H,Y,Rgg,var_No,N,L)
+    
+    cs_mse_ave   = mean(cs_mse,0)
+    ls_mse_ave   = mean(ls_mse,0)
+    mmse_mse_ave = mean(mmse_mse,0)
         
     ''' 画图 '''
     if N==128:
@@ -104,12 +140,12 @@ def MSE_com(K,h,SNR,N):
 
         plt.subplot(312)
         plt.stem(np.abs(re_h),'g')
-        plt.title('Reconstruc h after CS/OMP')
+        plt.title('Reconstruct h after CS/OMP')
         plt.show()
         
         plt.subplot(313)
         plt.stem(np.abs(re_h_invalid),'r')
-        plt.title('Reconstruc h of Invalid User')
+        plt.title('Reconstruct h of Invalid User')
         plt.xlabel('Sampling Point(Time Delay)')
         plt.show()
         
@@ -123,12 +159,12 @@ def MSE_com(K,h,SNR,N):
         
         plt.subplot(312)
         plt.plot(np.abs(re_H),'go-')        
-        plt.title('Reconstruc H after CS/OMP')
+        plt.title('Reconstruct H after CS/OMP')
         plt.show()
            
         plt.subplot(313)
         plt.plot(np.abs(re_H_invalid),'ro-')
-        plt.title('Reconstruc H of Invalid User')
+        plt.title('Reconstruct H of Invalid User')
         plt.xlabel('Subcarrier Index')
         plt.show()
         
@@ -158,4 +194,4 @@ def MSE_com(K,h,SNR,N):
         plt.xlabel('Frequency')
         plt.show()
         
-    return cs_mse_ave
+    return (cs_mse_ave,ls_mse_ave,mmse_mse_ave)
