@@ -76,9 +76,9 @@ def quantization_thre(RSSI,block_size,coef):
     drop_list  = array([],dtype=np.int32)
     
     for i in range(block_num):
-        RSSI_bl = RSSI[i*block_size:(i+1)*block_size]   # 每个block中RSSI的样本
-        upper = mean(RSSI_bl)+coef*std(RSSI_bl)            # 上阈值
-        lower = mean(RSSI_bl)-coef*std(RSSI_bl)            # 下阈值
+        RSSI_bl = RSSI[i*block_size:(i+1)*block_size]       # 每个block中RSSI的样本
+        upper = mean(RSSI_bl)+coef*std(RSSI_bl)             # 上阈值
+        lower = mean(RSSI_bl)-coef*std(RSSI_bl)             # 下阈值
         
         for j in range(block_size):
             if RSSI_bl[j] >= upper:
@@ -86,7 +86,7 @@ def quantization_thre(RSSI,block_size,coef):
             elif RSSI_bl[j] <= lower:
                 bit_stream = np.r_[bit_stream,0]
             else:
-                bit_stream = np.r_[bit_stream,-100]       # 用来临时填充
+                bit_stream = np.r_[bit_stream,-100]         # 用来临时填充
                 drop_list = np.r_[drop_list,i*block_size+j]
       
     return bit_stream,drop_list

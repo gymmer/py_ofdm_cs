@@ -7,10 +7,12 @@ Created on Tue Apr 19 11:41:45 2016
 
 import os
 import numpy as np
-from numpy import zeros
+from numpy import zeros,size
 from function import BMR
+from universal_statistical_test import Entropy
 from RSSI_sampling import sampling
 from RSSI_quantization import quantization_even,quantization_thre,remain
+from part_transmission import awgn
 import matplotlib.pyplot as plt
 
 os.system('cls')
@@ -18,68 +20,67 @@ plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
 sampling_time = 20
-block_size = 25
+SNR = 30
+qtype = 'gray'
+order = 3
+block_size = 250
+coef = 0.8
 
 group_num = 5
-condi_num = 9
+condi_num = 3
 bmr = zeros((group_num,condi_num))
+bgr = zeros((group_num,condi_num))
+ent = zeros((group_num,condi_num))
 
 for i in range(group_num):
     print 'Running group:',i
     
     rssi_A = sampling(sampling_period,sampling_time,1)
-    rssi_B = sampling(sampling_period,sampling_time,1)+np.random.randint(1,5,size=(sampling_time/sampling_period*1000,1))
-
-    bitsA = quantization_even(rssi_A,block_size,'gray',1)
-    bitsB = quantization_even(rssi_B,block_size,'gray',1)
+    rssi_B = awgn(rssi_A,SNR)
+    
+    bitsA = quantization_even(rssi_A,block_size,qtype,order)
+    bitsB = quantization_even(rssi_B,block_size,qtype,order)
     bmr[i,0] = BMR(bitsA,bitsB)
+    bgr[i,0] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+    ent[i,0] = Entropy(bitsA)
     
-    bitsA = quantization_even(rssi_A,block_size,'gray',2)
-    bitsB = quantization_even(rssi_B,block_size,'gray',2)
+    bitsA = quantization_even(rssi_A,size(rssi_A),qtype,order)
+    bitsB = quantization_even(rssi_B,size(rssi_A),qtype,order)
     bmr[i,1] = BMR(bitsA,bitsB)
+    bgr[i,1] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+    ent[i,1] = Entropy(bitsA)
     
-    bitsA = quantization_even(rssi_A,block_size,'gray',3)
-    bitsB = quantization_even(rssi_B,block_size,'gray',3)
-    bmr[i,2] = BMR(bitsA,bitsB)
-    
-    bitsA = quantization_even(rssi_A,block_size,'gray',4)
-    bitsB = quantization_even(rssi_B,block_size,'gray',4)
-    bmr[i,3] = BMR(bitsA,bitsB)
-    
-    bitsA = quantization_even(rssi_A,block_size,'natural',2)
-    bitsB = quantization_even(rssi_B,block_size,'natural',2)
-    bmr[i,4] = BMR(bitsA,bitsB)
-    
-    bitsA = quantization_even(rssi_A,block_size,'natural',3)
-    bitsB = quantization_even(rssi_B,block_size,'natural',3)
-    bmr[i,5] = BMR(bitsA,bitsB)
-    
-    bitsA = quantization_even(rssi_A,block_size,'natural',4)
-    bitsB = quantization_even(rssi_B,block_size,'natural',4)
-    bmr[i,6] = BMR(bitsA,bitsB)
-    
-    bitsA,drop_listA = quantization_thre(rssi_A,block_size,0)
-    bitsB,drop_listB = quantization_thre(rssi_B,block_size,0)
-    bmr[i,7] = BMR(bitsA,bitsB)
-    
-    coef = 0.2
     bitsA,drop_listA = quantization_thre(rssi_A,block_size,coef)
     bitsB,drop_listB = quantization_thre(rssi_B,block_size,coef)
     bitsA = remain(bitsA,drop_listA,drop_listB)
     bitsB = remain(bitsB,drop_listA,drop_listB)
-    bmr[i,8] = BMR(bitsA,bitsB)
+    bmr[i,2] = BMR(bitsA,bitsB)
+    bgr[i,2] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+    ent[i,2] = Entropy(bitsA)
     
 plt.figure(figsize=(8,5))
-plt.plot(bmr[:,0],'ro-' ,label='even:1bit')
-plt.plot(bmr[:,1],'y.-' ,label='even:2 Gray')
-plt.plot(bmr[:,2],'g.-' ,label='even:3 Gray')
-plt.plot(bmr[:,3],'c.-' ,label='even:4 Gray')
-plt.plot(bmr[:,4],'ys--',label='even:2 Natural')
-plt.plot(bmr[:,5],'gs--',label='even:3 Natural')
-plt.plot(bmr[:,6],'cs--',label='even:4 Natural')
-plt.plot(bmr[:,7],'b*-' ,label='threshold:coef=0')
-plt.plot(bmr[:,8],'bp--',label='threshold:coef=0.2')
+plt.plot(bmr[:,0],'ro-' ,label='Lightweight(%dbit %s,bl=%d)'%(order,qtype,block_size))
+plt.plot(bmr[:,1],'go-' ,label='ASBG Multi(%dbit %s)'%(order,qtype))
+plt.plot(bmr[:,2],'bo-' ,label='ASBG Single(coef=%.2f,bl=%d)'%(coef,block_size))
 plt.legend()
 plt.xlabel('Expriment')
 plt.ylabel('Bit Mismatch Rate')
-plt.title('BMR of different quantize methods(block_size=%d)'%(block_size))
+plt.title('BMR of different quantize methods')
+
+plt.figure(figsize=(8,5))
+plt.plot(bgr[:,0],'ro-' ,label='Lightweight(%dbit %s,bl=%d)'%(order,qtype,block_size))
+plt.plot(bgr[:,1],'go-' ,label='ASBG Multi(%dbit %s)'%(order,qtype))
+plt.plot(bgr[:,2],'bo-' ,label='ASBG Single(coef=%.2f,bl=%d)'%(coef,block_size))
+plt.legend()
+plt.xlabel('Expriment')
+plt.ylabel('Bit Generation Rate')
+plt.title('BGR of different quantize methods')
+
+plt.figure(figsize=(8,5))
+plt.plot(ent[:,0],'ro-' ,label='Lightweight(%dbit %s,bl=%d)'%(order,qtype,block_size))
+plt.plot(ent[:,1],'go-' ,label='ASBG Multi(%dbit %s)'%(order,qtype))
+plt.plot(ent[:,2],'bo-' ,label='ASBG Single(coef=%.2f,bl=%d)'%(coef,block_size))
+plt.legend()
+plt.xlabel('Expriment')
+plt.ylabel('Entropy')
+plt.title('Entropy of different quantize methods')

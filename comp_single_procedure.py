@@ -45,8 +45,8 @@ h_cs,H_cs,bits_cs,diagram_cs = receiver(y,L,K,N,Ncp,pos_B,modulate_type,'CS','fr
 h_ls,H_ls,bits_ls,diagram_ls = receiver(y,L,K,N,Ncp,pos_B,modulate_type,'LS','from_pos')
 
 ''' 非法用户 '''
-h_eva,H_eva,bits_eva,diagram_eva = receiver(y,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
-#h_eva,H_eva,bits_eva,diagram_eva = receiver(y,L,K,N,Ncp,pos_A,modulate_type,'CS','1')
+#h_eva,H_eva,bits_eva,diagram_eva = receiver(y,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
+h_eva,H_eva,bits_eva,diagram_eva = receiver(y,L,K,N,Ncp,pos_A,modulate_type,'CS','33')
         
 ''' 评价性能 '''
 CS_MSE  = MSE(H,H_cs)
