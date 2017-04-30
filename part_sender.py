@@ -6,10 +6,12 @@ Created on Thu Mar 17 12:53:23 2016
 """
 
 import numpy as np
+from numpy import size
 from numpy.random import randint
 from numpy.fft import ifft
 import matplotlib.pyplot as plt
-from OFDM_diagram import diagram_mod
+from OFDM_interlace import interlace_code
+from OFDM_diagram import diagram_mod,normal_coef
 from STBC import STBC_code
 
 def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):     
@@ -24,11 +26,14 @@ def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):
     '''
     
     ''' 二进制序列 '''
-    bit_num = N*M*modulate_type                         # 总共发送的比特数
-    bits = randint(2,size=bit_num)                      #随机产生二进制序列
+    bit_num = N*M*modulate_type                             # 总共发送的比特数
+    bits = randint(2,size=bit_num)                          # 随机产生二进制序列
+
+    ''' 交织 '''
+    interlace_bits = interlace_code(bits,64,size(bits)/64)
     
     ''' 16-QAM调制 '''
-    diagram = diagram_mod(bits,modulate_type)      # BPSK/QPSK/16QAM调制，共产生N个星座点
+    diagram = diagram_mod(interlace_bits,modulate_type)    # BPSK/QPSK/16QAM调制，共产生N个星座点
     
     ''' 画出星座图 
     plt.figure(figsize=(8,5))
@@ -36,7 +41,9 @@ def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):
     plt.title('Constellation diagram of sender')
     plt.xlim(-4,4)
     plt.ylim(-4,4)'''
-    #diagram = diagram/(np.sqrt(10))     # 归一化
+    
+    ''' 星座点归一化 '''
+    diagram = diagram/normal_coef[modulate_type]
     
     ''' 串并转换 '''
     # 横坐标代表时域（OFDM符号），纵坐标代表频域（子载波）

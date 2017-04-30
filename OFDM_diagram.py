@@ -5,9 +5,15 @@ Created on Mon Apr 11 20:56:31 2016
 @author: My402
 """
 import numpy as np
-from numpy import array
+from numpy import array,sqrt
 from from_to import from2seq_to10
 
+''' 星座点的归一化系数 '''
+normal_coef = {
+    1:sqrt(1),
+    2:sqrt(2),
+    4:sqrt(10)}
+    
 ''' 星座映射的格雷码'''
 BPSK_list  = [-1+0j,+1+0j]
 QPSK_list  = [-1-1j,-1+1j,+1-1j,+1+1j]

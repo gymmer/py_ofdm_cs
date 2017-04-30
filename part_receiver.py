@@ -12,7 +12,8 @@ from numpy.fft import fft
 import matplotlib.pyplot as plt
 from function import fftMatrix,ifftMatrix,interpolation
 from OFDM_OMP import OMP
-from OFDM_diagram import diagram_demod
+from OFDM_diagram import diagram_demod,normal_coef
+from OFDM_interlace import interlace_decode
 from STBC import STBC_decode
 
 def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,esti_type):
@@ -98,16 +99,23 @@ def receiver(RECEIVE,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,esti_type):
     SISO = STBC_decode(Y,re_H,N,M,Nt,Nr)
 
     ''' 并串转换 '''
-    diagram = SISO.reshape(-1,1)
+    diagram = SISO.reshape(-1)
+    
+    ''' 星座点归一化 '''
+    diagram = diagram*normal_coef[demodulate_type]
     
     ''' 画出星座图 '''
+    
     plt.figure(figsize=(8,5))
     plt.scatter(np.real(diagram),np.imag(diagram))
     plt.title('Constellation diagram of receiver')
     plt.xlim(-4,4)
     plt.ylim(-4,4)
-    #diagram = diagram*(np.sqrt(10))     # 归一化
+    
     ''' 16-QAM解调 '''
     bits = diagram_demod(diagram,demodulate_type)
 
+    ''' 解交织 '''
+    bits = interlace_decode(bits,64,size(bits)/64)
+    
     return re_h,re_H,bits
