@@ -12,6 +12,7 @@ from RSSI_pos_agreement import agreement
 from part_sender import sender
 from part_transmission import transmission
 from part_receiver import receiver
+from part_receiver_eva import receiver_eva
 from part_plot import plot
 from function import MSE,BMR
   
@@ -21,13 +22,13 @@ plt.close('all')
 L = 50                      # 信道长度
 K = 6                       # 稀疏度/多径数，满足:K<<L
 N = 512                     # 训练序列长度/载波数,满足：L<=N
-Ncp = 60                    # 循环前缀的长度,Ncp>L
+Ncp = 64                    # 循环前缀的长度,Ncp>L
 P = [36,103]                # 导频数，P<N
 SNR = [0,5,10,15,20,25,30]  # AWGN信道信噪比
 
 ''' 比较不同的信噪比SNR '''
 SNR_num = len(SNR)
-gro_num = 10        # 进行多组取平均
+gro_num = 1        # 进行多组取平均
 CS_MSE  = zeros((gro_num,SNR_num))
 LS_MSE  = zeros((gro_num,SNR_num))
 eva_MSE = zeros((gro_num,SNR_num))
@@ -48,11 +49,11 @@ for i in range(gro_num):
         h,H,W,y = transmission(x,L,K,N,Ncp,SNR[j])
         
         ''' 接收端 信道估计'''
-        h_cs,H_cs,bits_cs = receiver(y,W,L,N,Ncp,K,pos_B,'CS','from_pos')
-        h_ls,H_ls,bits_ls = receiver(y,W,L,N,Ncp,K,pos_B,'LS','from_pos')
+        h_cs,H_cs,bits_cs = receiver(y,W,L,N,Ncp,K,pos_B,'CS')
+        h_ls,H_ls,bits_ls = receiver(y,W,L,N,Ncp,K,pos_B,'LS')
         
         ''' 非法用户 '''
-        h_eva,H_eva,bits_eva = receiver(y,W,L,N,Ncp,K,pos_E,'CS','from_pos')
+        h_eva,H_eva,bits_eva = receiver_eva(y,W,N,Ncp,K,pos_E,'from_pos')
         
         ''' 评价性能：MSE '''
         CS_MSE[i,j]  = MSE(H,H_cs)
@@ -88,13 +89,13 @@ for i in range(gro_num):
         h,H,W,y = transmission(x,L,K,N,Ncp,SNR[j])
         
         ''' 接收端 信道估计''' 
-        h_cs,H_cs,bits_cs = receiver(y,W,L,N,Ncp,K,pos,'CS','from_pos')
-        h_ls,H_ls,bits_ls = receiver(y,W,L,N,Ncp,K,pos,'LS','from_pos')
+        h_cs,H_cs,bits_cs = receiver(y,W,L,N,Ncp,K,pos,'CS')
+        h_ls,H_ls,bits_ls = receiver(y,W,L,N,Ncp,K,pos,'LS')
         
         ''' 非法用户 '''
         # 均匀放置导频时，非法用户可以很容易猜到导频图样。假设非法用户猜到了每5个插入一个导频
         # 这个时候，非法用户的重构性能，和基于CS的合法用户的重构性能，是完全一样的
-        h_eva,H_eva,bits_eva = receiver(y,W,L,N,Ncp,K,pos,'CS','from_pos')
+        h_eva,H_eva,bits_eva = receiver_eva(y,W,N,Ncp,K,pos,'from_pos')
         
         ''' 评价性能：MSE '''
         CS_MSE[i,j]  = MSE(H,H_cs)
