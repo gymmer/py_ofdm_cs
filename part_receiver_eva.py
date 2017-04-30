@@ -9,8 +9,8 @@ import random
 import numpy as np
 from numpy import dot,eye,array,size
 from numpy.fft import fft
+import matplotlib.pyplot as plt
 from OMP import OMP
-from function import exist
 import QAM16
 
 def guess_pos(N,P,pos,right_num):
@@ -22,7 +22,7 @@ def guess_pos(N,P,pos,right_num):
     pos_eva_size = 0                                # 非法导频序列的位置，初始化为0
     while pos_eva_size < P:                         # 先生成一个与合法导频序列完全不同的非法导频序列
         new_pos = np.random.randint(low=0,high=N)   # 随机产生一个新的非法导频位置，取值[0,N)
-        if (not exist(pos,new_pos)) and (not exist(pos_eva,new_pos)) : # 新的非法位置，不在合法序列中，也不与已产生的任意非法位置重合
+        if (new_pos not in pos) and (new_pos not in pos_eva) : # 新的非法位置，不在合法序列中，也不与已产生的任意非法位置重合
             pos_eva = np.r_[pos_eva,new_pos]        # 只要满足了上述条件，这个新产生的位置才有效，加入到非法导频序列中
             pos_eva_size += 1                       # 更新非法导频序列的长度
     
@@ -69,6 +69,13 @@ def receiver_eva(y,W,N,Ncp,K,pos,guess_type):
     ''' 信道均衡 '''
     Y = Y/H_eva
 
+    ''' 画出星座图 
+    plt.figure(figsize=(8,5))
+    plt.scatter(np.real(Y),np.imag(Y))
+    plt.title('Constellation diagram of eva')
+    plt.xlim(-4,4)
+    plt.ylim(-4,4)'''
+    
     ''' 16-QAM解调 '''
     bits = QAM16.demod(Y)
     

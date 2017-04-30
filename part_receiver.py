@@ -9,6 +9,7 @@ import numpy as np
 from numpy import dot,transpose,eye,size
 from numpy.linalg import inv
 from numpy.fft import fft
+import matplotlib.pyplot as plt
 from OMP import OMP
 from function import ifftMatrix,interpolation
 import QAM16
@@ -60,7 +61,14 @@ def receiver(y,W,L,N,Ncp,K,pos,etype):
     
     ''' 信道均衡 '''
     Y = Y/re_H
-
+    
+    ''' 画出星座图 
+    plt.figure(figsize=(8,5))
+    plt.scatter(np.real(Y),np.imag(Y))
+    plt.title('Constellation diagram of receiver')
+    plt.xlim(-4,4)
+    plt.ylim(-4,4)'''
+    
     ''' 16-QAM解调 '''
     bits = QAM16.demod(Y)
     
