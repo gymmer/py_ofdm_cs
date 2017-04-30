@@ -17,6 +17,14 @@ from function import BMR
 plt.close('all')
 
 def agreement(sampling_time,order,P):
+    import random
+    pos1 = random.sample(range(512),P)     # 导频插入的位置。取值范围[0,N-1]，不重复的P个随机整数
+    pos2 = random.sample(range(512),P)
+    pos1.sort()
+    pos2.sort()
+    return pos1,pos1,pos2
+    
+def agreement_backup(sampling_time,order,P):
     '''
     sampling_time: 采样周期。单位：s
     order: 量化阶数。可取order=2,3
@@ -80,5 +88,3 @@ def agreement(sampling_time,order,P):
     plt.legend()'''
     
     return pos_A,pos_B,pos_E
-    
-agreement(1,2,36)

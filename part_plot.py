@@ -8,7 +8,7 @@ Created on Thu Mar 17 13:37:31 2016
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot(h,H,re_h,re_H,re_h_eva,re_H_eva):
+def plot(h,H,diagram,re_h,re_H,re_diagram,re_h_eva,re_H_eva,re_diagram_eva):
     ''' 信道冲激响应 '''
     plt.figure(figsize=(10,9))
     plt.subplot(311)
@@ -46,6 +46,26 @@ def plot(h,H,re_h,re_H,re_h_eva,re_H_eva):
     plt.title('Reconstruct H of Invalid User(CS)')
     plt.xlabel('Subcarrier Index')
     plt.show()
+    
+    ''' 画出星座图 '''  
+    plt.figure(figsize=(10,9))
+    plt.subplot(221)
+    plt.scatter(np.real(diagram),np.imag(diagram))
+    plt.title('Constellation diagram of sender')
+    plt.xlim(-4,4)
+    plt.ylim(-4,4) 
+    
+    plt.subplot(222)
+    plt.scatter(np.real(re_diagram),np.imag(re_diagram))
+    plt.title('Constellation diagram of receiver')
+    plt.xlim(-4,4)
+    plt.ylim(-4,4) 
+    
+    plt.subplot(223)
+    plt.scatter(np.real(re_diagram_eva),np.imag(re_diagram_eva))
+    plt.title('Constellation diagram of invalid user')
+    plt.xlim(-4,4)
+    plt.ylim(-4,4) 
     
     ''' 发送、接收序列 
     plt.figure(figsize=(10,9))
