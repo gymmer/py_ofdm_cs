@@ -10,19 +10,18 @@ import math
 import matplotlib.pyplot as plt
 from numpy import size,dot,mean,diag,zeros,transpose,var,conjugate
 from numpy.random import randn
-from omp import omp
+from OMP import OMP
 from math import pi,e
-from LS_MSE_calc import LS_MSE_calc
-from MMSE_MSE_calc import MMSE_MSE_calc
+from MSE_SER_calc import LS_calc,MMSE_calc
         
-def awgn(X,snr):
-    snr_log=10**(snr/10.0)
+def awgn(X,SNR):
+    SNR_log=10**(SNR/10.0)
     xpower=np.sum(X**2)/len(X)
-    npower=xpower/snr_log
-    noise=randn(len(X)) * np.sqrt(npower)
+    npower=xpower/SNR_log
+    No=randn(len(X)) * np.sqrt(npower)
     Y = np.zeros(X.shape,X.dtype)
     for i in range(len(X)):
-        Y[i]=X[i]+noise[i]
+        Y[i]=X[i]+No[i]
     return Y
 
 def fftMatrix(N,L):
@@ -41,7 +40,7 @@ def ifftMatrix(N,L):
     w = 1/math.sqrt(L)*w
     return w
     
-def MSE_com(K,h,SNR,N):
+def channelEstimation(K,h,SNR,N):
     '''
     LS/MMSE/CS信道估计，得MSE
     输入参数
@@ -60,8 +59,11 @@ def MSE_com(K,h,SNR,N):
           
     ''' 发送端序列的频谱Xn '''
     Xn = randn(N)           # 均值为0，方差为1的正态分布
+    # 假设采用BPSK调制，符号为+1/-1
+    # Xn = randint(low=0,high=2,size=N)-1
         
-    ''' 测量矩阵,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵 '''
+    ''' 测量矩阵 '''
+    # 将发送信号作为观测矩阵的对角元素,X=diag(X(0),X(1),...,X(N-1))是N*N的子载波矩阵
     X = diag(Xn)
     
     ''' 求h的自协方差矩阵-Rhh  '''
@@ -78,25 +80,27 @@ def MSE_com(K,h,SNR,N):
     gg_mid   = gg-gg_myu_expend
     gg_mid_t = conjugate(transpose(gg_mid))
     
-    sum_gg_mid = np.sum(gg_mid,0);
+    sum_gg_mid = np.sum(gg_mid,0);  # 每一列的值求和得1*L的矩阵
     sum_gg_mid.shape = (1,L)
     sum_gg_mid_t = conjugate(transpose(sum_gg_mid))
     
-    Rgg = (dot(gg_mid_t,gg_mid) - dot(sum_gg_mid_t,sum_gg_mid)/L) / (L-1)
+    Rgg = (dot(gg_mid_t,gg_mid) - dot(sum_gg_mid_t,sum_gg_mid)/L) / (L-1)  # Rgg是信道自协方差矩阵
     
-    ''' 信道估计 '''
-    cs_mse   = zeros((group_num,SNR_num))
-    ls_mse   = zeros((group_num,SNR_num))
-    mmse_mse = zeros((group_num,SNR_num))
+    ''' 信道估计, 计算MSE、SER并作图比较CS、LS和MMSE '''
+    CS_MSE   = zeros((group_num,SNR_num))
+    LS_MSE   = zeros((group_num,SNR_num))
+    LS_SER   = zeros((group_num,SNR_num))
+    MMSE_MSE = zeros((group_num,SNR_num))
+    MMSE_SER = zeros((group_num,SNR_num))
     
     for i in range(group_num):          # 多组实验取平均
         for j in range(SNR_num):        # 比较不同的信噪比
         
             ''' 添加高斯白噪声，得接收信号向量Y '''
             X_H = dot(X,H);             # 理想信道传输,X_H = X*H
-            Y = awgn(X_H,SNR[j])        # 高斯白噪声
+            Y = awgn(X_H,SNR[j])        # 加入复高斯白噪声,得到接收到的信号（频域表示）
             No = Y-X_H                  # Y = X*H + No
-            var_No = var(No);
+            var_No = var(No);           # 计算噪声方差
             
             ''' CS信道估计H，得MSE'''
             # s   = Phi*Psi*x
@@ -107,26 +111,27 @@ def MSE_com(K,h,SNR,N):
             #   ==>   Phi = X;
             #   ==>   Psi = W; 
                        
-            re_H = omp(K,Y,X,W)
+            re_H = OMP(K,Y,X,W)
             diff_value = np.abs(re_H-H)           
-            re_error = mean((diff_value/np.abs(H))**2)
-            cs_mse[i,j] = re_error
-            
+            CS_MSE[i,j] = mean((diff_value/np.abs(H))**2)
+                        
             ''' LS信道估计 '''
-            ls_mse[i,j] = LS_MSE_calc(X,H,Y,N)
+            (LS_MSE[i,j],LS_SER[i,j]) = LS_calc(X,H,Y,N)
             
             ''' MMSE信道估计 '''
-            mmse_mse[i,j] = MMSE_MSE_calc(X,H,Y,Rgg,var_No,N,L)
+            (MMSE_MSE[i,j],MMSE_SER[i,j]) = MMSE_calc(X,H,Y,Rgg,var_No,N,L)
     
-    cs_mse_ave   = mean(cs_mse,0)
-    ls_mse_ave   = mean(ls_mse,0)
-    mmse_mse_ave = mean(mmse_mse,0)
-        
+    CS_MSE_ave   = mean(CS_MSE,0)
+    LS_MSE_ave   = mean(LS_MSE,0)
+    LS_SER_ave   = mean(LS_MSE,0)
+    MMSE_MSE_ave = mean(MMSE_MSE,0)
+    MMSE_SER_ave = mean(MMSE_MSE,0)
+          
     ''' 画图 '''
     if N==128:
         ''' 假设非法用户用另一个测量矩阵X进行解码 '''
         X_invalid = diag(randn(N))
-        re_H_invalid = omp(K,Y,X_invalid,W)
+        re_H_invalid = OMP(K,Y,X_invalid,W)
         re_h = dot(ifftMatrix(L,N),re_H)
         re_h_invalid = dot(ifftMatrix(L,N),re_H_invalid)
     
@@ -194,4 +199,4 @@ def MSE_com(K,h,SNR,N):
         plt.xlabel('Frequency')
         plt.show()
         
-    return (cs_mse_ave,ls_mse_ave,mmse_mse_ave)
+    return (CS_MSE_ave,LS_MSE_ave,LS_SER_ave,MMSE_MSE_ave,MMSE_SER_ave)

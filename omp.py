@@ -9,10 +9,10 @@ import numpy as np
 from numpy import zeros,empty,dot,transpose,size,conjugate
 from numpy.linalg import inv
 
-def omp(K,s,Phi,Psi):
+def OMP(K,y,Phi,Psi):
     
     '''
-    s  = Phi*Psi*x
+    y  = Phi*Psi*x
     Y  = X  *W  *h + N
        = X * H + N
     '''                                       
@@ -24,9 +24,9 @@ def omp(K,s,Phi,Psi):
     M = size(T,0)
     N = size(T,1)
     
-    hat_y = zeros((1,N),np.complex)     # 待重构的谱域(变换域)向量                     
+    hat_X = zeros((1,N),np.complex)     # 待重构的谱域(变换域)向量                     
     Aug_t = empty([M,1])                # 增量矩阵(初始值为空矩阵)
-    r_n   = s                           # 残差值
+    r_n   = y                           # 残差值
     pos_array = zeros((m,1))            # 最大投影系数的位置                          
     product   = zeros((1,N))
     
@@ -43,13 +43,12 @@ def omp(K,s,Phi,Psi):
         T[:,pos] = zeros(M)                     # 选中的列置零（实质上应该去掉，为了简单我把它置零），在数据中去除这个标记的所有印迹
         Aug_t_tr = conjugate(transpose(Aug_t))  # 共轭转置    
         inverse  = inv(dot(Aug_t_tr,Aug_t))
-        aug_y    = dot(dot(inverse,Aug_t_tr),s) # 最小二乘,使残差最小          
-        r_n      = s-dot(Aug_t,aug_y)           # 残差
+        aug_y    = dot(dot(inverse,Aug_t_tr),y) # 最小二乘,使残差最小          
+        r_n      = y-dot(Aug_t,aug_y)           # 残差
         pos_array[times] = pos                  # 纪录最大投影系数的位置
         
     for i in range(m):                          # 重构的谱域向量
         pos = np.int(pos_array[i])
-        hat_y[:,pos] = aug_y[i]                 
-    hat_H = dot(Psi,transpose(hat_y))           # 做傅里叶变换重构得到原信号  
-  
+        hat_X[:,pos] = aug_y[i]                 
+    hat_H = dot(Psi,transpose(hat_X))           # 做傅里叶变换重构得到原信号  
     return hat_H
