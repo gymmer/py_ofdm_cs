@@ -20,13 +20,13 @@ plt.close('all')
 L = 50                      # 信道长度
 K = 6                       # 稀疏度/多径数，满足:K<<L
 N = 512                     # 训练序列长度/载波数,满足：L<=N
+P = 36                      # 导频数，P<N
 Ncp = 60                    # 循环前缀的长度,Ncp>L
 SNR = 30                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
        
 ''' 根据RSSI/Phase产生随机导频图样'''
-P = 36                      # 导频数，P<N
-pos_A,pos_B,pos_E = agreement(2,P,0.5)
+pos_A,pos_B,pos_E = agreement(P,0.5)
 
 ''' 发送端 '''
 bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)

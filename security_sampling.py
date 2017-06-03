@@ -41,8 +41,8 @@ def sampling(stype,sampling_period,sampling_time,corr_ab=1,corr_ae=1):
     elif stype=='Phase':
         
         corr_SNR_dict={
-        0.1:6, 0.2:8, 0.3:10, 0.4:11, 0.5:13,
-        0.6:15,   0.7:18,  0.8:20,  0.9:30, 1.0:1000 }
+        0.1:6, 0.2:8, 0.3:10, 0.4:12, 0.5:14,
+        0.6:17,   0.7:20,  0.8:23,  0.9:29, 1.0:1000 }
         samples_A = 2*pi*random(sampling_num)     # [0,2pi)之间均匀分布
         
     samples_B = awgn(samples_A,corr_SNR_dict[corr_ab])
@@ -70,7 +70,7 @@ def draw_SNR_corr(stype,sampling_period,sampling_time):
     plt.plot(SNR,corr,'bo-')
     plt.xlabel('SNR')
     plt.ylabel('Corrcoef')
-    plt.title('Corrcoef in different SNR for'+stype)
+    plt.title('Corrcoef in different SNR for '+stype)
 
 def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=1,corr_ae=1):
     samples_A,samples_B,samples_E = sampling(stype,sampling_period,sampling_time,corr_ab,corr_ae)
@@ -94,7 +94,8 @@ def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=1,corr_
     plt.legend()
     
 if __name__=='__main__':
-    #draw_SNR_corr('RSSI',1,2)
-    #draw_SNR_corr('Phase',10,2)
-    draw_channel_correlation('RSSI',1,2,1,0.4)
-    draw_channel_correlation('Phase',10,2,1,0.4)
+    pass
+    #draw_SNR_corr('RSSI',1,3)
+    #draw_SNR_corr('Phase',10,3)
+    draw_channel_correlation('RSSI',1,3,0.9,0.4)
+    draw_channel_correlation('Phase',10,3,0.9,0.4)

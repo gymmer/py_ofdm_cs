@@ -22,10 +22,10 @@ K = 6                       # 稀疏度/多径数，满足:K<<L
 N = 512                     # 训练序列长度/载波数,满足：L<=N
 Ncp = 60                    # 循环前缀的长度,Ncp>L
 P = 36                      # 导频数，P<N
-SNR = 30                    # AWGN信道信噪比
+SNR = 15                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 right = range(P+1)          # 非法用户猜对导频数
-gro_num = 100                # 进行多组取平均
+gro_num = 100               # 进行多组取平均
 
 right_num = len(right)
 lx_MSE  = zeros((gro_num,right_num))
@@ -42,7 +42,7 @@ for i in range(gro_num):
         print 'Running... Current group: ',i,j
         
         ''' 根据RSSI/Phase产生随机导频图样'''
-        pos_A,pos_B,pos_E = agreement(2,P,0.5)
+        pos_A,pos_B,pos_E = agreement(P,0.5)
         
         ''' 发送端 '''
         bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
@@ -58,7 +58,7 @@ for i in range(gro_num):
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
         
         ''' 窃听信道 '''
-        h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR[j])
+        h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR)
         
         ''' 非法用户 '''
         # 非法用户随机猜测导频位置。与发送端的导频图样pos_A相比，非法用户猜对了j个,j取值[0,P)
@@ -87,7 +87,7 @@ CS_SC   = mean(CS_SC,0)
 plt.figure(figsize=(8,5))
 plt.plot(right,lx_MSE, 'bo-',label='Ideal user')
 plt.plot(right,CS_MSE, 'g*-',label='Valid user')
-plt.plot(right,eva_MSE,'r^-',label='Eevasdropper')
+plt.plot(right,eva_MSE,'r^--',label='Evasdropper')
 plt.xlabel('number of right pilots')
 plt.ylabel('MSE(dB)')
 plt.title('MSE of evasdropper by random guessing(SNR=%d)'%(SNR))
@@ -96,7 +96,7 @@ plt.legend()
 plt.figure(figsize=(8,5))
 plt.semilogy(right,lx_BER, 'bo-',label='Ideal user')
 plt.semilogy(right,CS_BER, 'g*-',label='Valid user')
-plt.semilogy(right,eva_BER,'r^-',label='Eevasdropper')
+plt.semilogy(right,eva_BER,'r^--',label='Evasdropper')
 plt.xlabel('number of right pilots')
 plt.ylabel('BER')
 plt.title('BER of evasdropper by random guessing(SNR=%d)'%(SNR))

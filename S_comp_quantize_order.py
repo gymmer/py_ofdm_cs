@@ -18,7 +18,7 @@ os.system('cls')
 plt.close('all')
 
 sampling_period = 10     # 采样周期1ms
-sampling_time = 20
+sampling_time = 3
 SNR = 30
 order = [1,2,3,4]
 qtype = ['natural','gray']
@@ -40,7 +40,7 @@ for i in range(group_num):
             bitsA = quantization_even('Phase',phase_A,size(phase_A),qtype[k],order[j])
             bitsB = quantization_even('Phase',phase_B,size(phase_A),qtype[k],order[j])        
             bmr[i,j,k] = BMR(bitsA,bitsB)
-            bgr[i,j,k] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+            bgr[i,j,k] = size(bitsA)/(sampling_time*1000.0/sampling_period)
             #ent[i,j,k] = Entropy(bitsA)
 
 bmr = mean(bmr,0)

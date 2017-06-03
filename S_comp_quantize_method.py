@@ -18,11 +18,11 @@ os.system('cls')
 plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
-sampling_time = 2
+sampling_time = 3
 SNR = 30
 qtype = 'gray'
 order = 2
-block_size = 200
+block_size = 25
 coef = 0.8
 
 group_num = 10
@@ -34,18 +34,18 @@ ent = zeros((group_num,condi_num))
 for i in range(group_num):
     print 'Running group:',i
     
-    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.7,0.4)
+    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)
     
     bitsA = quantization_even('RSSI',rssi_A,block_size,qtype,order)
     bitsB = quantization_even('RSSI',rssi_B,block_size,qtype,order)
     bmr[i,0] = BMR(bitsA,bitsB)
-    bgr[i,0] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+    bgr[i,0] = size(bitsA)/(sampling_time*1000.0/sampling_period)
     #ent[i,0] = Entropy(bitsA)
     
     bitsA = quantization_even('RSSI',rssi_A,size(rssi_A),qtype,order)
     bitsB = quantization_even('RSSI',rssi_B,size(rssi_A),qtype,order)
     bmr[i,1] = BMR(bitsA,bitsB)
-    bgr[i,1] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+    bgr[i,1] = size(bitsA)/(sampling_time*1000.0/sampling_period)
     #ent[i,1] = Entropy(bitsA)
     
     bitsA,drop_listA = quantization_thre(rssi_A,block_size,coef)
@@ -53,7 +53,7 @@ for i in range(group_num):
     bitsA = remain(bitsA,drop_listA,drop_listB)
     bitsB = remain(bitsB,drop_listA,drop_listB)
     bmr[i,2] = BMR(bitsA,bitsB)
-    bgr[i,2] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+    bgr[i,2] = size(bitsA)/(sampling_time*1000.0/sampling_period)
     #ent[i,2] = Entropy(bitsA)
     
 plt.figure(figsize=(8,5))

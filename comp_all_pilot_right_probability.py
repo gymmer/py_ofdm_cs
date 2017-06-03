@@ -25,7 +25,7 @@ if __name__ == '__main__':
         allright = 0.0
         for j in range(group):   
             print 'running group...',i,j
-            posA,posB,posE = agreement(2,P,0.5,iteration[i])
+            posA,posB,posE = agreement(P,0.5,iteration[i])
             if how_many_right(posA,posB) == P:
                 allright += 1
         probability.append(allright/group)

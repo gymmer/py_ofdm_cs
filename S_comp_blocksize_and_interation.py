@@ -19,9 +19,9 @@ os.system('cls')
 plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
-sampling_time = 2
+sampling_time = 3
 SNR = 30
-block_size = [10,50,100,150,200,250,300]
+block_size = range(5,41,5)
 coef = 0.8
 iteration = [0,1,2,3,4]
 
@@ -37,7 +37,7 @@ for i in range(group_num):
         for k in range(inter_num):
             print 'Running group:',i,j,k
             
-            rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.7,0.4)            
+            rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)            
             bitsA,drop_listA = quantization_thre(rssi_A,block_size[j],coef)
             bitsB,drop_listB = quantization_thre(rssi_B,block_size[j],coef)
             bitsA = remain(bitsA,drop_listA,drop_listB)
@@ -45,7 +45,7 @@ for i in range(group_num):
             bitsA,bitsB = winnow(bitsA,bitsB,iteration[k])
             
             bmr[i,j,k] = BMR(bitsA,bitsB)
-            bgr[i,j,k] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+            bgr[i,j,k] = size(bitsA)/(sampling_time*1000.0/sampling_period)
             #ent[i,j,k] = Entropy(bitsA)
 
 bmr = mean(bmr,0)
@@ -89,30 +89,30 @@ plt.legend()
 
 '''iteration为横坐标'''
 plt.figure(figsize=(8,5))
-plt.plot(iteration,bmr[1,:],'ro-',label='bl=50')
-plt.plot(iteration,bmr[2,:],'yo-',label='bl=100')
-plt.plot(iteration,bmr[3,:],'go-',label='bl=150')
-plt.plot(iteration,bmr[4,:],'bo-',label='bl=200')
+plt.plot(iteration,bmr[0,:],'ro-',label='bl=%d'%(block_size[0]))
+plt.plot(iteration,bmr[2,:],'yo-',label='bl=%d'%(block_size[2]))
+plt.plot(iteration,bmr[4,:],'go-',label='bl=%d'%(block_size[4]))
+plt.plot(iteration,bmr[6,:],'bo-',label='bl=%d'%(block_size[6]))
 plt.xlabel('Iteration')
 plt.ylabel('Bit Mismatch Rate')
 plt.title('BMR of different iteration(coef=%.2f)'%(coef))
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.plot(iteration,bgr[1,:],'ro-',label='bl=50')
-plt.plot(iteration,bgr[2,:],'yo-',label='bl=100')
-plt.plot(iteration,bgr[3,:],'go-',label='bl=150')
-plt.plot(iteration,bgr[4,:],'bo-',label='bl=200')
+plt.plot(iteration,bgr[0,:],'ro-',label='bl=%d'%(block_size[0]))
+plt.plot(iteration,bgr[2,:],'yo-',label='bl=%d'%(block_size[2]))
+plt.plot(iteration,bgr[4,:],'go-',label='bl=%d'%(block_size[4]))
+plt.plot(iteration,bgr[6,:],'bo-',label='bl=%d'%(block_size[6]))
 plt.xlabel('Iteration')
 plt.ylabel('Bit Generation Rate')
 plt.title('BGR of different iteration(coef=%.2f)'%(coef))
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.plot(iteration,ent[1,:],'ro-',label='bl=50')
-plt.plot(iteration,ent[2,:],'yo-',label='bl=100')
-plt.plot(iteration,ent[3,:],'go-',label='bl=150')
-plt.plot(iteration,ent[4,:],'bo-',label='bl=200')
+plt.plot(iteration,ent[0,:],'ro-',label='bl=%d'%(block_size[0]))
+plt.plot(iteration,ent[2,:],'yo-',label='bl=%d'%(block_size[2]))
+plt.plot(iteration,ent[4,:],'go-',label='bl=%d'%(block_size[4]))
+plt.plot(iteration,ent[6,:],'bo-',label='bl=%d'%(block_size[6]))
 plt.xlabel('Iteration')
 plt.ylabel('Entropy')
 plt.title('Entropy of different iteration(coef=%.2f)'%(coef))

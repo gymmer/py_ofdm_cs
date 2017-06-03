@@ -19,9 +19,9 @@ os.system('cls')
 plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
-sampling_time = 2
+sampling_time = 3
 SNR = 30
-block_size = 200
+block_size = 25
 coef = [i/10.0 for i in range(10)]
 iteration = [0,1,2,3,4]
 
@@ -37,7 +37,7 @@ for i in range(group_num):
         for k in range(inter_num):
             print 'Running group:',i,j,k
         
-            rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.7,0.4)        
+            rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)        
             bitsA,drop_listA = quantization_thre(rssi_A,block_size,coef[j])
             bitsB,drop_listB = quantization_thre(rssi_B,block_size,coef[j])
             bitsA = remain(bitsA,drop_listA,drop_listB)
@@ -45,7 +45,7 @@ for i in range(group_num):
             bitsA,bitsB = winnow(bitsA,bitsB,iteration[k])
                        
             bmr[i,j,k] = BMR(bitsA,bitsB)
-            bgr[i,j,k] = size(bitsA)/(sampling_time/sampling_period*1000.0)
+            bgr[i,j,k] = size(bitsA)/(sampling_time*1000.0/sampling_period)
             #ent[i,j,k] = Entropy(bitsA)
 
 bmr = mean(bmr,0)

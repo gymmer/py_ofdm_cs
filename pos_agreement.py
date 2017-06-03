@@ -31,7 +31,7 @@ def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
     pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
     return pos
     
-def agreement(sampling_time,P,weight,iteration=3):
+def agreement(P,weight,iteration=2):
     
     # 根据权重，计算RSSI和Phase两种方式各自产生的导频
     P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P)
@@ -39,21 +39,21 @@ def agreement(sampling_time,P,weight,iteration=3):
     ''' 采样参数'''
     sampling_period_rssi  = 1
     sampling_period_phase = 10
+    sampling_time = 3
+    corr_ab = 0.9
+    corr_ae = 0.4
     
     '''量化参数'''
-    block_size = 200
+    block_size = 25
     coef = 0.8
     qtype = 'gray'
     order = 2
     
-    ''' winnow最大迭代次数'''
-    #iteration = 3
-    
     ''' 采样'''        
-    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period_rssi,sampling_time,0.7,0.4)  
-    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period_phase,sampling_time,0.9,0.4),2*pi)    
+    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period_rssi,sampling_time,corr_ab,corr_ae)  
+    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period_phase,sampling_time,corr_ab,corr_ae),2*pi)    
     #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]            
-    print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]   
+    #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]   
     
     ''' RSSI量化'''
     bits_A_rssi,drop_listA = quantization_thre(rssi_A,block_size,coef)
@@ -84,7 +84,7 @@ def agreement(sampling_time,P,weight,iteration=3):
     return posA,posB,posE
 
 if __name__=='__main__':
-    posA,posB,posE = agreement(2,36,0.5)
+    posA,posB,posE = agreement(36,0.7)
     from comp_all_pilot_right_probability import how_many_right
     print how_many_right(posA,posB)
     print how_many_right(posA,posE)

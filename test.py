@@ -1,112 +1,125 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar 11 13:06:28 2016
+Created on Wed Apr 27 10:26:24 2016
 
 @author: My402
 """
+import numpy as np
+from numpy import size,array,transpose,zeros,shape,mod,split,hstack
+from from_to import from2seq_to10
+import random
 
-import os
-from numpy import zeros,mean
-import matplotlib.pyplot as plt
-from pos_agreement import agreement
-from part_sender import sender
-from part_transmission import transmission
-from part_receiver import receiver
-from function import MSE,BMR,SecCap
-  
-os.system('cls')
-plt.close('all')
+def xor_dot(seq,matrix):
+    n = size(seq)
+    row,col = shape(matrix)
+    assert row==n,'seq and matrix do not match'
+    result = zeros(col)
+    for i in range(col):
+        temp = matrix[:,i]
+        for j in range(row):
+            result[i] += (seq[j]*temp[j])
+        result[i] = mod(result[i],2)
+    return result
 
-L = 50                      # 信道长度
-K = 6                       # 稀疏度/多径数，满足:K<<L
-N = 512                     # 训练序列长度/载波数,满足：L<=N
-Ncp = 60                    # 循环前缀的长度,Ncp>L
-P = 36                      # 导频数，P<N
-SNR = range(0,31,5)         # AWGN信道信噪比
-modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
-gro_num = 100                # 进行多组取平均
-
-''' 比较不同的信噪比SNR '''
-SNR_num = len(SNR)
-lx_MSE  = zeros((gro_num,SNR_num))
-CS_MSE  = zeros((gro_num,SNR_num))
-eva_MSE = zeros((gro_num,SNR_num))
-lx_BER  = zeros((gro_num,SNR_num))
-CS_BER  = zeros((gro_num,SNR_num))
-eva_BER = zeros((gro_num,SNR_num))
-lx_SC   = zeros((gro_num,SNR_num))
-CS_SC   = zeros((gro_num,SNR_num))
-
-for i in range(gro_num):
-    for j in range(SNR_num):
-        print 'Running... Current group: ',i,j
-        
-        ''' 根据RSSI/Phase产生随机导频图样'''
-        pos_A,pos_B,pos_E = agreement(2,P,0.5)
-        
-        ''' 发送端 '''
-        bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
-        
-        ''' 信道传输 '''
-        h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR[j])
-        
-        ''' 理想条件下的信道估计'''
-        # 合法用户确切知道发送端导频
-        h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type,'CS','from_pos')
+def split_into_block(bits,block_size):
+    block_num = size(bits)/block_size
+    bits = bits[0:block_num*block_size]  # 如果bits不能被size整除，则忽略bits最后无法被整除的点
+    bits = split(bits,block_num)
+    return bits
     
-        ''' 接收端 信道估计'''
-        h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
+def get_parity_per_block(bits):
+    parity = [np.sum(x)%2 for x in bits]
+    return array(parity)
+
+def compare_parity_per_block(my_parity,his_parity,my_bits):
+    diff_bl = []
+    for i in range(size(my_parity)):
+        if my_parity[i] != his_parity[i]:
+            diff_bl.append(i)               # 取出奇偶校验结果不同的段
+        #my_bits[i] = my_bits[i][1:]         # 舍弃第一个比特，维持数据的保密性
+    return my_bits,diff_bl
+
+def get_S_in_diff_block(bits,diff_bl,H):
+    S = array([])
+    for i in diff_bl:
+        S = np.r_[S,xor_dot(bits[i],transpose(H))]
+    S = split(S,size(diff_bl))
+    return S
+
+def get_Sc_in_diff_block(diff_bl,Sa,Sb):
+    Sc = array([])
+    for i in range(size(diff_bl)):
+        Sc = np.r_[Sc, array([mod(Sa[i][j]+Sb[i][j],2) for j in range(3)])]
+    Sc = split(Sc,size(diff_bl))
+    return Sc
+
+def correct_bits_by_Sc(bits,diff_bl,Sc):
+    for i in range(size(diff_bl)):
+        pos = from2seq_to10(Sc[i])
+        if pos!=0:
+            bits[diff_bl[i]][pos-1] = mod(bits[diff_bl[i]][pos-1]+1,2)
+    return bits
+
+def reorgnize_bits(bits,order):
+    result = zeros(bits.shape)
+    for i in range(size(bits)):
+        result[i] = bits[order[i]]
+    return result
         
-        ''' 窃听信道 '''
-        h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR[j])
+def winnow(bitsA,bitsB,bitsE,iteration): 
+    for inter in range(iteration):
         
-        ''' 非法用户 '''
-        h_eva, H_eva, bits_eva, diagram = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
+        # 迭代停止的条件：
+        # 1.达到指定的迭代次数。此时bitsA与bitsB仍有可能存在误码
+        # 2.BMR=0。说明bitsB的误比特已经被改正，不必再进行后续迭代。
+        #if BMR(bitsA,bitsB)==0:
+        #    return bitsA,bitsB
         
-        ''' 评价性能 '''
-        lx_MSE[i,j]  = MSE(H_ab,H_lx)
-        CS_MSE[i,j]  = MSE(H_ab,H_cs)
-        eva_MSE[i,j] = MSE(H_ae,H_eva)   
-        lx_BER[i,j]  = BMR(bits_A,bits_lx)
-        CS_BER[i,j]  = BMR(bits_A,bits_cs)
-        eva_BER[i,j] = BMR(bits_A,bits_eva)
-        lx_SC[i,j]   = SecCap(lx_BER[i,j],eva_BER[i,j])
-        CS_SC[i,j]   = SecCap(CS_BER[i,j],eva_BER[i,j])
+        ''' 进行第inter次迭代 '''
 
-''' 多组取平均 ''' 
-lx_MSE  = mean(lx_MSE,0)   
-CS_MSE  = mean(CS_MSE,0)
-eva_MSE = mean(eva_MSE,0)
-lx_BER  = mean(lx_BER,0)
-CS_BER  = mean(CS_BER,0)
-eva_BER = mean(eva_BER,0)
-lx_SC   = mean(lx_SC,0)
-CS_SC   = mean(CS_SC,0)
-
-plt.figure(figsize=(8,5))
-plt.plot(SNR,lx_MSE, 'ko-',label='Ideal user')
-plt.plot(SNR,CS_MSE, 'g*-',label='Valid user')
-plt.plot(SNR,eva_MSE,'r^-',label='EVA')
-plt.xlabel('SNR(dB)')
-plt.ylabel('MSE(dB)')
-plt.title('MSE')
-plt.legend()
-
-plt.figure(figsize=(8,5))
-plt.semilogy(SNR,lx_BER, 'ko-',label='Ideal user')
-plt.semilogy(SNR,CS_BER, 'g*-',label='Valid user')
-plt.semilogy(SNR,eva_BER,'r^-',label='EVA')
-plt.xlabel('SNR(dB)')
-plt.ylabel('BER')
-plt.title('BER')
-plt.legend()
-
-plt.figure(figsize=(8,5))
-plt.plot(SNR,lx_SC,'ko-',label='Ideal user')
-plt.plot(SNR,CS_SC,'g*-',label='Valid user')
-plt.xlabel('SNR(dB)')
-plt.ylabel('Capacity')
-plt.title('Security Capacity')
-plt.legend()
-
-print 'Program Finished'
+        # 二进制序列按照相同的随机顺序进行排序，使错误均匀地随机分布
+        order = random.sample(range(size(bitsA)),size(bitsA))
+        bitsA = reorgnize_bits(bitsA,order)
+        bitsB = reorgnize_bits(bitsB,order)
+        bitsE = reorgnize_bits(bitsE,order)
+        
+        # 两端同时进行分组，每组的数据长度为2**m（m>2)，通常取m=3
+        m = 3
+        block_size = 2**m-1       
+        bitsA = split_into_block(bitsA,block_size)
+        bitsB = split_into_block(bitsB,block_size)
+        bitsE = split_into_block(bitsE,block_size)
+        
+        # 计算各组的奇偶校验值
+        parityA = get_parity_per_block(bitsA)    
+        parityB = get_parity_per_block(bitsB)
+        
+        # 第一次信息交互
+        # 通信的双方在公共信道中交换各组的奇偶校验位，并进行比较
+        # 记录奇偶校验不同的分组
+        bitsA,diff_bl = compare_parity_per_block(parityA,parityB,bitsA)
+        bitsB,diff_bl = compare_parity_per_block(parityB,parityA,bitsB)
+        
+        # 后续计算校正子，都是针对奇偶校验不同的分组
+        # 若所有分组的奇偶校验都一样，则不必再计算校正子了，可直接进行下次迭代
+        if size(diff_bl) != 0:
+        
+            # 对于奇偶校验不同的组，计算各组的伴随式
+            H = array([[0,0,0,1,1,1,1],[0,1,1,0,0,1,1],[1,0,1,0,1,0,1]])    
+            Sa = get_S_in_diff_block(bitsA,diff_bl,H)
+            Sb = get_S_in_diff_block(bitsB,diff_bl,H)
+            
+            # 第二次信息交互
+            # Alice通过公开信道将其校正子Sa发送给 Bob
+            # 对于奇偶校验不同的组，Bob计算Sc = Sa（异或）Sb
+            Sc = get_Sc_in_diff_block(diff_bl,Sa,Sb)
+            
+            # Sc表示 Alice 和 Bob 第 i 个分组中错误比特的位置。
+            # Bob 通过将该位置的位数值取反，纠正该分组的错误
+            bitsB =  correct_bits_by_Sc(bitsB,diff_bl,Sc)
+        
+        bitsA = hstack(bitsA)
+        bitsB = hstack(bitsB)
+        bitsE = hstack(bitsE)
+        
+    return bitsA,bitsB,bitsE
