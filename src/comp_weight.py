@@ -8,7 +8,7 @@ Created on Fri Mar 11 13:06:28 2016
 import os
 from numpy import zeros,mean
 import matplotlib.pyplot as plt
-from test2 import agreement
+from pos_agreement import agreement
 from part_sender import sender
 from part_transmission import transmission
 from part_receiver import receiver

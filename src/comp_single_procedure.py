@@ -46,7 +46,6 @@ h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR)
 
 ''' 非法用户 '''
 h_eva,H_eva,bits_eva,diagram_eva = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
-#h_eva,H_eva,bits_eva,diagram_eva = receiver(y,L,K,N,Ncp,pos_A,modulate_type,'CS','33')
         
 ''' 评价性能 '''
 lx_MSE  = MSE(H_ab,H_lx)
