@@ -31,7 +31,7 @@ def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
     pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
     return pos
     
-def agreement(P,weight,iteration=2):
+def agreement(P,weight,iteration=2,corr_ab=0.9,corr_ae=0.4):
     
     # 根据权重，计算RSSI和Phase两种方式各自产生的导频
     P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P)
@@ -40,8 +40,6 @@ def agreement(P,weight,iteration=2):
     sampling_period_rssi  = 1
     sampling_period_phase = 10
     sampling_time = 3
-    corr_ab = 0.9
-    corr_ae = 0.4
     
     '''量化参数'''
     block_size = 25
