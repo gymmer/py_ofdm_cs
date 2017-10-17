@@ -10,24 +10,11 @@ from function import BMR,how_many_equal
 from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
 from security_winnow import winnow
-from from_to import from2seq_to10
-
-def get_pos_from_bits(bits,P):
-    pos_num = 0                             # 已生成的导频数。初始时未生成导频，为0
-    pos = array([],dtype=np.int32)          # 初始化导频图样pos为空
-    index = 0
-    while(pos_num<P):                       # 循环停止的条件是，已经根据密钥流产生了足够数量的导频位置
-        seed = bits[index*9:(index+1)*9]    # 如果N=512,则导频位置的取值范围[0,512]，需要对9位二进制转成十进制。
-        index += 1
-        new_pos = int(from2seq_to10(seed))  # 密钥流每读入9个比特，则计算一次新产生的导频位置
-        if new_pos not in pos:              # 如果新增导频不在我的已有导频列表中，则加入这个导频
-            pos = np.r_[pos,new_pos]        # 如果已有导频列表中已有该导频，则放弃。防止重复加入多个相同的同频位置
-            pos_num += 1                    # 修改已产生的导频位置数
-    return pos
+from security_encode import encode
 
 def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
-    pos_phase = get_pos_from_bits(bits_phase,P_phase)   # 从Phase的密钥流产生导频
-    pos_rssi = get_pos_from_bits(bits_rssi, P_rssi)     # 从RSSI的密钥流产生导频
+    pos_phase = encode(bits_phase,P_phase)   # 从Phase的密钥流产生导频
+    pos_rssi = encode(bits_rssi, P_rssi)     # 从RSSI的密钥流产生导频
     pos = np.r_[pos_phase,pos_rssi]
     pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
     return pos
