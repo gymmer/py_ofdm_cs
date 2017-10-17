@@ -74,3 +74,11 @@ def interpolation(Hp,pos,N):
     for i in range(pos[P-1]+1,N):
         H[i,0]=Hp[P-1,0]
     return H
+
+def how_many_equal(arrA,arrB):
+    ''' 求两个数组中，相同元素的个数 '''
+    equal = 0    
+    for pos in arrA:
+        if pos in arrB:
+            equal += 1
+    return equal

@@ -19,7 +19,6 @@ plt.close('all')
 
 sampling_period = 10     # 采样周期1ms
 sampling_time = 3
-SNR = 30
 order = [1,2,3,4]
 qtype = ['natural','gray']
 

@@ -20,7 +20,6 @@ plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
 sampling_time = 3
-SNR = 30
 block_size = 25
 coef = [i/10.0 for i in range(10)]
 iteration = [0,1,2,3,4]

@@ -19,7 +19,6 @@ plt.close('all')
 
 sampling_period = 1     # 采样周期1ms
 sampling_time = 3
-SNR = 30
 qtype = 'gray'
 order = 2
 block_size = 25
