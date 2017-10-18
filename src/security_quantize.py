@@ -19,13 +19,18 @@ def remain(bits,drop_list_A,drop_list_B):
   
 def quantization_even(stype,samples,block_size,qtype,order):
     '''
-    block_size : 将samples划分成长为block_size的多个block
+    均匀量化
+    stype:
+        RSSI: 对RSSI做均匀量化
+        Phase: 对相位做均匀量化
+    samples: 采样点
+    block_size: 将samples划分成长为block_size的多个block
     qtype:
-        gray:均匀量化、格雷编码
-        natural：均匀量化、自然编码
-    order:量化阶数，order=1，2，3，4
+        gray: 均匀量化、格雷编码
+        natural: 均匀量化、自然编码
+    order: 量化阶数，order=1，2，3，4
         若order=1，则格雷编码与自然编码等价
-    返回值：bit_stream，量化后的比特流
+    返回值: bit_stream，量化后的比特流
     '''
     
     # 由于相位是均匀分布的，即使分成多个block，每个block中均匀量化的minimun=0,interval=2pi/(2^N)
@@ -71,10 +76,12 @@ def quantization_even(stype,samples,block_size,qtype,order):
 
 def quantization_thre(samples,block_size,coef):
     '''
-    block_size : 将RSSI划分成长为block_size的多个block
+    阈值量化
+    samples: 采样点
+    block_size: 将RSSI划分成长为block_size的多个block
     coef:量化系数，上阈值=均值+系数x标准差，下阈值=均值-系数x标准差
         阈值量化时，若para=0，则双阈值等价为单阈值，阈值=均值
-    返回值：bit_stream，量化后的比特流
+    返回值: bit_stream，量化后的比特流
     '''
     # They drop RSS esimates that lie between two thresholds and maintain
     # a list of indices to track the RSS estimates that are dropped.

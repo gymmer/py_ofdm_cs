@@ -20,10 +20,14 @@ def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
     return pos
     
 def agreement(P,weight,iteration=2,corr_ab=0.9,corr_ae=0.4):
-    
-    # 根据权重，计算RSSI和Phase两种方式各自产生的导频
-    P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P)
-    
+    '''
+    P: 导频数
+    weight: 权重。RSSI权重weight，相位权重(1-weight)
+    iteration: winnow迭代次数
+    corr_ab: Alice和Bob的信道测量值的相关系数
+    corr_ae: Alice和Eve的信道测量值的相关系数
+    '''
+
     ''' 采样参数 '''
     sampling_period_rssi  = 1
     sampling_period_phase = 10
@@ -62,6 +66,7 @@ def agreement(P,weight,iteration=2,corr_ab=0.9,corr_ae=0.4):
     bits_A_phase,bits_B_phase = winnow(bits_A_phase,bits_B_phase,iteration)
 
     ''' 生成导频 '''
+    P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P) # 根据权重，计算RSSI和Phase两种方式各自产生的导频
     posA = generate_pos(bits_A_rssi,bits_A_phase,P_rssi,P_phase)
     posB = generate_pos(bits_B_rssi,bits_B_phase,P_rssi,P_phase)
     posE = generate_pos(bits_E_rssi,bits_E_phase,P_rssi,P_phase)    

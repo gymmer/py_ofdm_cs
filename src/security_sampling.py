@@ -16,7 +16,7 @@ def sampling(stype,sampling_period,sampling_time,corr_ab=1,corr_ae=1):
     sampling_period: 采样周期/采样间隔。单位ms。每隔一个采样周期，可采集到一个RSSI样本
     sampling_time:   采样时间。单位s。一共采样了这么长的时间，也即每隔一个采样时间，更新一次密钥/导频位置
     corr:            在给定相关系数corr时，得到与RSSI_A满足corr的RSSI_B(或RSSI_E)
-    返回值：         RSSI采样序列。一共有time/period个采样点。如period=1，time=25，共采样25*1000/1=25000个RSSI
+    返回值:           RSSI采样序列。一共有time/period个采样点。如period=1，time=25，共采样25*1000/1=25000个RSSI
     '''
     
     sampling_num = sampling_time*1000/sampling_period
