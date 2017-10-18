@@ -13,8 +13,8 @@ from security_winnow import winnow
 from security_encode import encode
 
 def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
-    pos_phase = encode(bits_phase,P_phase)   # 从Phase的密钥流产生导频
-    pos_rssi = encode(bits_rssi, P_rssi)     # 从RSSI的密钥流产生导频
+    pos_phase = encode(bits_phase,P_phase)              # 从Phase的密钥流产生导频
+    pos_rssi = encode(bits_rssi,P_rssi,pos_phase)       # 从RSSI的密钥流产生导频
     pos = np.r_[pos_phase,pos_rssi]
     pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
     return pos
