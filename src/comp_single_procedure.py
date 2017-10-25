@@ -24,9 +24,10 @@ P = 36                      # 导频数，P<N
 Ncp = 60                    # 循环前缀的长度,Ncp>L
 SNR = 30                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
+weight = 0.5                # 权重
        
 ''' 根据RSSI/Phase产生随机导频图样'''
-pos_A,pos_B,pos_E = agreement(P,0.5)
+pos_A,pos_B,pos_E = agreement(P,weight)
 
 ''' 发送端 '''
 bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)

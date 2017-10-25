@@ -7,7 +7,7 @@ Created on Fri Mar 11 13:06:28 2016
 
 import os
 import numpy as np
-from numpy import zeros,mean
+from numpy import zeros,mean,arange
 import matplotlib.pyplot as plt
 from pos_agreement import agreement
 from part_sender import sender
@@ -26,7 +26,7 @@ P = 36                      # 导频数，P<N
 SNR = 20
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 gro_num = 100               # 进行多组取平均
-weight = np.arange(0,1,0.1) # 权重
+weight = arange(0,1,0.1)    # 权重
 corr_ab = [0.6, 0.7, 0.8, 0.9, 1]        # 相关系数
 
 ''' 比较不同的信噪比SNR '''
@@ -59,7 +59,7 @@ for i in range(gro_num):
           h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR)
           
           ''' 非法用户 '''
-          h_eva, H_eva, bits_eva, diagram = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
+          h_eva,H_eva,bits_eva,diagram = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
           
           ''' 评价性能 '''
           CS_MSE[i,j,k]  = MSE(H_ab,H_cs)
