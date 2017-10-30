@@ -8,7 +8,8 @@ Created on Sat Jun 03 16:30:41 2017
 import matplotlib.pyplot as plt
 
 iteration = [0,1,2,3,4]
-probability= [0.0,
+probability= [
+0.0,
 0.24,
 0.96,
 0.99,
