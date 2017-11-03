@@ -25,8 +25,8 @@ Ncp = 60                    # 循环前缀的长度,Ncp>L
 P = 36                      # 导频数，P<N
 SNR = range(0,31,5)         # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
-gro_num = 100               # 进行多组取平均
-mtype = ['RSSI', 'Phase', 'cross']
+gro_num = 1               # 进行多组取平均
+mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
 
 ''' 比较不同的信噪比SNR '''
 mtype_num = len(mtype)
