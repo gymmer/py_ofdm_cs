@@ -24,7 +24,6 @@ Ncp = 60                    # 循环前缀的长度,Ncp>L
 P = arange(4,60,4)          # 导频数，P<N
 SNR = 20                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
-weight = 0.5                # 权重
 gro_num = 100               # 进行多组取平均
 
 ''' 比较不同的信噪比SNR '''
@@ -43,7 +42,7 @@ for i in range(gro_num):
         print 'Running... Current group: ',i,j
         
         ''' 根据RSSI/Phase产生随机导频图样'''
-        pos_A,pos_B,pos_E = agreement(P[j],weight)
+        pos_A,pos_B,pos_E = agreement(P[j])
         
         ''' 发送端 '''
         bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)

@@ -1,36 +1,24 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Apr 27 14:20:11 2016
-
-@author: My402
-"""    
 import numpy as np
-from numpy import corrcoef,mod,array,floor,ceil,pi,size
+from numpy import corrcoef,mod,pi,size
 from function import BMR,how_many_equal
 from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
 from security_winnow import winnow
 from security_encode import encode
+from security_merge import *
 
-def generate_pos(bits_rssi,bits_phase,P_rssi,P_phase):
-    pos_phase = encode(bits_phase,P_phase)              # 从Phase的密钥流产生导频
-    pos_rssi = encode(bits_rssi,P_rssi,pos_phase)       # 从RSSI的密钥流产生导频
-    pos = np.r_[pos_phase,pos_rssi]
-    pos.sort()                                          # pos中包含有（P_rssi+P_phase）个不重复的导频
-    return pos
-    
-def agreement(P,weight,iteration=2,corr_ab=0.9,corr_ae=0.4):
+def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     '''
     P: 导频数
-    weight: 权重。RSSI权重weight，相位权重(1-weight)
+    mtype: 合并类型。RSSI/Phase/cross/and/or/xor
     iteration: winnow迭代次数
     corr_ab: Alice和Bob的信道测量值的相关系数
     corr_ae: Alice和Eve的信道测量值的相关系数
     '''
-
+    
     ''' 采样参数 '''
-    sampling_period_rssi  = 1
-    sampling_period_phase = 10
+    sampling_period = 1
     sampling_time = 3
     
     ''' 量化参数 '''
@@ -39,42 +27,62 @@ def agreement(P,weight,iteration=2,corr_ab=0.9,corr_ae=0.4):
     qtype = 'gray'
     order = 2
     
-    ''' 采样 '''        
-    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period_rssi,sampling_time,corr_ab,corr_ae)  
-    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period_phase,sampling_time,corr_ab,corr_ae),2*pi)    
-    #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]            
-    #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]   
-    
+    ''' 采样 ''' 
+    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,corr_ab,corr_ae)  
+    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,corr_ab,corr_ae),2*pi)
+    #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]
+    #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]
+        
     ''' RSSI量化 '''
     bits_A_rssi,drop_listA = quantization_thre(rssi_A,block_size,coef)
     bits_B_rssi,drop_listB = quantization_thre(rssi_B,block_size,coef)
     bits_E_rssi,drop_listE = quantization_thre(rssi_E,block_size,coef)
     bits_A_rssi = remain(bits_A_rssi,drop_listA,drop_listB)
     bits_B_rssi = remain(bits_B_rssi,drop_listA,drop_listB)
-    #bits_E_rssi = remain(bits_E_rssi,array([]),drop_listE)
     bits_E_rssi = remain(bits_E_rssi,drop_listA,drop_listE)
-    #print bits_A_rssi.shape,bits_B_rssi.shape,bits_E_rssi.shape
+    #print 'BMR of RSSI before winnow between AB',BMR(bits_A_rssi,bits_B_rssi)
     
     ''' Phase量化 '''
     bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
     bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
     bits_E_phase = quantization_even('Phase',phase_E,size(phase_E),qtype,order)
-    #print 'BMR of phase before winnow between AB and AE:',BMR(bits_A_phase,bits_B_phase),BMR(bits_A_phase,bits_E_phase)
+    #print 'BMR of phase before winnow between AB',BMR(bits_A_phase,bits_B_phase)
+    
+    ''' 合并 '''
+    if mtype == 'RSSI':
+        bits_A = bits_A_rssi
+        bits_B = bits_B_rssi
+        bits_E = bits_E_rssi
+    elif mtype == 'Phase':
+        bits_A = bits_A_phase
+        bits_B = bits_B_phase
+        bits_E = bits_E_phase
+    else:
+        if mtype == 'cross':
+            merge_method = merge_cross
+        elif mtype == 'and':
+            merge_method = merge_and
+        elif mtype == 'or':
+            merge_method = merge_or
+        elif mtype == 'xor':
+            merge_method = merge_xor
+        bits_A = merge_method(bits_A_rssi,bits_A_phase)
+        bits_B = merge_method(bits_B_rssi,bits_B_phase)
+        bits_E = merge_method(bits_E_rssi,bits_E_phase)
+    #print 'BMR of merge before winnow between AB',BMR(bits_A,bits_B)
     
     ''' winnow信息协调 '''
-    bits_A_rssi, bits_B_rssi  = winnow(bits_A_rssi, bits_B_rssi ,iteration)
-    bits_A_phase,bits_B_phase = winnow(bits_A_phase,bits_B_phase,iteration)
-
-    ''' 生成导频 '''
-    P_rssi,P_phase = floor(weight*P), ceil((1-weight)*P) # 根据权重，计算RSSI和Phase两种方式各自产生的导频
-    posA = generate_pos(bits_A_rssi,bits_A_phase,P_rssi,P_phase)
-    posB = generate_pos(bits_B_rssi,bits_B_phase,P_rssi,P_phase)
-    posE = generate_pos(bits_E_rssi,bits_E_phase,P_rssi,P_phase)    
-    #print 'BMR of rssi and phase after winnow between AB:',BMR(bits_A_rssi,bits_B_rssi),BMR(bits_A_phase,bits_B_phase)
+    bits_A, bits_B = winnow(bits_A,bits_B,iteration)
+    #print 'BMR of merge after winnow between AB',BMR(bits_A,bits_B)
     
-    return posA,posB,posE
+    ''' 生成导频 '''
+    pos_A = encode(bits_A,P)
+    pos_B = encode(bits_B,P)
+    pos_E = encode(bits_E,P)
+
+    return pos_A,pos_B,pos_E
 
 if __name__=='__main__':
-    posA,posB,posE = agreement(36,0.7)
+    posA,posB,posE = agreement(36,'cross',1)
     print how_many_equal(posA,posB)
     print how_many_equal(posA,posE)

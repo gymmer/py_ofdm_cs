@@ -7,16 +7,14 @@ from function import BMR
 from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
 from security_merge import *
-from universal_statistical_test import Entropy
 import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')
 
 ''' 采样参数 '''
-sampling_period_rssi  = 1
-sampling_period_phase = 10
-sampling_time = 4
+sampling_period  = 1
+sampling_time = 3
 
 ''' 量化参数 '''
 block_size = 25
@@ -28,13 +26,15 @@ mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
 gro_num = 100
 mtype_num = len(mtype)
 bmr = zeros((gro_num,mtype_num))
+bgr = zeros((gro_num,mtype_num))
 
 for i in range(gro_num):
     for j in range(mtype_num):
         print 'Running... Current group: ',i,j
+        
         ''' 采样 ''' 
-        rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period_rssi,sampling_time,0.9,0.4)  
-        phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period_phase,sampling_time,0.9,0.4),2*pi)
+        rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)  
+        phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4),2*pi)
             
         ''' RSSI量化 '''
         bits_A_rssi,drop_listA = quantization_thre(rssi_A,block_size,coef)
@@ -66,8 +66,10 @@ for i in range(gro_num):
             bits_B = merge_method(bits_B_rssi,bits_B_phase)
         
         bmr[i,j] = BMR(bits_A,bits_B)
+        bgr[i,j] = size(bits_A)/(sampling_time*1000.0/sampling_period)
 
 bmr = mean(bmr,0)
+bgr = mean(bgr,0)
 
 plt.figure(figsize=(8,5))
 color = ['r','g','b','c','y']
@@ -80,5 +82,19 @@ plt.xticks([])
 plt.xlabel('Merge method')
 plt.ylabel('Bit Mismatch Rate')
 plt.title('BMR of different merge method')
+plt.legend()
+plt.show()
+
+plt.figure(figsize=(8,5))
+color = ['r','g','b','c','y']
+for x,y in zip(arange(mtype_num),bgr):
+    plt.bar(x+1,bgr[x],width=0.5,facecolor=color[x],edgecolor='white',label='%s'%(mtype[x]))
+    plt.text(x+1+0.25,y,'%.4f'%y,ha='center',va='bottom')
+plt.xlim(0.5,7.5)
+plt.ylim(0,2.5)
+plt.xticks([])
+plt.xlabel('Merge method')
+plt.ylabel('Bit Generate Rate')
+plt.title('BGR of different merge method')
 plt.legend()
 plt.show()

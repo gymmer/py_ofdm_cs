@@ -25,7 +25,6 @@ P = 36                      # CS估计导频数，P<N
 pos_even = arange(1,N,15)   # 均匀导频图样
 SNR = range(0,31,5)         # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
-weight = 0.5                # 权重
 gro_num = 100               # 进行多组取平均
 
 ''' 比较不同的信噪比SNR '''
@@ -46,7 +45,7 @@ for i in range(gro_num):
         print 'Running... Current group: ',i,j
         
         ''' Random pilot '''
-        pos_A,pos_B,pos_E = agreement(P,weight)
+        pos_A,pos_B,pos_E = agreement(P)
         bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
         h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR[j])
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type,'CS','from_pos')

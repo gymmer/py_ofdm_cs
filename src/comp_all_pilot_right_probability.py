@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
     
 P = 36
 group = 100
-weight = 0.5
 iteration = [0,1,2,3,4]
 probability = []
 
@@ -19,7 +18,7 @@ for i in range(len(iteration)):
     allright = 0.0
     for j in range(group):   
         print 'running group...',i,j
-        posA,posB,posE = agreement(P,weight,iteration[i])
+        posA,posB,posE = agreement(P,'cross',iteration[i])
         if how_many_equal(posA,posB) == P:
             allright += 1
     probability.append(allright/group)

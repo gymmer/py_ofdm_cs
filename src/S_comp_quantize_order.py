@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 os.system('cls')
 plt.close('all')
 
-sampling_period = 10     # 采样周期1ms
+sampling_period = 1
 sampling_time = 3
 order = [1,2,3,4]
 qtype = ['natural','gray']
