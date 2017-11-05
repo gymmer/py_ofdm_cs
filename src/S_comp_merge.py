@@ -2,11 +2,11 @@
 
 import os
 import numpy as np
-from numpy import zeros,size,mean,arange
+from numpy import zeros,size,mean,arange,mod,pi
 from function import BMR
 from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
-from security_merge import *
+from security_merge import merge
 import matplotlib.pyplot as plt
 
 os.system('cls')
@@ -47,23 +47,8 @@ for i in range(gro_num):
         bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
         
         ''' 合并 '''
-        if mtype[j] == 'RSSI':
-            bits_A = bits_A_rssi
-            bits_B = bits_B_rssi
-        elif mtype[j] == 'Phase':
-            bits_A = bits_A_phase
-            bits_B = bits_B_phase
-        else:
-            if mtype[j] == 'cross':
-                merge_method = merge_cross
-            elif mtype[j] == 'and':
-                merge_method = merge_and
-            elif mtype[j] == 'or':
-                merge_method = merge_or
-            elif mtype[j] == 'xor':
-                merge_method = merge_xor
-            bits_A = merge_method(bits_A_rssi,bits_A_phase)
-            bits_B = merge_method(bits_B_rssi,bits_B_phase)
+        bits_A = merge(bits_A_rssi,bits_A_phase,mtype[j])
+        bits_B = merge(bits_B_rssi,bits_B_phase,mtype[j])
         
         bmr[i,j] = BMR(bits_A,bits_B)
         bgr[i,j] = size(bits_A)/(sampling_time*1000.0/sampling_period)

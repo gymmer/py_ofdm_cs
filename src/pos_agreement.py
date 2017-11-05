@@ -6,7 +6,7 @@ from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
 from security_winnow import winnow
 from security_encode import encode
-from security_merge import *
+from security_merge import merge
 
 def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     '''
@@ -49,26 +49,9 @@ def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     #print 'BMR of phase before winnow between AB',BMR(bits_A_phase,bits_B_phase)
     
     ''' 合并 '''
-    if mtype == 'RSSI':
-        bits_A = bits_A_rssi
-        bits_B = bits_B_rssi
-        bits_E = bits_E_rssi
-    elif mtype == 'Phase':
-        bits_A = bits_A_phase
-        bits_B = bits_B_phase
-        bits_E = bits_E_phase
-    else:
-        if mtype == 'cross':
-            merge_method = merge_cross
-        elif mtype == 'and':
-            merge_method = merge_and
-        elif mtype == 'or':
-            merge_method = merge_or
-        elif mtype == 'xor':
-            merge_method = merge_xor
-        bits_A = merge_method(bits_A_rssi,bits_A_phase)
-        bits_B = merge_method(bits_B_rssi,bits_B_phase)
-        bits_E = merge_method(bits_E_rssi,bits_E_phase)
+    bits_A = merge(bits_A_rssi,bits_A_phase,mtype)
+    bits_B = merge(bits_B_rssi,bits_B_phase,mtype)
+    bits_E = merge(bits_E_rssi,bits_E_phase,mtype)
     #print 'BMR of merge before winnow between AB',BMR(bits_A,bits_B)
     
     ''' winnow信息协调 '''
