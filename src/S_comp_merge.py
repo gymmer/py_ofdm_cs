@@ -2,12 +2,12 @@
 
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from numpy import zeros,size,mean,arange,mod,pi
 from function import BMR
 from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
 from security_merge import merge
-import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')

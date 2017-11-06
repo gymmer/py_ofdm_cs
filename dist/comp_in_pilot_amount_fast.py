@@ -2,6 +2,7 @@
 
 from numpy import arange
 import matplotlib.pyplot as plt
+
 P = arange(4,60,4)   # 导频数，P<N
 
 lx_MSE = [

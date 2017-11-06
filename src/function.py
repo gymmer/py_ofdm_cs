@@ -7,11 +7,23 @@ Created on Tue Mar 15 08:07:45 2016
 
 import numpy as np
 import math
+import operator
 from numpy import mean,zeros,size
 from math import pi,e,log
 
+def fac(n):
+    ''' 计算阶乘 '''
+    if n==0:
+        return 1
+    else:
+        return reduce(operator.mul,range(1,n+1)) 
+        
+def c(n,m):
+    ''' 计算组合数 '''
+    return fac(n)/(fac(m)*fac(n-m))
+
 def fftMatrix(N,L):
-    W = np.zeros((N,L),dtype=np.complex)
+    W = zeros((N,L),dtype=np.complex)
     for n in range(N):
         for l in range(L):
             W[n,l] = e**(-1j*2*pi*n*l/N)
@@ -19,7 +31,7 @@ def fftMatrix(N,L):
     return W
     
 def ifftMatrix(N,L):
-    w = np.zeros((N,L),dtype=np.complex)
+    w = zeros((N,L),dtype=np.complex)
     for n in range(N):
         for l in range(L):
             w[n,l] = e**(1j*2*pi*n*l/L)
@@ -27,7 +39,7 @@ def ifftMatrix(N,L):
     return w
     
 def MSE(H,re_H):
-    ''' calculate MSE '''
+    ''' 求MSE '''
     MSE = mean(abs(H-re_H)**2,0)    # 常规计算
     MSE = MSE / mean(abs(H**2),0)   # 归一化
     MSE = 10*math.log10(MSE)        # 取dB
@@ -39,7 +51,7 @@ def BMR(bitA,bitB):
     return BMR
 
 def entropy(p):
-    ''' 求信息熵'''
+    ''' 求信息熵 '''
     if p==0 or p==1:
         return 0
     else:

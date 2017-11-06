@@ -13,7 +13,7 @@ from part_transmission import transmission
 from part_receiver import receiver
 from part_plot import plot
 from function import MSE,BMR,SecCap
-  
+
 os.system('cls')
 plt.close('all')
 

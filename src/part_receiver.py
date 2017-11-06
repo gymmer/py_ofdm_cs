@@ -6,17 +6,33 @@ Created on Thu Mar 17 13:06:33 2016
 """
 
 import numpy as np
-from numpy import dot,transpose,eye,size
+import random
+from numpy import dot,transpose,eye,size,array
 from numpy.linalg import inv
 from numpy.fft import fft
-import matplotlib.pyplot as plt
 from function import fftMatrix,ifftMatrix,interpolation
-from eva_guess import guess_pos
 from OFDM_OMP import OMP
 from OFDM_pilot import remove_pilot
 from OFDM_diagram import diagram_demod,normal_coef
 from OFDM_interlace import interlace_decode
 from OFDM_convolution import viterbi_decode
+
+def guess_pos(N,P,pos,right_num):
+        
+    pos_original = array(pos)                       # 合法用户的导频序列
+    where_right = random.sample(range(P),right_num) # 猜对的导频，一共P个导频，从中猜对了right_num个
+    
+    pos_eva = array([],dtype=np.int32)              # 非法用户随机猜的导频序列，初始化为空
+    pos_eva_size = 0                                # 非法导频序列的位置，初始化为0
+    while pos_eva_size < P:                         # 先生成一个与合法导频序列完全不同的非法导频序列
+        new_pos = np.random.randint(low=0,high=N)   # 随机产生一个新的非法导频位置，取值[0,N)
+        if (new_pos not in pos) and (new_pos not in pos_eva) : # 新的非法位置，不在合法序列中，也不与已产生的任意非法位置重合
+            pos_eva = np.r_[pos_eva,new_pos]        # 只要满足了上述条件，这个新产生的位置才有效，加入到非法导频序列中
+            pos_eva_size += 1                       # 更新非法导频序列的长度
+    
+    pos_eva[where_right] = pos_original[where_right]# 对于那些猜对的位置，更正非法导频序列
+    pos_eva.sort()
+    return pos_eva
 
 def receiver(y,L,K,N,Ncp,pos,demodulate_type,esti_type,pos_type):
     '''

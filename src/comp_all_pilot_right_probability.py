@@ -5,10 +5,14 @@ Created on Fri Apr 29 13:46:14 2016
 @author: gymmer
 """
 
+import os
+import matplotlib.pyplot as plt
 from pos_agreement import agreement
 from function import how_many_equal
-import matplotlib.pyplot as plt
-    
+
+os.system('cls')
+plt.close('all')
+
 P = 36
 group = 100
 iteration = [0,1,2,3,4]

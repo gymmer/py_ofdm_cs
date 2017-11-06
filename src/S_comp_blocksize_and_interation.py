@@ -7,13 +7,13 @@ Created on Tue Apr 19 11:41:45 2016
 
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from numpy import zeros,size,mean
 from function import BMR
 from security_sampling import sampling
 from security_quantize import quantization_thre,remain
 from security_winnow   import winnow
 from universal_statistical_test import Entropy
-import matplotlib.pyplot as plt
 
 os.system('cls')
 plt.close('all')

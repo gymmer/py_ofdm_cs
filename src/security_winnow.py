@@ -4,10 +4,11 @@ Created on Wed Apr 27 10:26:24 2016
 
 @author: My402
 """
+
+import random
 import numpy as np
 from numpy import size,array,transpose,zeros,shape,mod,split,hstack
 from from_to import from2seq_to10
-import random
 
 def xor_dot(seq,matrix):
     n = size(seq)
