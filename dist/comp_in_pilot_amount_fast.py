@@ -141,8 +141,8 @@ CS_SC = [
 ]
 
 plt.figure(figsize=(8,5))
-plt.plot(P,lx_MSE, 'bo-',label='Ideal user')
-plt.plot(P,CS_MSE, 'g*-',label='Valid user')
+plt.plot(P,lx_MSE, 'bo-', label='Ideal user')
+plt.plot(P,CS_MSE, 'g*-', label='Valid user')
 plt.plot(P,eva_MSE,'r^--',label='Evasdropper')
 plt.xlabel('Pilot Amount')
 plt.ylabel('MSE(dB)')
@@ -150,8 +150,8 @@ plt.title('MSE')
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(P,lx_BER, 'bo-',label='Ideal user')
-plt.semilogy(P,CS_BER, 'g*-',label='Valid user')
+plt.semilogy(P,lx_BER, 'bo-', label='Ideal user')
+plt.semilogy(P,CS_BER, 'g*-', label='Valid user')
 plt.semilogy(P,eva_BER,'r^--',label='Evasdropper')
 plt.xlabel('Pilot Amount')
 plt.ylabel('BER')
