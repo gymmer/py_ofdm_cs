@@ -36,30 +36,24 @@ def merge_cross(bitsA, bitsB):
 
 def merge_and(bitsA, bitsB):
     '''与合并'''
-    bits = array([],dtype=np.int32)
     length = min(size(bitsA), size(bitsB))
-    for i in range(length):
-        bits = np.r_[bits,bitsA[i]&bitsB[i]]
+    bits = bitsA[:length] & bitsB[:length]
     return bits
 
 def merge_or(bitsA,bitsB):
     '''或合并'''
-    bits = array([],dtype=np.int32)
     length = min(size(bitsA), size(bitsB))
-    for i in range(length):
-        bits = np.r_[bits,bitsA[i]|bitsB[i]]
+    bits = bitsA[:length] | bitsB[:length]
     return bits
 
 def merge_xor(bitsA,bitsB):
     '''异或合并'''
-    bits = array([],dtype=np.int32)
     length = min(size(bitsA), size(bitsB))
-    for i in range(length):
-        bits = np.r_[bits,bitsA[i]^bitsB[i]]
+    bits = bitsA[:length] ^ bitsB[:length]
     return bits
 
 if __name__=='__main__':
-    bitsA = array([0,0,1,1])
+    bitsA = array([0,0,1,1,1,0])
     bitsB = array([0,1,0,1])
     print 'merge cross:',merge_cross(bitsA,bitsB)
     print 'merge and:',  merge_and(bitsA,bitsB)
