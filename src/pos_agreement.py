@@ -25,7 +25,7 @@ def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     block_size = 25
     coef = 0.8
     qtype = 'gray'
-    order = 2
+    order = 1
     
     ''' 采样 ''' 
     rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,corr_ab,corr_ae)  
