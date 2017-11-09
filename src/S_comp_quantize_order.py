@@ -9,7 +9,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy import zeros,size,mean,mod,pi
-from function import BMR
+from function import BMR,BGR
 from security_sampling import sampling
 from security_quantize import quantization_even
 
@@ -37,7 +37,7 @@ for i in range(group_num):
             bitsB = quantization_even('Phase',phase_B,size(phase_A),qtype[k],order[j])    
             
             bmr[i,j,k] = BMR(bitsA,bitsB)
-            bgr[i,j,k] = size(bitsA)/(sampling_time*1000.0/sampling_period)
+            bgr[i,j,k] = BGR(bitsA,sampling_time,sampling_period)
 
 bmr = mean(bmr,0)
 bgr = mean(bgr,0)

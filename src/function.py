@@ -50,6 +50,11 @@ def BMR(bitA,bitB):
     BMR = np.sum(diff)/(size(bitA)+0.0)
     return BMR
 
+def BGR(bits,sampling_time,sampling_period):
+    ''' 求BGR '''
+    BGR = size(bits)/(sampling_time*1000.0/sampling_period)
+    return BGR
+
 def entropy(p):
     ''' 求信息熵 '''
     if p==0 or p==1:

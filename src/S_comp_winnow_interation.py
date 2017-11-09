@@ -9,7 +9,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy import zeros,size,mean,mod,pi
-from function import BMR
+from function import BMR,BGR
 from security_sampling import sampling
 from security_quantize import quantization_thre,quantization_even,remain
 from security_winnow import winnow
@@ -62,7 +62,7 @@ for i in range(group_num):
         bits_A, bits_B = winnow(bits_A,bits_B,iteration[j])
         
         bmr[i,j] = BMR(bits_A,bits_B)
-        bgr[i,j] = size(bits_A)/(sampling_time*1000.0/sampling_period)
+        bgr[i,j] = BGR(bits_A,sampling_time,sampling_period)
 
 bmr = mean(bmr,0)
 bgr = mean(bgr,0)
