@@ -56,7 +56,8 @@ def quantization_even(stype,samples,block_size,qtype,order):
             quantize = grayCode_2bit
         elif order==1:
             quantize = Code_1bit
-            
+
+    ''' 以下代码可量化RSSI及相位        
     block_num  = size(samples)/block_size
     bit_stream = array([],dtype=np.int32)
     
@@ -71,7 +72,15 @@ def quantization_even(stype,samples,block_size,qtype,order):
         for j in range(block_size):
             bit = quantize(minimum,interval,samples_bl[j])
             bit_stream = np.r_[bit_stream,bit]
-            
+    '''      
+    
+    ''' 以下代码只对相位做量化 '''
+    bit_stream = array([],dtype=np.int32)
+    minimum,maxmum = 0,2*pi
+    interval = (maxmum-minimum)/(2.0**order)   # 每个block的量化间隔
+    for i in range(block_size):
+        bit = quantize(minimum,interval,samples[i])
+        bit_stream = np.r_[bit_stream,bit]
     return bit_stream
 
 def quantization_thre(samples,block_size,coef):
@@ -93,8 +102,10 @@ def quantization_thre(samples,block_size,coef):
     
     for i in range(block_num):
         samples_bl = samples[i*block_size:(i+1)*block_size]       # 每个block中RSSI的样本
-        upper = mean(samples_bl)+coef*std(samples_bl)             # 上阈值
-        lower = mean(samples_bl)-coef*std(samples_bl)             # 下阈值
+        mean_val   = mean(samples_bl)                             # 均值
+        std_val    = std(samples_bl)                              # 标准差
+        upper      = mean_val+coef*std_val                        # 上阈值
+        lower      = mean_val-coef*std_val                        # 下阈值
         
         for j in range(block_size):
             if samples_bl[j] >= upper:

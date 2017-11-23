@@ -67,37 +67,37 @@ def reorgnize_bits(bits,order):
         result[i] = bits[order[i]]
     return result
         
-def winnow(bitsA,bitsB,iteration): 
+def winnow(bits_A,bits_B,iteration): 
     for inter in range(iteration):
         
         # 迭代停止的条件：
-        # 1.达到指定的迭代次数。此时bitsA与bitsB仍有可能存在误码
-        # 2.BMR=0。说明bitsB的误比特已经被改正，不必再进行后续迭代。
-        #if BMR(bitsA,bitsB)==0:
-        #    return bitsA,bitsB
+        # 1.达到指定的迭代次数。此时bits_A与bits_B仍有可能存在误码
+        # 2.BMR=0。说明bits_B的误比特已经被改正，不必再进行后续迭代。
+        #if BMR(bits_A,bits_B)==0:
+        #    return bits_A,bits_B
         
         ''' 进行第inter次迭代 '''
 
         # 二进制序列按照相同的随机顺序进行排序，使错误均匀地随机分布
-        order = random.sample(range(size(bitsA)),size(bitsA))
-        bitsA = reorgnize_bits(bitsA,order)
-        bitsB = reorgnize_bits(bitsB,order)
+        order = random.sample(range(size(bits_A)),size(bits_A))
+        bits_A = reorgnize_bits(bits_A,order)
+        bits_B = reorgnize_bits(bits_B,order)
         
         # 两端同时进行分组，每组的数据长度为2**m（m>2)，通常取m=3
         m = 3
         block_size = 2**m       
-        bitsA = split_into_block(bitsA,block_size)
-        bitsB = split_into_block(bitsB,block_size)
+        bits_A = split_into_block(bits_A,block_size)
+        bits_B = split_into_block(bits_B,block_size)
         
         # 计算各组的奇偶校验值
-        parityA = get_parity_per_block(bitsA)    
-        parityB = get_parity_per_block(bitsB)
+        parityA = get_parity_per_block(bits_A)    
+        parityB = get_parity_per_block(bits_B)
         
         # 第一次信息交互
         # 通信的双方在公共信道中交换各组的奇偶校验位，并进行比较
         # 记录奇偶校验不同的分组
-        bitsA,diff_bl = compare_parity_per_block(parityA,parityB,bitsA)
-        bitsB,diff_bl = compare_parity_per_block(parityB,parityA,bitsB)
+        bits_A,diff_bl = compare_parity_per_block(parityA,parityB,bits_A)
+        bits_B,diff_bl = compare_parity_per_block(parityB,parityA,bits_B)
         
         # 后续计算校正子，都是针对奇偶校验不同的分组
         # 若所有分组的奇偶校验都一样，则不必再计算校正子了，可直接进行下次迭代
@@ -105,8 +105,8 @@ def winnow(bitsA,bitsB,iteration):
         
             # 对于奇偶校验不同的组，计算各组的伴随式
             H = array([[0,0,0,1,1,1,1],[0,1,1,0,0,1,1],[1,0,1,0,1,0,1]])    
-            Sa = get_S_in_diff_block(bitsA,diff_bl,H)
-            Sb = get_S_in_diff_block(bitsB,diff_bl,H)
+            Sa = get_S_in_diff_block(bits_A,diff_bl,H)
+            Sb = get_S_in_diff_block(bits_B,diff_bl,H)
             
             # 第二次信息交互
             # Alice通过公开信道将其校正子Sa发送给 Bob
@@ -115,9 +115,9 @@ def winnow(bitsA,bitsB,iteration):
             
             # Sc表示 Alice 和 Bob 第 i 个分组中错误比特的位置。
             # Bob 通过将该位置的位数值取反，纠正该分组的错误
-            bitsB =  correct_bits_by_Sc(bitsB,diff_bl,Sc)
+            bits_B =  correct_bits_by_Sc(bits_B,diff_bl,Sc)
         
-        bitsA = hstack(bitsA)
-        bitsB = hstack(bitsB)
+        bits_A = hstack(bits_A)
+        bits_B = hstack(bits_B)
         
-    return bitsA,bitsB
+    return bits_A,bits_B

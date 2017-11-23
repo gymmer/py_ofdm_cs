@@ -37,10 +37,10 @@ for i in range(gro_num):
         phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4),2*pi)
             
         ''' RSSI量化 '''
-        bits_A_rssi,drop_listA = quantization_thre(rssi_A,block_size,coef)
-        bits_B_rssi,drop_listB = quantization_thre(rssi_B,block_size,coef)
-        bits_A_rssi = remain(bits_A_rssi,drop_listA,drop_listB)
-        bits_B_rssi = remain(bits_B_rssi,drop_listA,drop_listB)
+        bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
+        bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
+        bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
+        bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
         
         ''' Phase量化 '''
         bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)

@@ -33,11 +33,11 @@ for i in range(group_num):
             print 'Running group:',i,j,k
         
             phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4), 2*pi)
-            bitsA = quantization_even('Phase',phase_A,size(phase_A),qtype[k],order[j])
-            bitsB = quantization_even('Phase',phase_B,size(phase_A),qtype[k],order[j])    
+            bits_A = quantization_even('Phase',phase_A,size(phase_A),qtype[k],order[j])
+            bits_B = quantization_even('Phase',phase_B,size(phase_B),qtype[k],order[j])    
             
-            bmr[i,j,k] = BMR(bitsA,bitsB)
-            bgr[i,j,k] = BGR(bitsA,sampling_time,sampling_period)
+            bmr[i,j,k] = BMR(bits_A,bits_B)
+            bgr[i,j,k] = BGR(bits_A,sampling_time,sampling_period)
 
 bmr = mean(bmr,0)
 bgr = mean(bgr,0)

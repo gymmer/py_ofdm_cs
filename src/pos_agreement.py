@@ -34,12 +34,12 @@ def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]
         
     ''' RSSI量化 '''
-    bits_A_rssi,drop_listA = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_listB = quantization_thre(rssi_B,block_size,coef)
-    bits_E_rssi,drop_listE = quantization_thre(rssi_E,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_listA,drop_listB)
-    bits_B_rssi = remain(bits_B_rssi,drop_listA,drop_listB)
-    bits_E_rssi = remain(bits_E_rssi,drop_listA,drop_listE)
+    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
+    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
+    bits_E_rssi,drop_list_E = quantization_thre(rssi_E,block_size,coef)
+    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
+    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
+    bits_E_rssi = remain(bits_E_rssi,drop_list_A,drop_list_E)
     #print 'BMR of RSSI before winnow between AB',BMR(bits_A_rssi,bits_B_rssi)
     
     ''' Phase量化 '''

@@ -31,13 +31,13 @@ for i in range(group_num):
         print 'Running group:',i,j
     
         rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)        
-        bitsA,drop_listA = quantization_thre(rssi_A,block_size,coef[j])
-        bitsB,drop_listB = quantization_thre(rssi_B,block_size,coef[j])
-        bitsA = remain(bitsA,drop_listA,drop_listB)
-        bitsB = remain(bitsB,drop_listA,drop_listB)
+        bits_A,drop_list_A = quantization_thre(rssi_A,block_size,coef[j])
+        bits_B,drop_list_B = quantization_thre(rssi_B,block_size,coef[j])
+        bits_A = remain(bits_A,drop_list_A,drop_list_B)
+        bits_B = remain(bits_B,drop_list_A,drop_list_B)
                    
-        bmr[i,j] = BMR(bitsA,bitsB)
-        bgr[i,j] = BGR(bitsA,sampling_time,sampling_period)
+        bmr[i,j] = BMR(bits_A,bits_B)
+        bgr[i,j] = BGR(bits_A,sampling_time,sampling_period)
 
 bmr = mean(bmr,0)
 bgr = mean(bgr,0)

@@ -25,37 +25,37 @@ def merge(bits_rssi, bits_phase, mtype):
         bits = merge_xor(bits_rssi, bits_phase)
     return bits
 
-def merge_cross(bitsA, bitsB):
+def merge_cross(bits_A, bits_B):
     '''交叉合并(错位混合)'''
     bits = array([],dtype=np.int32)
-    length = min(size(bitsA), size(bitsB))
+    length = min(size(bits_A), size(bits_B))
     for i in range(length):
-        bits = np.r_[bits,bitsA[i]]
-        bits = np.r_[bits,bitsB[i]]
+        bits = np.r_[bits,bits_A[i]]
+        bits = np.r_[bits,bits_B[i]]
     return bits
 
-def merge_and(bitsA, bitsB):
+def merge_and(bits_A, bits_B):
     '''与合并'''
-    length = min(size(bitsA), size(bitsB))
-    bits = bitsA[:length] & bitsB[:length]
+    length = min(size(bits_A), size(bits_B))
+    bits = bits_A[:length] & bits_B[:length]
     return bits
 
-def merge_or(bitsA,bitsB):
+def merge_or(bits_A,bits_B):
     '''或合并'''
-    length = min(size(bitsA), size(bitsB))
-    bits = bitsA[:length] | bitsB[:length]
+    length = min(size(bits_A), size(bits_B))
+    bits = bits_A[:length] | bits_B[:length]
     return bits
 
-def merge_xor(bitsA,bitsB):
+def merge_xor(bits_A,bits_B):
     '''异或合并'''
-    length = min(size(bitsA), size(bitsB))
-    bits = bitsA[:length] ^ bitsB[:length]
+    length = min(size(bits_A), size(bits_B))
+    bits = bits_A[:length] ^ bits_B[:length]
     return bits
 
 if __name__=='__main__':
-    bitsA = array([0,0,1,1,1,0])
-    bitsB = array([0,1,0,1])
-    print 'merge cross:',merge_cross(bitsA,bitsB)
-    print 'merge and:',  merge_and(bitsA,bitsB)
-    print 'merge or:',   merge_or(bitsA,bitsB)
-    print 'merge xor:',  merge_xor(bitsA,bitsB)
+    bits_A = array([0,0,1,1,1,0])
+    bits_B = array([0,1,0,1])
+    print 'merge cross:',merge_cross(bits_A,bits_B)
+    print 'merge and:',  merge_and(bits_A,bits_B)
+    print 'merge or:',   merge_or(bits_A,bits_B)
+    print 'merge xor:',  merge_xor(bits_A,bits_B)
