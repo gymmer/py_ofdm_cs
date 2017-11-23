@@ -45,9 +45,9 @@ def MSE(H,re_H):
     MSE = 10*math.log10(MSE)        # 取dB
     return MSE
 
-def BMR(bitA,bitB):
-    diff = np.abs(bitA-bitB)
-    BMR = np.sum(diff)/(size(bitA)+0.0)
+def BMR(bits_A,bits_B):
+    diff = np.abs(bits_A-bits_B)
+    BMR = np.sum(diff)/(size(bits_A)+0.0)
     return BMR
 
 def BGR(bits,sampling_time,sampling_period):

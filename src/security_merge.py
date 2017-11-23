@@ -3,7 +3,7 @@
 import numpy as np
 from numpy import array,size
 
-def merge(bits_rssi, bits_phase, mtype):
+def merge(bits_rssi,bits_phase,mtype):
     '''
     bits_rssi: 由RSSI量化生成的二进制序列
     bits_phase: 由相位量化生成的二进制序列
@@ -16,39 +16,39 @@ def merge(bits_rssi, bits_phase, mtype):
     elif mtype == 'Phase':
         bits = bits_phase
     elif mtype == 'cross':
-        bits = merge_cross(bits_rssi, bits_phase)
+        bits = merge_cross(bits_rssi,bits_phase)
     elif mtype == 'and':
-        bits = merge_and(bits_rssi, bits_phase)
+        bits = merge_and(bits_rssi,bits_phase)
     elif mtype == 'or':
-        bits = merge_or(bits_rssi, bits_phase)
+        bits = merge_or(bits_rssi,bits_phase)
     elif mtype == 'xor':
-        bits = merge_xor(bits_rssi, bits_phase)
+        bits = merge_xor(bits_rssi,bits_phase)
     return bits
 
-def merge_cross(bits_A, bits_B):
+def merge_cross(bits_A,bits_B):
     '''交叉合并(错位混合)'''
     bits = array([],dtype=np.int32)
-    length = min(size(bits_A), size(bits_B))
+    length = min(size(bits_A),size(bits_B))
     for i in range(length):
         bits = np.r_[bits,bits_A[i]]
         bits = np.r_[bits,bits_B[i]]
     return bits
 
-def merge_and(bits_A, bits_B):
+def merge_and(bits_A,bits_B):
     '''与合并'''
-    length = min(size(bits_A), size(bits_B))
+    length = min(size(bits_A),size(bits_B))
     bits = bits_A[:length] & bits_B[:length]
     return bits
 
 def merge_or(bits_A,bits_B):
     '''或合并'''
-    length = min(size(bits_A), size(bits_B))
+    length = min(size(bits_A),size(bits_B))
     bits = bits_A[:length] | bits_B[:length]
     return bits
 
 def merge_xor(bits_A,bits_B):
     '''异或合并'''
-    length = min(size(bits_A), size(bits_B))
+    length = min(size(bits_A),size(bits_B))
     bits = bits_A[:length] ^ bits_B[:length]
     return bits
 
