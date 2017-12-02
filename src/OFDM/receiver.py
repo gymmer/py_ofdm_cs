@@ -10,8 +10,7 @@ from numpy.random import randint
 
 sys.path.append('../')
 from util.mathematics import fftMatrix,ifftMatrix
-from util.function import interpolation
-from PHY import OMP,remove_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode
+from PHY import OMP,remove_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,interpolation
 
 def guess_pos(N,P,pos,right_num):
         
@@ -30,7 +29,7 @@ def guess_pos(N,P,pos,right_num):
     pos_eva.sort()
     return pos_eva
 
-def receiver(y,L,K,N,Ncp,pos,demodulate_type,esti_type,pos_type):
+def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype,pos_type):
     '''
     y: 接收信号
     L: 信道长度
@@ -73,7 +72,7 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,esti_type,pos_type):
     W = fftMatrix(N,L)                  # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基      
     Wp = dot(S,W)                       # PxL的矩阵,从W中选取与导频位置对应的P行
     
-    if esti_type=='CS':
+    if etype=='CS':
         ''' CS信道估计'''
         # s   = Phi*Psi*x
         # Y   = X  * W *h + N
@@ -87,7 +86,7 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,esti_type,pos_type):
         # 而Wp又是从W中选取的与导频位置对应的P行，所以密钥取决于导频位置pos
         re_h = OMP(K,Yp,Xp,Wp)      # OMP是时域估计算法，估计得到时域的h
         re_H = dot(W,re_h)          # 傅里叶变换，得到频域的H
-    elif esti_type=='LS':       
+    elif etype=='LS':       
         ''' LS信道估计 '''
         Hp_ls = dot(inv(Xp),Yp)             # LS、MMSE是频域估计算法，得到导频处的Hp
         re_H = interpolation(Hp_ls,pos,N)   # 根据导频处Hp进行插值，恢复信道的H     
