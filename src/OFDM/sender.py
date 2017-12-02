@@ -7,7 +7,7 @@ from numpy.random import randint
 from numpy.fft import ifft
 
 sys.path.append('../')
-from PHY import conv_code,interlace_code,diagram_mod,normal_coef,insert_pilot
+from PHY import conv_code,interlace_code,diagram_mod,normal_coef,insert_OFDM_pilot
 
 def sender (N,Ncp,pos,modulate_type):
     ''' 
@@ -42,8 +42,7 @@ def sender (N,Ncp,pos,modulate_type):
     X = diagram/normal_coef[modulate_type]
     
     ''' 插入导频 '''   
-    # 对于频率选择性信道，选择梳状导频图样
-    X = insert_pilot(X,pos)
+    X = insert_OFDM_pilot(X,pos)            # 对于频率选择性信道，选择梳状导频图样
     
     ''' 串并转换 '''
     X = X.reshape(N,1)
@@ -55,8 +54,7 @@ def sender (N,Ncp,pos,modulate_type):
     x = x.reshape(1,N)
     
     ''' 循环前缀 '''
-    # 循环前缀的长度Ncp>信道长度L
-    cyclic_prefix = x[:,-Ncp:]
+    cyclic_prefix = x[:,-Ncp:]              # 循环前缀的长度Ncp>信道长度L
     x = np.c_[cyclic_prefix,x]
         
     return bits_orginal,diagram,x

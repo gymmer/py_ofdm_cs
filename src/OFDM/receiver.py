@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import numpy as np
-import random
 from numpy import dot,transpose,eye,size
 from numpy.linalg import inv
 from numpy.fft import fft
@@ -10,7 +8,7 @@ from numpy.fft import fft
 sys.path.append('../')
 from util.mathematics import fftMatrix,ifftMatrix
 from util.function import guess_pos
-from PHY import OMP,remove_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,interpolation
+from PHY import OMP,remove_OFDM_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,interpolation
 
 def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
     '''
@@ -29,10 +27,9 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
     
     P = size(pos)
     if pos_type != 'from_pos':
-        right_num = int(pos_type)   # 与pos相比，非法用户猜对了right_num个
+        right_num = int(pos_type)
         pos = guess_pos(N,P,pos,right_num)
         
-         
     ''' 移除循环前缀'''
     y = y[:,Ncp:]
     
@@ -46,8 +43,8 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
     pass
 
     ''' 导频选择矩阵 '''
-    I = eye(N,N)    # NxN的单位矩阵
-    S = I[pos,:]    # PxN的导频选择矩阵，从NxN的单位矩阵选取与导频位置对应的P行，用于从N个子载波中选择出P个导频位置
+    I = eye(N,N)                        # NxN的单位矩阵
+    S = I[pos,:]                        # PxN的导频选择矩阵，从NxN的单位矩阵选取与导频位置对应的P行，用于从N个子载波中选择出P个导频位置
     
     ''' 提取导频 ''' 
     Yp = dot(S,Y)                       # Px1的导频位置的接受信号向量
@@ -68,8 +65,8 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
         
         # Xp*Wp作为密钥。若Xp是单位矩阵，则Xp*Wp=Wp，密钥取决于Wp。
         # 而Wp又是从W中选取的与导频位置对应的P行，所以密钥取决于导频位置pos
-        re_h = OMP(K,Yp,Xp,Wp)      # OMP是时域估计算法，估计得到时域的h
-        re_H = dot(W,re_h)          # 傅里叶变换，得到频域的H
+        re_h = OMP(K,Yp,Xp,Wp)              # OMP是时域估计算法，估计得到时域的h
+        re_H = dot(W,re_h)                  # 傅里叶变换，得到频域的H
     elif etype=='LS':       
         ''' LS信道估计 '''
         Hp_ls = dot(inv(Xp),Yp)             # LS、MMSE是频域估计算法，得到导频处的Hp
@@ -80,7 +77,7 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
     Y = Y/re_H
     
     ''' 移除导频 '''   
-    Y = remove_pilot(Y,pos)
+    Y = remove_OFDM_pilot(Y,pos)
     
     ''' 星座点归一化 '''
     diagram = Y*normal_coef[demodulate_type]

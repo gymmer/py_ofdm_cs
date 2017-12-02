@@ -24,8 +24,8 @@ def transmission(x,L,K,N,Ncp,SNR):
     h = channel(L,K)
     
     ''' 信道频率响应H '''
-    W = fftMatrix(N,L)      # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基
-    H = dot(W,h)            # 频率的冲激响应
+    W = fftMatrix(N,L)          # 傅里叶正变换矩阵，即：使稀疏的h变为不稀疏的H的基
+    H = dot(W,h)                # 频率的冲激响应
     H.shape = (N,1)
     
     ''' 不考虑循环前缀在信道中的传输 '''

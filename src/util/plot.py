@@ -30,7 +30,7 @@ def plot(h,H,diagram,re_h,re_H,re_diagram):
     plt.title('Reconstruct H after Channel Estimation(CS/LS)')
     plt.show()
     
-    ''' 画出星座图 '''  
+    ''' 星座图 '''  
     plt.figure(figsize=(9,3))
     plt.subplot(121)
     plt.scatter(real(diagram),imag(diagram))

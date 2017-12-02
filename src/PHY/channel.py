@@ -19,9 +19,9 @@ def channel(L,K):
     taumax = float(L)
     
     # 随机产生各径延时,延时的位置是各径信号到达接收端的时刻。K径产生K个时延
-    tau = random.sample(range(L),K)     # 取值范围[0,L-1]，不重复的P个随机整数
+    tau = random.sample(range(L),K)                 # 取值范围[0,L-1]，不重复的P个随机整数
     tau.sort()
-    tau[0] = 0                          # 规定第一个路径时延为0
+    tau[0] = 0                                      # 规定第一个路径时延为0
     
     # 每条路径的增益呈复高斯分布
     ampli = randn(K) + 1j*randn(K)
