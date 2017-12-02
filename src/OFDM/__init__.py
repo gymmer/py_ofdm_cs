@@ -7,4 +7,3 @@ OFDM communication Model
 from sender import sender
 from transmission import transmission
 from receiver import receiver
-from plot import plot

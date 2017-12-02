@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 
 sys.path.append('../')
 from util.metric import MSE,BMR,SecCap
+from util.plot import plot
 from KG import agreement
-from OFDM import sender,transmission,receiver,plot
+from OFDM import sender,transmission,receiver
 
 os.system('cls')
 plt.close('all')
