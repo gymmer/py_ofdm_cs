@@ -3,33 +3,16 @@
 import sys
 import numpy as np
 import random
-from numpy import dot,transpose,eye,size,array
+from numpy import dot,transpose,eye,size
 from numpy.linalg import inv
 from numpy.fft import fft
-from numpy.random import randint
 
 sys.path.append('../')
 from util.mathematics import fftMatrix,ifftMatrix
+from util.function import guess_pos
 from PHY import OMP,remove_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,interpolation
 
-def guess_pos(N,P,pos,right_num):
-        
-    pos_original = array(pos)                       # 合法用户的导频序列
-    where_right = random.sample(range(P),right_num) # 猜对的导频，一共P个导频，从中猜对了right_num个
-    
-    pos_eva = array([],dtype=np.int32)              # 非法用户随机猜的导频序列，初始化为空
-    pos_eva_size = 0                                # 非法导频序列的位置，初始化为0
-    while pos_eva_size < P:                         # 先生成一个与合法导频序列完全不同的非法导频序列
-        new_pos = randint(low=0,high=N)   # 随机产生一个新的非法导频位置，取值[0,N)
-        if (new_pos not in pos) and (new_pos not in pos_eva) : # 新的非法位置，不在合法序列中，也不与已产生的任意非法位置重合
-            pos_eva = np.r_[pos_eva,new_pos]        # 只要满足了上述条件，这个新产生的位置才有效，加入到非法导频序列中
-            pos_eva_size += 1                       # 更新非法导频序列的长度
-    
-    pos_eva[where_right] = pos_original[where_right]# 对于那些猜对的位置，更正非法导频序列
-    pos_eva.sort()
-    return pos_eva
-
-def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype,pos_type):
+def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
     '''
     y: 接收信号
     L: 信道长度
@@ -37,17 +20,18 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype,pos_type):
     N: 子载波数
     Ncp: 循环前缀长度
     pos: 导频图样
+    demodulate_type: 调制方式。1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
     etype: 'CS' 或 'LS'
+    pos_type：
+        'from_pos'：使用传入的参数 pos 作为导频图样
+        其他（数字类型）：与 pos 相比，猜对了其中【数字】个导频位置。用于：非法用户随机猜测导频位置，此时传入的pos为发送端的导频图样
     '''
     
     P = size(pos)
-    
-    ''' 假设非法用户用另一个导频图样进行解码 '''
-    if pos_type=='from_pos':        # 使用传入的pos作为导频图样（RSSI量化得到，或均匀放置）       
-        pos = pos
-    else:                           # 非法用户随机猜测导频位置。此时传入的pos为发送端的导频图样
+    if pos_type != 'from_pos':
         right_num = int(pos_type)   # 与pos相比，非法用户猜对了right_num个
         pos = guess_pos(N,P,pos,right_num)
+        
          
     ''' 移除循环前缀'''
     y = y[:,Ncp:]

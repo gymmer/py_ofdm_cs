@@ -32,16 +32,16 @@ h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR)
 
 ''' 理想条件下的信道估计'''
 # 合法用户确切知道发送端导频
-h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type,'CS','from_pos')
+h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type)
 
 ''' 接收端 信道估计'''
-h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
+h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type)
 
 ''' 窃听信道 '''
 h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR)
 
 ''' 非法用户 '''
-h_eva,H_eva,bits_eva,diagram_eva = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type,'CS','from_pos')
+h_eva,H_eva,bits_eva,diagram_eva = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type)
         
 ''' 评价性能 '''
 lx_MSE  = MSE(H_ab,H_lx)
