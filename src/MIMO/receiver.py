@@ -8,6 +8,7 @@ from numpy.fft import fft
 
 sys.path.append('../')
 from util.mathematics import fftMatrix,ifftMatrix
+from util.function import guess_pos
 from PHY import OMP,remove_MIMO_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,STBC_decode,interpolation
 
 def receiver(y,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,etype="CS",pos_type="from_pos"):
