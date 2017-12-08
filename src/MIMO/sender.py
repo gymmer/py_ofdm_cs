@@ -2,7 +2,7 @@
 
 import sys
 import numpy as np
-from numpy import size,real,imag
+from numpy import size
 from numpy.random import randint
 from numpy.fft import ifft
 

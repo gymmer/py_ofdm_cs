@@ -13,7 +13,7 @@ os.system('cls')
 plt.close('all')
 
 ''' 采样参数 '''
-sampling_period  = 1
+sampling_period = 1
 sampling_time = 3
 
 ''' 量化参数 '''

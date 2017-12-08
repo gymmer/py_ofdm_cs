@@ -2,7 +2,7 @@
 
 import sys
 import numpy as np
-from numpy import dot,transpose,eye,size,zeros,real,imag
+from numpy import dot,transpose,eye,size,zeros
 from numpy.linalg import inv
 from numpy.fft import fft
 
