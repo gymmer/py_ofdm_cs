@@ -91,8 +91,8 @@ SC = [
 ]
 
 plt.figure(figsize=(8,5))
-plt.plot(P,val_MSE,'ko-', label='Valid user')
-plt.plot(P,eva_MSE,'ks--',label='Evasdropper')
+plt.plot(P,val_MSE,'ko-', label='Bob')
+plt.plot(P,eva_MSE,'ks--',label='Eve')
 plt.xlabel('Pilot Amount')
 plt.ylabel('MSE(dB)')
 plt.title('MSE')
@@ -100,8 +100,8 @@ plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(P,val_BER,'ko-', label='Valid user')
-plt.semilogy(P,eva_BER,'ks--',label='Evasdropper')
+plt.semilogy(P,val_BER,'ko-', label='Bob')
+plt.semilogy(P,eva_BER,'ks--',label='Eve')
 plt.xlabel('Pilot Amount')
 plt.ylabel('BER')
 plt.title('BER')
