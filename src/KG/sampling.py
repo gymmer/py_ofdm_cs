@@ -94,7 +94,7 @@ def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=1,corr_
     
 if __name__=='__main__':
     pass
-    #draw_SNR_corr('RSSI',1,3)
-    #draw_SNR_corr('Phase',10,3)
+    draw_SNR_corr('RSSI',1,3)
+    draw_SNR_corr('Phase',1,3)
     draw_channel_correlation('RSSI',1,3,0.9,0.4)
-    draw_channel_correlation('Phase',10,3,0.9,0.4)
+    draw_channel_correlation('Phase',1,3,0.9,0.4)

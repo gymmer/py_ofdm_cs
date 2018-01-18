@@ -27,9 +27,10 @@ for i in range(len(iteration)):
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(iteration,probability,'bo-')
+plt.plot(iteration,probability,'ko-')
 plt.xlabel('Iteration')
 plt.ylabel('Probability')
 plt.title('Probability of all pilots right')
+plt.show()
 
 print 'Program Finished'

@@ -48,18 +48,18 @@ bgr = mean(bgr,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(coef,bmr,'bo-')
+plt.plot(coef,bmr,'ko-')
 plt.xlabel('Coefficient')
-plt.ylabel('Bit Mismatch Rate')
+plt.ylabel('BMR')
 plt.title('BMR of different coef(bl=%d)'%(block_size))
-plt.legend()
+plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(coef,bgr,'bo-')
+plt.plot(coef,bgr,'ko-')
 plt.xlabel('Coefficient')
-plt.ylabel('Bit Generate Rate')
+plt.ylabel('BGR')
 plt.title('BGR of different coef(bl=%d)'%(block_size))
-plt.legend()
 plt.ylim(0,1)
+plt.show()
 
 print 'Program Finished'

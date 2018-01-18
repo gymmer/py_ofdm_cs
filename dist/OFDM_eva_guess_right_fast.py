@@ -105,6 +105,7 @@ plt.xlabel('number of right pilots')
 plt.ylabel('MSE(dB)')
 plt.title('MSE of evasdropper by random guessing(SNR=%d)'%(SNR))
 plt.legend()
+plt.show()
 
 plt.figure(figsize=(8,5))
 plt.semilogy(right,lx_BER, 'ko-', label='Scheme 1')  # Ideal user
@@ -114,12 +115,14 @@ plt.xlabel('number of right pilots')
 plt.ylabel('BER')
 plt.title('BER of evasdropper by random guessing(SNR=%d)'%(SNR))
 plt.legend()
+plt.show()
 
 plt.figure(figsize=(8,5))
 plt.plot(right,lx_SC,'ko-',label='Scheme 1')  # Ideal user
 plt.plot(right,CS_SC,'k^:',label='Scheme 2')  # Valid user
 plt.xlabel('number of right pilots')
-plt.ylabel('Capacity')
+plt.ylabel('Capacity(bit/symbol)')
 plt.title('Security Capacity by random guessing(SNR=%d)'%(SNR))
 plt.legend()
 plt.ylim(0,1)
+plt.show()

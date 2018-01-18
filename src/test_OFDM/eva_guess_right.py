@@ -83,30 +83,33 @@ CS_SC   = mean(CS_SC,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(right,lx_MSE, 'bo-', label='Ideal user')
-plt.plot(right,CS_MSE, 'g*-', label='Valid user')
-plt.plot(right,eva_MSE,'r^--',label='Evasdropper')
+plt.plot(right,lx_MSE, 'ko-', label='Scheme 1')  # Ideal user
+plt.plot(right,CS_MSE, 'k^:', label='Scheme 2')  # Valid user
+plt.plot(right,eva_MSE,'ks--',label='Evasdropper')
 plt.xlabel('number of right pilots')
 plt.ylabel('MSE(dB)')
 plt.title('MSE of evasdropper by random guessing(SNR=%d)'%(SNR))
 plt.legend()
+plt.show()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(right,lx_BER, 'bo-', label='Ideal user')
-plt.semilogy(right,CS_BER, 'g*-', label='Valid user')
-plt.semilogy(right,eva_BER,'r^--',label='Evasdropper')
+plt.semilogy(right,lx_BER, 'ko-', label='Scheme 1')  # Ideal user
+plt.semilogy(right,CS_BER, 'k^:', label='Scheme 2')  # Valid user
+plt.semilogy(right,eva_BER,'ks--',label='Evasdropper')
 plt.xlabel('number of right pilots')
 plt.ylabel('BER')
 plt.title('BER of evasdropper by random guessing(SNR=%d)'%(SNR))
 plt.legend()
+plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(right,lx_SC,'bo-',label='Ideal user')
-plt.plot(right,CS_SC,'g*-',label='Valid user')
+plt.plot(right,lx_SC,'ko-',label='Scheme 1')  # Ideal user
+plt.plot(right,CS_SC,'k^:',label='Scheme 2')  # Valid user
 plt.xlabel('number of right pilots')
-plt.ylabel('Capacity')
+plt.ylabel('Capacity(bit/symbol)')
 plt.title('Security Capacity by random guessing(SNR=%d)'%(SNR))
 plt.legend()
 plt.ylim(0,1)
+plt.show()
 
 print 'Program Finished'

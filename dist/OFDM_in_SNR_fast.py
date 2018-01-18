@@ -85,8 +85,8 @@ CS_SC = [
 ]
 
 plt.figure(figsize=(8,5))
-plt.plot(SNR,lx_MSE, 'ko-', label='Scheme 1')  # Ideal user
-plt.plot(SNR,CS_MSE, 'k^:', label='Scheme 2')  # Valid user
+plt.plot(SNR,lx_MSE, 'ko-', label='Scheme 1')
+plt.plot(SNR,CS_MSE, 'k^:', label='Scheme 2')
 plt.plot(SNR,eva_MSE,'ks--',label='Evasdropper')
 plt.xlabel('SNR(dB)')
 plt.ylabel('MSE(dB)')
@@ -94,8 +94,8 @@ plt.title('MSE')
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(SNR,lx_BER, 'ko-', label='Scheme 1')  # Ideal user
-plt.semilogy(SNR,CS_BER, 'k^:', label='Scheme 2')  # Valid user
+plt.semilogy(SNR,lx_BER, 'ko-', label='Scheme 1')
+plt.semilogy(SNR,CS_BER, 'k^:', label='Scheme 2')
 plt.semilogy(SNR,eva_BER,'ks--',label='Evasdropper')
 plt.xlabel('SNR(dB)')
 plt.ylabel('BER')
@@ -103,8 +103,8 @@ plt.title('BER')
 plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.plot(SNR,lx_SC,'ko-',label='Scheme 1')   # Ideal user
-plt.plot(SNR,CS_SC,'k^:',label='Scheme 2')   # Valid user
+plt.plot(SNR,lx_SC,'ko-',label='Scheme 1')
+plt.plot(SNR,CS_SC,'k^:',label='Scheme 2')
 plt.xlabel('SNR(dB)')
 plt.ylabel('Capacity(bit/symbol)')
 plt.title('Security Capacity')

@@ -48,19 +48,21 @@ bgr = mean(bgr,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(order,bmr[:,0],'bo-',label=qtype[0])
-plt.plot(order,bmr[:,1],'go-',label=qtype[1])
+plt.plot(order,bmr[:,0],'ko-',label=qtype[0])
+plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
 plt.xlabel('Quantize Order')
-plt.ylabel('Bit Mismatch Rate')
+plt.ylabel('BMR')
 plt.title('BMR of different order')
 plt.legend()
+plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(order,bgr[:,0],'bo-',label=qtype[0])
-plt.plot(order,bgr[:,1],'go-',label=qtype[1])
+plt.plot(order,bgr[:,0],'ko-',label=qtype[0])
+plt.plot(order,bgr[:,1],'k^:',label=qtype[1])
 plt.xlabel('Quantize Order')
-plt.ylabel('Bit Generate Rate')
+plt.ylabel('BGR')
 plt.title('BGR of different order')
 plt.legend()
+plt.show()
 
 print 'Program Finished'

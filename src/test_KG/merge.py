@@ -24,7 +24,7 @@ order = 1
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
 
 ''' 多组取平均 '''
-gro_num = 100
+gro_num = 10
 mtype_num = len(mtype)
 bmr = zeros((gro_num,mtype_num))
 bgr = zeros((gro_num,mtype_num))
@@ -60,31 +60,27 @@ bgr = mean(bgr,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-color = ['r','g','b','c','y']
 for x,y in zip(arange(mtype_num),bmr):
-    plt.bar(x+1,bmr[x],width=0.5,facecolor=color[x],edgecolor='white',label='%s'%(mtype[x]))
-    plt.text(x+1+0.25,y,'%.4f'%y,ha='center',va='bottom')
-plt.xlim(0.5,7.5)
-plt.ylim(0.02,0.04)
+    plt.bar(x+1,bmr[x],width=0.5,facecolor='lightgray',edgecolor='black')
+    plt.text(x+1+0.25,y,'%s\n%.4f'%(mtype[x],y),ha='center',va='bottom')
+plt.xlim(0.5,6)
+plt.ylim(0.028,0.035)
 plt.xticks([])
-plt.xlabel('Merge method')
-plt.ylabel('Bit Mismatch Rate')
+plt.xlabel('Quantize Scheme')
+plt.ylabel('BMR')
 plt.title('BMR of different merge method')
-plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-color = ['r','g','b','c','y']
 for x,y in zip(arange(mtype_num),bgr):
-    plt.bar(x+1,bgr[x],width=0.5,facecolor=color[x],edgecolor='white',label='%s'%(mtype[x]))
-    plt.text(x+1+0.25,y,'%.4f'%y,ha='center',va='bottom')
-plt.xlim(0.5,7.5)
+    plt.bar(x+1,bgr[x],width=0.5,facecolor='lightgray',edgecolor='black')
+    plt.text(x+1+0.25,y,'%s\n%.4f'%(mtype[x],y),ha='center',va='bottom')
+plt.xlim(0.5,6)
 plt.ylim(0,1.2)
 plt.xticks([])
-plt.xlabel('Merge method')
-plt.ylabel('Bit Generate Rate')
+plt.xlabel('Quantize Scheme')
+plt.ylabel('BGR')
 plt.title('BGR of different merge method')
-plt.legend()
 plt.show()
 
 print 'Program Finished'

@@ -66,15 +66,17 @@ bgr = mean(bgr,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(iteration,bmr,'bo-')
+plt.plot(iteration,bmr,'ko-')
 plt.xlabel('Iteration')
-plt.ylabel('Bit Mismatch Rate')
+plt.ylabel('BMR')
 plt.title('BMR of different iteration')
+plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(iteration,bgr,'bo-',)
+plt.plot(iteration,bgr,'ko-',)
 plt.xlabel('Iteration')
-plt.ylabel('Bit Generation Rate')
+plt.ylabel('BGR')
 plt.title('BGR of different iteration')
+plt.show()
 
 print 'Program Finished'
