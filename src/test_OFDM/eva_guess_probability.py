@@ -29,10 +29,11 @@ print ('Most probabily guess right:Pro(%d)=%f'%(maxright,pro[maxright]))
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(pro,'bo-')
-plt.plot(maxright,pro[maxright],'ro')
-plt.xlabel('number of right pilots')
-plt.ylabel('probability')
-plt.title('Probability of the number of right pilots')
+plt.plot(pro,'k.-')
+plt.plot(maxright,pro[maxright],'ko')
+plt.xlabel('Number of Right Pilots')
+plt.ylabel('Probability')
+plt.title('Probability of Guessing N Pilots Right')
+plt.show()
 
 print 'Program Finished'

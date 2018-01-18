@@ -75,18 +75,18 @@ def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=1,corr_
     samples_A,samples_B,samples_E = sampling(stype,sampling_period,sampling_time,corr_ab,corr_ae)
     
     plt.figure(figsize=(8,5))
-    plt.plot(range(100),samples_A[0:100],'bo-',label='Sender')
-    plt.plot(range(100),samples_B[0:100],'gs-',label='Receiver')
-    plt.plot(range(100),samples_E[0:100],'r*-',label='Eavedropper')
+    plt.plot(range(100),samples_A[0:100],'ko-',label='Alice')
+    plt.plot(range(100),samples_B[0:100],'k^:',label='Bob')
+    plt.plot(range(100),samples_E[0:100],'ks--',label='Eve')
     plt.xlabel('Probes')
     plt.ylabel(stype)
     plt.title(stype+' of communication parts(front 100 samples)')
     plt.legend()
     
     plt.figure(figsize=(8,5))
-    plt.plot(samples_A,samples_B,c='b',marker='o',label='Sender VS Receiver')
-    plt.scatter(samples_B,samples_E,c='g',marker='s',label='Sender VS Eavedropper')
-    plt.scatter(samples_A,samples_E,c='r',marker='*',label='Receiver VS Eavedropper')
+    plt.plot(samples_A,samples_B,c='b',marker='o',label='Alice VS Bob')
+    plt.scatter(samples_B,samples_E,c='g',marker='s',label='Alice VS Eve')
+    plt.scatter(samples_A,samples_E,c='r',marker='*',label='Bob VS Eve')
     plt.xlabel(stype)
     plt.ylabel(stype)
     plt.title('Spatial channels correlation')
@@ -94,7 +94,7 @@ def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=1,corr_
     
 if __name__=='__main__':
     pass
-    draw_SNR_corr('RSSI',1,3)
-    draw_SNR_corr('Phase',1,3)
+    #draw_SNR_corr('RSSI',1,3)
+    #draw_SNR_corr('Phase',1,3)
     draw_channel_correlation('RSSI',1,3,0.9,0.4)
     draw_channel_correlation('Phase',1,3,0.9,0.4)

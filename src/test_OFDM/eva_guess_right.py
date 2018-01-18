@@ -83,31 +83,31 @@ CS_SC   = mean(CS_SC,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(right,lx_MSE, 'ko-', label='Scheme 1')  # Ideal user
-plt.plot(right,CS_MSE, 'k^:', label='Scheme 2')  # Valid user
+plt.plot(right,lx_MSE, 'ko-', label='Scheme 1')
+plt.plot(right,CS_MSE, 'k^:', label='Scheme 2')
 plt.plot(right,eva_MSE,'ks--',label='Evasdropper')
-plt.xlabel('number of right pilots')
+plt.xlabel('Number of Right Pilots')
 plt.ylabel('MSE(dB)')
-plt.title('MSE of evasdropper by random guessing(SNR=%d)'%(SNR))
+plt.title('MSE of Random Guessing(SNR=%d)'%(SNR))
 plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(right,lx_BER, 'ko-', label='Scheme 1')  # Ideal user
-plt.semilogy(right,CS_BER, 'k^:', label='Scheme 2')  # Valid user
+plt.semilogy(right,lx_BER, 'ko-', label='Scheme 1')
+plt.semilogy(right,CS_BER, 'k^:', label='Scheme 2')
 plt.semilogy(right,eva_BER,'ks--',label='Evasdropper')
-plt.xlabel('number of right pilots')
+plt.xlabel('Number of Right Pilots')
 plt.ylabel('BER')
-plt.title('BER of evasdropper by random guessing(SNR=%d)'%(SNR))
+plt.title('BER of Random Guessing(SNR=%d)'%(SNR))
 plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(right,lx_SC,'ko-',label='Scheme 1')  # Ideal user
-plt.plot(right,CS_SC,'k^:',label='Scheme 2')  # Valid user
-plt.xlabel('number of right pilots')
+plt.plot(right,lx_SC,'ko-',label='Scheme 1')
+plt.plot(right,CS_SC,'k^:',label='Scheme 2')
+plt.xlabel('Number of Right Pilots')
 plt.ylabel('Capacity(bit/symbol)')
-plt.title('Security Capacity by random guessing(SNR=%d)'%(SNR))
+plt.title('Security Capacity of Random Guessing(SNR=%d)'%(SNR))
 plt.legend()
 plt.ylim(0,1)
 plt.show()
