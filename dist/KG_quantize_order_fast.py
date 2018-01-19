@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from numpy import array
 
 order = [1,2,3,4]
-qtype = ['natural','gray']
+qtype = ['Natural','Gray']
 
 bmr = array([[ 0.03303   ,  0.03282667],
        [ 0.04917667,  0.03266667],
@@ -17,7 +17,7 @@ bgr = array([[ 1.,  1.],
        [ 4.,  4.]])
        
 plt.figure(figsize=(8,5))
-plt.plot(order,bmr[:,0],'ko-',label=qtype[0])
+plt.plot(order,bmr[:,0],'k.-',label=qtype[0])
 plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
 plt.xlabel('Quantize Order')
 plt.ylabel('BMR')
@@ -26,7 +26,7 @@ plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(order,bgr[:,0],'ko-',label=qtype[0])
+plt.plot(order,bgr[:,0],'k.-',label=qtype[0])
 plt.plot(order,bgr[:,1],'k^:',label=qtype[1])
 plt.xlabel('Quantize Order')
 plt.ylabel('BGR')
