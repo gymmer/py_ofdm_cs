@@ -24,6 +24,7 @@ order = 1
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
 
 ''' 多组取平均 '''
+gro_num = 100
 mtype_num = len(mtype)
 bmr = zeros((gro_num,mtype_num))
 bgr = zeros((gro_num,mtype_num))
