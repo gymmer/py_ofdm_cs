@@ -32,7 +32,7 @@ for i in range(group_num):
         for k in range(qtype_num):
             print 'Running... Current group: ',i,j,k
         	
-        	''' 采样 '''
+            ''' 采样 '''
             phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4), 2*pi)
 
             ''' Phase量化 '''

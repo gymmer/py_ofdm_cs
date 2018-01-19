@@ -24,7 +24,6 @@ order = 1
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
 
 ''' 多组取平均 '''
-gro_num = 10
 mtype_num = len(mtype)
 bmr = zeros((gro_num,mtype_num))
 bgr = zeros((gro_num,mtype_num))
@@ -59,10 +58,11 @@ bmr = mean(bmr,0)
 bgr = mean(bgr,0)
 
 ''' 画图 '''
+labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR']
 plt.figure(figsize=(8,5))
 for x,y in zip(arange(mtype_num),bmr):
     plt.bar(x+1,bmr[x],width=0.5,facecolor='lightgray',edgecolor='black')
-    plt.text(x+1+0.25,y,'%s\n%.4f'%(mtype[x],y),ha='center',va='bottom')
+    plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,6)
 plt.ylim(0.028,0.035)
 plt.xticks([])
@@ -74,7 +74,7 @@ plt.show()
 plt.figure(figsize=(8,5))
 for x,y in zip(arange(mtype_num),bgr):
     plt.bar(x+1,bgr[x],width=0.5,facecolor='lightgray',edgecolor='black')
-    plt.text(x+1+0.25,y,'%s\n%.4f'%(mtype[x],y),ha='center',va='bottom')
+    plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,6)
 plt.ylim(0,1.2)
 plt.xticks([])

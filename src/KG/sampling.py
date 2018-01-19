@@ -29,7 +29,7 @@ def sampling(stype,sampling_period,sampling_time,corr_ab=1,corr_ae=1):
         try:
             conn = sql.connect(host='localhost',user='root',passwd='11223',db='rssi',port=3306)
             cur = conn.cursor()       
-            sql_script = 'select rssi1 from omni_16dbm where id>0 and id<=%d'%(sampling_num) 
+            sql_script = 'select rssi4 from omni_16dbm where id>0 and id<=%d'%(sampling_num) 
             cur.execute(sql_script)
             samples_A = array(cur.fetchall())
             cur.close()

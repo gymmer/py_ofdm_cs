@@ -49,20 +49,19 @@ for i in range(mtype_num):
     
     ''' 评价性能 '''
     ust[i] = UST(bits_A)
-
+    
 ''' 画图 '''
+labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR']
 plt.figure(figsize=(8,5))
-color = ['r','g','b','c','y']
 for x,y in zip(arange(mtype_num),ust):
-    plt.bar(x+1,ust[x],width=0.5,facecolor=color[x],edgecolor='white',label='%s'%(mtype[x]))
-    plt.text(x+1+0.25,y,'%.4f'%y,ha='center',va='bottom')
-plt.xlim(0.5,7.5)
+    plt.bar(x+1,ust[x],width=0.5,facecolor='lightgray',edgecolor='black')
+    plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
+plt.xlim(0.5,6)
 plt.ylim(0,1)
 plt.xticks([])
 plt.xlabel('Merge method')
 plt.ylabel('Entropy')
 plt.title('Universal Statistical Test of different merge method')
-plt.legend()
 plt.show()
 
 print 'Program Finished'
