@@ -123,7 +123,7 @@ for i in range(mtype_num):
 ''' 画图 '''
 labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR']
 plt.figure(figsize=(8,5))
-for x,y in zip(arange(mtype_num),times):
+for x,y in zip(arange(len(labels)),times):
     plt.bar(x+1,times[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%d'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,6)

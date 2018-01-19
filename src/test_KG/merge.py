@@ -61,7 +61,7 @@ bgr = mean(bgr,0)
 ''' 画图 '''
 labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR']
 plt.figure(figsize=(8,5))
-for x,y in zip(arange(mtype_num),bmr):
+for x,y in zip(arange(len(labels)),bmr):
     plt.bar(x+1,bmr[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,6)
@@ -73,7 +73,7 @@ plt.title('BMR of different merge method')
 plt.show()
 
 plt.figure(figsize=(8,5))
-for x,y in zip(arange(mtype_num),bgr):
+for x,y in zip(arange(len(labels)),bgr):
     plt.bar(x+1,bgr[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,6)
