@@ -2,7 +2,7 @@
 
 import random
 import numpy as np
-from numpy import zeros,sqrt,sum,array
+from numpy import zeros,sqrt,sum,array,shape,nonzero
 from numpy.random import randn,randint
 
 def awgn(X,SNR):
@@ -16,13 +16,27 @@ def awgn(X,SNR):
         Y[i]=X[i]+No[i]
     return Y
 
-def how_many_equal(arrA,arrB):
+def how_many_equal(arr_A,arr_B):
     ''' 求两个数组中，相同元素的个数 '''
     equal = 0    
-    for pos in arrA:
-        if pos in arrB:
+    for pos in arr_A:
+        if pos in arr_B:
             equal += 1
     return equal
+
+def nonzero_num(vector):
+    ''' 求一维向量中非零元素个数 '''
+    return shape(nonzero(vector)[0])[0]
+
+def Hw(bits):
+    ''' 求二进制序列的汉明重量 '''
+    # 非零的元素个数。对于二进制字符串来说，就是1的个数
+    return nonzero_num(bits)
+
+def Hd(bits_A,bits_B):
+    ''' 求两个二进制序列的汉明距离 '''
+    # 通过对应向量（或矩阵）相减，结果中元素中非零元素个数即为汉明距离
+    return nonzero_num(bits_A-bits_B)
 
 def guess_pos(N,P,pos,right_num):
     '''
