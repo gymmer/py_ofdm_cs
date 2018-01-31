@@ -60,7 +60,7 @@ plt.xlim(0.5,6)
 plt.ylim(0,1)
 plt.xticks([])
 plt.xlabel('Merge method')
-plt.ylabel('Entropy')
+plt.ylabel('P_value')
 plt.title('Universal Statistical Test of different merge method')
 plt.show()
 

@@ -53,8 +53,8 @@ def merge_xor(bits_A,bits_B):
     return bits
 
 if __name__=='__main__':
-    bits_A = array([0,0,1,1,1,0])
-    bits_B = array([0,1,0,1])
+    bits_A = array([1,0,1,1,0,1,0,0])
+    bits_B = array([1,0,0,1,0,1,0,1,1,0])
     print 'merge cross:',merge_cross(bits_A,bits_B)
     print 'merge and:',  merge_and(bits_A,bits_B)
     print 'merge or:',   merge_or(bits_A,bits_B)
