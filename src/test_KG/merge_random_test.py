@@ -21,7 +21,7 @@ block_size = 25
 coef = 0.8
 qtype = 'gray'
 order = 1
-mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
+mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 mtype_num = len(mtype)
 ust = zeros(mtype_num)
@@ -42,6 +42,8 @@ bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
 bits_A_cross = merge(bits_A_rssi,bits_A_phase,'cross')
 bits_A_and = merge(bits_A_rssi,bits_A_phase,'and')
 bits_A_or = merge(bits_A_rssi,bits_A_phase,'or')
+bits_A_xor = merge(bits_A_rssi,bits_A_phase,'xor')
+bits_A_syn = merge(bits_A_rssi,bits_A_phase,'syn')
 
 ''' 评价性能 '''
 ust[0] = UST(bits_A_rssi)
@@ -49,14 +51,16 @@ ust[1] = UST(bits_A_phase)
 ust[2] = UST(bits_A_cross)
 ust[3] = UST(bits_A_and)
 ust[4] = UST(bits_A_or)
+ust[5] = UST(bits_A_xor)
+ust[6] = UST(bits_A_syn)
     
 ''' 画图 '''
-labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR']
+labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR', 'XOR', 'Syn']
 plt.figure(figsize=(8,5))
 for x,y in zip(arange(len(labels)),ust):
     plt.bar(x+1,ust[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
-plt.xlim(0.5,6)
+plt.xlim(0.5,8)
 plt.ylim(0,1)
 plt.xticks([])
 plt.xlabel('Merge method')

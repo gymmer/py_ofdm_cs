@@ -21,7 +21,7 @@ block_size = 25
 coef = 0.8
 qtype = 'gray'
 order = 1
-mtype = ['RSSI', 'Phase', 'cross', 'and', 'or']
+mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 ''' 多组取平均 '''
 gro_num = 100
@@ -59,13 +59,13 @@ bmr = mean(bmr,0)
 bgr = mean(bgr,0)
 
 ''' 画图 '''
-labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR']
+labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR', 'XOR', 'Syn']
 plt.figure(figsize=(8,5))
 for x,y in zip(arange(len(labels)),bmr):
     plt.bar(x+1,bmr[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
-plt.xlim(0.5,6)
-plt.ylim(0.028,0.035)
+plt.xlim(0.5,8)
+plt.ylim(0.028,0.07)
 plt.xticks([])
 plt.xlabel('Quantize Scheme')
 plt.ylabel('BMR')
@@ -76,7 +76,7 @@ plt.figure(figsize=(8,5))
 for x,y in zip(arange(len(labels)),bgr):
     plt.bar(x+1,bgr[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
-plt.xlim(0.5,6)
+plt.xlim(0.5,8)
 plt.ylim(0,1.2)
 plt.xticks([])
 plt.xlabel('Quantize Scheme')

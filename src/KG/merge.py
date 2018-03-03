@@ -65,11 +65,11 @@ def merge_syn(bits_A,bits_B):
     Y = bits_B[:length]
     L = length
     
-    # M的设定为：M=Hw(X)，M=L-Hw(X)，M=Hw(Y)，M=L-Hw(Y)，M=Hd(X,Y)，M=L-Hd(X,Y)
-    M = Hd(X,Y)
+    # M的设定为：M=Hw(X)，M=L-Hw(X)，M=Hw(Y)，M=L-Hw(Y)，M=Hd(X,Y)，M=L-Hd(X,Y)，或其他约定值
+    M = round(0.5*L)
     
     # 由Y的后M位，和X的前L-M位，组成形成的新的L位数组
-    bits =  np.hstack((Y[L-M:L], X[0:L-M]))
+    bits = np.hstack((Y[L-M:L], X[0:L-M]))
     return bits
     
 if __name__=='__main__':
