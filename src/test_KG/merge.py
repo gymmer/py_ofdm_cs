@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 采样参数 '''
 sampling_period = 1
-sampling_time = 3
+sampling_time = 1
 
 ''' 量化参数 '''
 block_size = 25
@@ -65,7 +65,7 @@ for x,y in zip(arange(len(labels)),bmr):
     plt.bar(x+1,bmr[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%.4f'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,8)
-plt.ylim(0.028,0.07)
+plt.ylim(0.0,0.07)
 plt.xticks([])
 plt.xlabel('Quantize Scheme')
 plt.ylabel('BMR')

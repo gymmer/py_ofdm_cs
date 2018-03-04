@@ -63,7 +63,7 @@ for x,y in zip(arange(len(labels)),ust):
 plt.xlim(0.5,8)
 plt.ylim(0,1)
 plt.xticks([])
-plt.xlabel('Merge method')
+plt.xlabel('Quantize Scheme')
 plt.ylabel('P_value')
 plt.title('Universal Statistical Test of different merge method')
 plt.show()
