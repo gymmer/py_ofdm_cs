@@ -6,10 +6,10 @@ from numpy import array
 order = [1,2,3,4]
 qtype = ['Natural','Gray']
 
-bmr = array([[ 0.03303   ,  0.03282667],
-       [ 0.04917667,  0.03266667],
-       [ 0.07568778,  0.04364   ],
-       [ 0.12215083,  0.06539167]])
+bmr = array([[ 0.03262   ,  0.03237   ],
+       [ 0.04919   ,  0.03219   ],
+       [ 0.07549333,  0.04400667],
+       [ 0.12286   ,  0.06627   ]])
        
 bgr = array([[ 1.,  1.],
        [ 2.,  2.],
@@ -19,6 +19,7 @@ bgr = array([[ 1.,  1.],
 plt.figure(figsize=(8,5))
 plt.plot(order,bmr[:,0],'k.-',label=qtype[0])
 plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
+plt.ylim(0,0.15)
 plt.xlabel('Quantize Order')
 plt.ylabel('BMR')
 plt.title('BMR of different order')

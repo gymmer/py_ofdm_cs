@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 采样参数 '''
 sampling_period = 1
-sampling_time = 3
+sampling_time = 1
 
 ''' 量化参数 '''
 block_size = 25

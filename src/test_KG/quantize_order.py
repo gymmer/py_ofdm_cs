@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 采样参数 '''
 sampling_period = 1
-sampling_time = 3
+sampling_time = 1
 
 ''' 量化参数 '''
 order = [1,2,3,4]
@@ -50,6 +50,7 @@ bgr = mean(bgr,0)
 plt.figure(figsize=(8,5))
 plt.plot(order,bmr[:,0],'ko-',label=qtype[0])
 plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
+plt.ylim(0,0.15)
 plt.xlabel('Quantize Order')
 plt.ylabel('BMR')
 plt.title('BMR of different order')
