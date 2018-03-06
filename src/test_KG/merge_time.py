@@ -4,7 +4,7 @@ import sys
 import os
 import datetime
 import matplotlib.pyplot as plt
-from numpy import size,arange,mod,pi
+from numpy import size,arange,mod,pi,zeros
 
 sys.path.append('../')
 from KG import sampling,quantization_even,quantization_thre,remain,merge
@@ -26,140 +26,50 @@ mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 ''' 多组取平均 '''
 gro_num = 100
 mtype_num = len(mtype)
-times = []
+times = zeros(mtype_num)
 
-''' 采样 ''' 
-rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)  
+''' 采样 '''
+rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)
 phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4),2*pi)
-    
-''' RSSI Only '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: RSSI Only, ',i
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
-end = datetime.datetime.now()
-times.append(end-begin)
 
-''' Phase Only '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: Phase Only, ',i
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-end = datetime.datetime.now()
-times.append(end-begin)
-
-''' cross '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: cross, ',i
-    
-    ''' RSSI量化 '''
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
-    
-    ''' Phase量化 '''
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-    
-    ''' 合并 '''
-    bits_A = merge(bits_A_rssi,bits_A_phase,'cross')
-    bits_B = merge(bits_B_rssi,bits_B_phase,'cross')
-end = datetime.datetime.now()
-times.append(end-begin)
-
-''' and '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: and, ',i
-    
-    ''' RSSI量化 '''
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
-    
-    ''' Phase量化 '''
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-    
-    ''' 合并 '''
-    bits_A = merge(bits_A_rssi,bits_A_phase,'and')
-    bits_B = merge(bits_B_rssi,bits_B_phase,'and')
-end = datetime.datetime.now()
-times.append(end-begin)
-
-''' or '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: or, ',i
-    
-    ''' RSSI量化 '''
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
-    
-    ''' Phase量化 '''
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-    
-    ''' 合并 '''
-    bits_A = merge(bits_A_rssi,bits_A_phase,'or')
-    bits_B = merge(bits_B_rssi,bits_B_phase,'or')
-end = datetime.datetime.now()
-times.append(end-begin)
-
-''' xor '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: xor, ',i
-    
-    ''' RSSI量化 '''
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
-    
-    ''' Phase量化 '''
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-    
-    ''' 合并 '''
-    bits_A = merge(bits_A_rssi,bits_A_phase,'xor')
-    bits_B = merge(bits_B_rssi,bits_B_phase,'xor')
-end = datetime.datetime.now()
-times.append(end-begin)
-
-''' syn '''
-begin = datetime.datetime.now()
-for i in range(gro_num):
-    print 'Running... Current group: syn, ',i
-    
-    ''' RSSI量化 '''
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-    bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
-    
-    ''' Phase量化 '''
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-    
-    ''' 合并 '''
-    bits_A = merge(bits_A_rssi,bits_A_phase,'syn')
-    bits_B = merge(bits_B_rssi,bits_B_phase,'syn')
-end = datetime.datetime.now()
-times.append(end-begin)
-
-# 转化成毫秒ms，并求每组样例的平均耗时。另Alice和Bob同时做量化，因此除2求每个人的耗时
 for i in range(mtype_num):
-    times[i] = times[i].total_seconds()*1000/gro_num/2
+    
+    print 'Running... Current group:',i
+    begin = datetime.datetime.now()
+    
+    if mtype[i] == 'RSSI':
+        ''' RSSI Only '''
+        for j in range(gro_num):
+            bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
+            bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
+            bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
+            bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
+        
+    elif mtype[i] == 'Phase':
+        for j in range(gro_num):
+            ''' Phase Only '''
+            bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
+            bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
+    
+    else:
+        for j in range(gro_num):
+            ''' RSSI量化 '''
+            bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
+            bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
+            bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
+            bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
+            
+            ''' Phase量化 '''
+            bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
+            bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
+            
+            ''' 合并 '''
+            bits_A = merge(bits_A_rssi,bits_A_phase,mtype[i])
+            bits_B = merge(bits_B_rssi,bits_B_phase,mtype[i])
+        
+    end = datetime.datetime.now()
+    # 转化成毫秒ms，并求每组样例的平均耗时。另Alice和Bob同时做量化，因此除2求每个人的耗时
+    times[i] = (end-begin).total_seconds()*1000/gro_num/2
 
 ''' 画图 '''
 labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR', 'XOR', 'Syn']
