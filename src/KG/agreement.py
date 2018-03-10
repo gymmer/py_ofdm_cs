@@ -5,18 +5,18 @@ from numpy import corrcoef,mod,pi,size
 
 sys.path.append('../')
 from util.function import how_many_equal
-from util.metric import BMR
 from sampling import sampling
 from quantize import quantization_thre,quantization_even,remain
 from winnow import winnow
 from encode import encode
 from merge import merge
+# from cascade import cascade
 
 def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     '''
     P: 导频数
     mtype: 合并类型。RSSI/Phase/cross/and/or/xor
-    iteration: winnow迭代次数
+    iteration: 信息协调迭代次数
     corr_ab: Alice和Bob的信道测量值的相关系数
     corr_ae: Alice和Eve的信道测量值的相关系数
     '''
@@ -44,23 +44,22 @@ def agreement(P,mtype='cross',iteration=2,corr_ab=0.9,corr_ae=0.4):
     bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
     bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
     bits_E_rssi = remain(bits_E_rssi,drop_list_A,drop_list_E)
-    #print 'BMR of RSSI before winnow between AB',BMR(bits_A_rssi,bits_B_rssi)
     
     ''' Phase量化 '''
     bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
     bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
     bits_E_phase = quantization_even('Phase',phase_E,size(phase_E),qtype,order)
-    #print 'BMR of phase before winnow between AB',BMR(bits_A_phase,bits_B_phase)
     
     ''' 合并 '''
     bits_A = merge(bits_A_rssi,bits_A_phase,mtype)
     bits_B = merge(bits_B_rssi,bits_B_phase,mtype)
     bits_E = merge(bits_E_rssi,bits_E_phase,mtype)
-    #print 'BMR of merge before winnow between AB',BMR(bits_A,bits_B)
     
     ''' winnow信息协调 '''
     bits_A, bits_B = winnow(bits_A,bits_B,iteration)
-    #print 'BMR of merge after winnow between AB',BMR(bits_A,bits_B)
+    
+    ''' cascade信息协调 '''
+    # bits_A, bits_B = cascade(bits_A,bits_B,iteration)
     
     ''' 生成导频 '''
     pos_A = encode(bits_A,P)
