@@ -32,19 +32,19 @@ def randfunc(n,ki):
         f[i,:].sort()
     return f
 
-def cascade(bit_A,bit_B,iteration):
-    n = size(bit_A)
+def cascade(bits_A,bits_B,iteration):
+    n = size(bits_A)
 
     ''' 第一轮 '''
     inter = 1           # 第几轮迭代
     k1 = 10             # 第一轮的块长度
     BL = int(n/k1)      # 划分成BL个block
     n = BL*k1
-    bit_A = bit_A[0:n]
-    bit_B = bit_B[0:n]
+    bits_A = bits_A[0:n]
+    bits_B = bits_B[0:n]
     # 划分成BL个block
-    K1_A = bit_A.reshape(BL,k1)
-    K1_B = bit_B.reshape(BL,k1)
+    K1_A = bits_A.reshape(BL,k1)
+    K1_B = bits_B.reshape(BL,k1)
     # 校验位
     par1_A = np.sum(K1_A,axis=1)%2
     par1_B = np.sum(K1_B,axis=1)%2
@@ -92,7 +92,7 @@ def cascade(bit_A,bit_B,iteration):
         last_k = ki
         last_Ki_A = Ki_A
         last_Ki_B = Ki_B
-    # cascade 后，被改正的Ki_A(或Ki_B)与原始的bit_A(或bit_B)相比，被打乱了顺序
+    # cascade 后，被改正的Ki_A(或Ki_B)与原始的bits_A(或bits_B)相比，被打乱了顺序
     if iteration == 1:
         return K1_A,K1_B
     else:
