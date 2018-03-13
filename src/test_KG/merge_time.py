@@ -78,7 +78,7 @@ for x,y in zip(arange(len(labels)),times):
     plt.bar(x+1,times[x],width=0.5,facecolor='lightgray',edgecolor='black')
     plt.text(x+1+0.25,y,'%s\n%d'%(labels[x],y),ha='center',va='bottom')
 plt.xlim(0.5,8)
-plt.ylim(0,65)
+plt.ylim(0,70)
 plt.xticks([])
 plt.xlabel('Quantize Scheme')
 plt.ylabel('Time(ms)')
