@@ -19,7 +19,7 @@ bgr = array([[ 1.,  1.],
 plt.figure(figsize=(8,5))
 plt.plot(order,bmr[:,0],'k.-',label=qtype[0])
 plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
-plt.ylim(0,0.15)
+plt.ylim(0,0.14)
 plt.xlabel('Quantize Order')
 plt.ylabel('BMR')
 plt.title('BMR of different order')

@@ -67,7 +67,7 @@ def draw_SNR_corr(stype,sampling_period,sampling_time):
     
     plt.figure(figsize=(8,5))
     plt.plot(SNR,corr,'bo-')
-    plt.xlabel('SNR')
+    plt.xlabel('SNR(dB)')
     plt.ylabel('Corrcoef')
     plt.title('Corrcoef in different SNR for '+stype)
 
