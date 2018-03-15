@@ -33,10 +33,12 @@ def randfunc(n,ki):
     return f
 
 def cascade(bits_A,bits_B,iteration):
-    n = size(bits_A)
-
+    if iteration == 0:
+        return bits_A,bits_B
+    
     ''' 第一轮 '''
     inter = 1           # 第几轮迭代
+    n = size(bits_A)
     k1 = 10             # 第一轮的块长度
     BL = int(n/k1)      # 划分成BL个block
     n = BL*k1
@@ -61,15 +63,12 @@ def cascade(bits_A,bits_B,iteration):
     last_Ki_A = K1_A
     last_Ki_B = K1_B
     while inter<iteration:
+        n = size(last_Ki_A)
         ki = 2*last_k       # 第i轮的块长度i，设为上一轮块长度的2倍
         BL = int(n/ki)      # 第i轮的划分的块数
-
-        # 如果n不能被ki整除，会造成错误。比如n=2000,ki=160,计算得BL=12
-        # Ki_A = np.zeros((BL,ki))与Ki_A.shape = n会发生矛盾。此时进行差错控制，将下一轮的ki重置为10
-        if BL*ki!=n:
-            last_k = k1
-            continue
-        
+        n = BL*ki
+        last_Ki_A = last_Ki_A[0:n]
+        last_Ki_B = last_Ki_B[0:n]        
         f = randfunc(n,ki)  # 随机置换函数
         # 对A、B同时用置换函数重排二进制序列
         Ki_A = zeros((BL,ki),dtype=np.int32)
@@ -92,6 +91,7 @@ def cascade(bits_A,bits_B,iteration):
         last_k = ki
         last_Ki_A = Ki_A
         last_Ki_B = Ki_B
+        inter = inter + 1
     # cascade 后，被改正的Ki_A(或Ki_B)与原始的bits_A(或bits_B)相比，被打乱了顺序
     if iteration == 1:
         return K1_A,K1_B

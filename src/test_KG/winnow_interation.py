@@ -7,7 +7,7 @@ from numpy import zeros,size,mean,mod,pi
 
 sys.path.append('../')
 from util.metric import BMR,BGR
-from KG import sampling,quantization_even,quantization_thre,remain,merge,winnow
+from KG import sampling,quantization_even,quantization_thre,remain,merge,reconciliation
 
 os.system('cls')
 plt.close('all')
@@ -24,6 +24,7 @@ order = 1
 mtype = 'cross'
 
 ''' 信息协调参数 '''
+rtype = 'winnow'
 iteration = [0,1,2,3,4]
 
 ''' 多组取平均 '''
@@ -54,8 +55,8 @@ for i in range(group_num):
         bits_A = merge(bits_A_rssi,bits_A_phase,mtype)
         bits_B = merge(bits_B_rssi,bits_B_phase,mtype)
         
-        ''' winnow信息协调 '''
-        bits_A, bits_B = winnow(bits_A,bits_B,iteration[j])
+        ''' 信息协调 '''
+        bits_A, bits_B = reconciliation(bits_A,bits_B,rtype,iteration[j])
         
         ''' 评价性能 '''
         bmr[i,j] = BMR(bits_A,bits_B)

@@ -20,7 +20,7 @@ for i in range(len(iteration)):
     allright = 0.0
     for j in range(group):   
         print 'Running... Current group: ',i,j
-        posA,posB,posE = agreement(P,'cross',iteration[i])
+        posA,posB,posE = agreement(P,{'iteration': iteration[i]})
         if how_many_equal(posA,posB) == P:
             allright += 1
     probability.append(allright/group)
