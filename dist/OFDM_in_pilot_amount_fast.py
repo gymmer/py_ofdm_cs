@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 P = arange(4,60,4)   # 导频数，P<N
 
-val_MSE = [
+bob_MSE = [
     2.039907565013010782e+01,
     1.478051035255984758e+01,
     -2.260990780385335075e+00,
@@ -39,7 +39,7 @@ eva_MSE = [
     1.752795632982715679e+00
 ]
 
-val_BER = [
+bob_BER = [
     4.910482283464565056e-01,
     4.729563492063491581e-01,
     2.869099999999999984e-01,
@@ -91,8 +91,8 @@ SC = [
 ]
 
 plt.figure(figsize=(8,5))
-plt.plot(P,val_MSE,'ko-', label='Bob')
-plt.plot(P,eva_MSE,'ks--',label='Eve')
+plt.plot(P,bob_MSE,'ko-',label='Bob')
+plt.plot(P,eva_MSE,'k^:',label='Eve')
 plt.xlabel('Pilot Amount')
 plt.ylabel('MSE(dB)')
 plt.title('MSE')
@@ -100,8 +100,8 @@ plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(P,val_BER,'ko-', label='Bob')
-plt.semilogy(P,eva_BER,'ks--',label='Eve')
+plt.semilogy(P,bob_BER,'ko-',label='Bob')
+plt.semilogy(P,eva_BER,'k^:',label='Eve')
 plt.xlabel('Pilot Amount')
 plt.ylabel('BER')
 plt.title('BER')
