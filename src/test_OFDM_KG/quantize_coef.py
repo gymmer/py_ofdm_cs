@@ -26,85 +26,51 @@ coef = [i/10.0 for i in range(10)]
 ''' 多组取平均 '''
 gro_num = 100
 cof_num = len(coef)
-lx_MSE  = zeros((gro_num,cof_num))
-CS_MSE  = zeros((gro_num,cof_num))
+bob_MSE = zeros((gro_num,cof_num))
 eva_MSE = zeros((gro_num,cof_num))
-lx_BER  = zeros((gro_num,cof_num))
-CS_BER  = zeros((gro_num,cof_num))
+bob_BER = zeros((gro_num,cof_num))
 eva_BER = zeros((gro_num,cof_num))
-lx_SC   = zeros((gro_num,cof_num))
-CS_SC   = zeros((gro_num,cof_num))
+SC      = zeros((gro_num,cof_num))
 
 for i in range(gro_num):
     for j in range(cof_num):
         print 'Running... Current group: ',i,j
         
-        ''' 根据RSSI/Phase产生随机导频图样'''
         pos_A,pos_B,pos_E = agreement(P,{'coef':coef[j]})
-        
-        ''' 发送端 '''
         bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
-        
-        ''' 信道传输 '''
         h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR)
-        
-        ''' 理想条件下的信道估计'''
-        # 合法用户确切知道发送端导频
-        h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type)
-    
-        ''' 接收端 信道估计'''
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type)
-        
-        ''' 窃听信道 '''
         h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR)
-        
-        ''' 非法用户 '''
         h_eva,H_eva,bits_eva,diagram = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type)
-        
-        ''' 评价性能 '''
-        lx_MSE[i,j]  = MSE(H_ab,H_lx)
-        CS_MSE[i,j]  = MSE(H_ab,H_cs)
+        bob_MSE[i,j] = MSE(H_ab,H_cs)
         eva_MSE[i,j] = MSE(H_ae,H_eva)   
-        lx_BER[i,j]  = BMR(bits_A,bits_lx)
-        CS_BER[i,j]  = BMR(bits_A,bits_cs)
+        bob_BER[i,j] = BMR(bits_A,bits_cs)
         eva_BER[i,j] = BMR(bits_A,bits_eva)
-        lx_SC[i,j]   = SecCap(lx_BER[i,j],eva_BER[i,j])
-        CS_SC[i,j]   = SecCap(CS_BER[i,j],eva_BER[i,j])
+        SC[i,j]      = SecCap(bob_BER[i,j],eva_BER[i,j])
 
-lx_MSE  = mean(lx_MSE,0)   
-CS_MSE  = mean(CS_MSE,0)
+bob_MSE = mean(bob_MSE,0)   
 eva_MSE = mean(eva_MSE,0)
-lx_BER  = mean(lx_BER,0)
-CS_BER  = mean(CS_BER,0)
+bob_BER = mean(bob_BER,0)
 eva_BER = mean(eva_BER,0)
-lx_SC   = mean(lx_SC,0)
-CS_SC   = mean(CS_SC,0)
+SC      = mean(SC,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(coef,lx_MSE, 'ko-', label='Bob(Method 1)')
-plt.plot(coef,CS_MSE, 'k^:', label='Bob(Method 2)')
-plt.plot(coef,eva_MSE,'ks--',label='Eve')
+plt.plot(coef,bob_MSE,'ko-')
 plt.xlabel('Coefficient')
 plt.ylabel('MSE(dB)')
 plt.title('MSE')
-plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.semilogy(coef,lx_BER, 'ko-', label='Bob(Method 1)')
-plt.semilogy(coef,CS_BER, 'k^:', label='Bob(Method 2)')
-plt.semilogy(coef,eva_BER,'ks--',label='Eve')
+plt.semilogy(coef,bob_BER,'ko-')
 plt.xlabel('Coefficient')
 plt.ylabel('BER')
 plt.title('BER')
-plt.legend()
 
 plt.figure(figsize=(8,5))
-plt.plot(coef,lx_SC,'ko-',label='Bob(Method 1)')
-plt.plot(coef,CS_SC,'k^:',label='Bob(Method 2)')
+plt.plot(coef,SC,'ko-')
 plt.xlabel('Coefficient')
 plt.ylabel('Capacity(bit/symbol)')
 plt.title('Security Capacity')
-plt.legend()
 
 print 'Program Finished'
