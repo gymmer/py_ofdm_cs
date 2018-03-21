@@ -7,7 +7,7 @@ from numpy import zeros,mean
 
 sys.path.append('../')
 from util.metric import BMR,BGR
-from KG import sampling,quantize_phase
+from KG import sampling_phase,quantize_phase
 
 os.system('cls')
 plt.close('all')
@@ -31,7 +31,7 @@ for i in range(group_num):
             print 'Running... Current group: ',i,j,k
         	
             ''' 采样 '''
-            phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time)
+            phase_A,phase_B,phase_E = sampling_phase(sampling_period,sampling_time)
 
             ''' Phase量化 '''
             bits_A = quantize_phase(phase_A,qtype[k],order[j])

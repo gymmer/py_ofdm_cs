@@ -7,7 +7,7 @@ from numpy import zeros,mean,arange
 
 sys.path.append('../')
 from util.metric import BMR,BGR
-from KG import sampling,quantize_phase,quantize_ASBG_1bit,remain,merge
+from KG import sampling_RSSI,sampling_phase,quantize_phase,quantize_ASBG_1bit,remain,merge
 
 os.system('cls')
 plt.close('all')
@@ -28,8 +28,8 @@ for i in range(group_num):
         print 'Running... Current group: ',i,j
         
         ''' 采样 ''' 
-        rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time)  
-        phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time)
+        rssi_A, rssi_B, rssi_E  = sampling_RSSI( sampling_period,sampling_time)  
+        phase_A,phase_B,phase_E = sampling_phase(sampling_period,sampling_time)
             
         ''' RSSI量化 '''
         bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A)

@@ -4,7 +4,7 @@ import sys
 
 sys.path.append('../')
 from util.function import how_many_equal
-from sampling import sampling
+from sampling import sampling_RSSI,sampling_phase
 from quantize import quantize_ASBG_1bit,quantize_phase,remain
 from merge import merge
 from reconciliation import reconciliation
@@ -45,8 +45,8 @@ def agreement(P,config={}):
     iteration = config.get('iteration', 2)
 
     ''' 采样 ''' 
-    rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time,corr_ab,corr_ae)  
-    phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time,corr_ab,corr_ae)
+    rssi_A, rssi_B, rssi_E  = sampling_RSSI( sampling_period,sampling_time,corr_ab,corr_ae)  
+    phase_A,phase_B,phase_E = sampling_phase(sampling_period,sampling_time,corr_ab,corr_ae)
 
     ''' RSSI量化 '''
     bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A,block_size,coef)
