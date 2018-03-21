@@ -34,8 +34,8 @@ for i in range(gro_num):
         print 'Running... Current group: ',i,j
         
         ''' 采样 ''' 
-        rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)  
-        phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4),2*pi)
+        rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time)  
+        phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time),2*pi)
             
         ''' RSSI量化 '''
         bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
