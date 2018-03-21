@@ -7,11 +7,12 @@ from numpy import array,size
 sys.path.append('../')
 from util.function import Hw,Hd
 
-def merge(bits_rssi,bits_phase,mtype):
+def merge(bits_rssi,bits_phase,mtype,w=0.5):
     '''
     bits_rssi: 由RSSI量化生成的二进制序列
     bits_phase: 由相位量化生成的二进制序列
     mtype: 合并类型。RSSI/Phase/cross/and/or/xor/syn
+    w: 字合成运算参数
     返回值: 合并后的二进制序列
     '''
 
@@ -28,7 +29,7 @@ def merge(bits_rssi,bits_phase,mtype):
     elif mtype == 'xor':
         bits = merge_xor(bits_rssi,bits_phase)
     elif mtype == 'syn':
-        bits = merge_syn(bits_rssi,bits_phase)
+        bits = merge_syn(bits_rssi,bits_phase,w)
     return bits
 
 def merge_cross(bits_A,bits_B):
@@ -58,7 +59,7 @@ def merge_xor(bits_A,bits_B):
     bits = bits_A[:length] ^ bits_B[:length]
     return bits
 
-def merge_syn(bits_A,bits_B):
+def merge_syn(bits_A,bits_B,w):
     '''字合成运算'''
     length = min(size(bits_A),size(bits_B))
     X = bits_A[:length]
@@ -66,7 +67,7 @@ def merge_syn(bits_A,bits_B):
     L = length
     
     # M的设定为：M=Hw(X)，M=L-Hw(X)，M=Hw(Y)，M=L-Hw(Y)，M=Hd(X,Y)，M=L-Hd(X,Y)，或其他约定值
-    M = round(0.5*L)
+    M = round(w*L)
     
     # 由Y的后M位，和X的前L-M位，组成形成的新的L位数组
     bits = np.hstack((Y[L-M:L], X[0:L-M]))

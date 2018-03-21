@@ -9,12 +9,14 @@ from numpy.random import random
 sys.path.append('../')
 from util.function import awgn
 
-def sampling(stype,sampling_period,sampling_time,corr_ab=1,corr_ae=1):
+def sampling(stype,sampling_period,sampling_time,corr_ab=0.9,corr_ae=0.4):
     '''
     stype:           'RSSI'或'Phase'
     sampling_period: 采样周期/采样间隔。单位ms。每隔一个采样周期，可采集到一个RSSI样本
     sampling_time:   采样时间。单位s。一共采样了这么长的时间，也即每隔一个采样时间，更新一次密钥/导频位置
-    corr:            在给定相关系数corr时，得到与RSSI_A满足corr的RSSI_B(或RSSI_E)
+    corr_ab:         Alice和Bob的信道测量值的相关系数
+    corr_ae:         Alice和Eve的信道测量值的相关系数    
+                     注：在给定相关系数corr时，得到与RSSI_A满足corr的RSSI_B(或RSSI_E)
     返回值:           RSSI采样序列。一共有time/period个采样点。如period=1，time=25，共采样25*1000/1=25000个RSSI
     '''
     
@@ -71,7 +73,7 @@ def draw_SNR_corr(stype,sampling_period,sampling_time):
     plt.ylabel('Corrcoef')
     plt.title('Corrcoef in different SNR for '+stype)
 
-def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=1,corr_ae=1):
+def draw_channel_correlation(stype,sampling_period,sampling_time,corr_ab=0.9,corr_ae=0.4):
     samples_A,samples_B,samples_E = sampling(stype,sampling_period,sampling_time,corr_ab,corr_ae)
     
     plt.figure(figsize=(8,5))
@@ -96,5 +98,5 @@ if __name__=='__main__':
     pass
     #draw_SNR_corr('RSSI',1,3)
     #draw_SNR_corr('Phase',1,3)
-    draw_channel_correlation('RSSI',1,3,0.9,0.4)
-    draw_channel_correlation('Phase',1,3,0.9,0.4)
+    draw_channel_correlation('RSSI',1,1)
+    draw_channel_correlation('Phase',1,1)

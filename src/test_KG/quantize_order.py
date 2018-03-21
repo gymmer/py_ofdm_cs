@@ -33,7 +33,7 @@ for i in range(group_num):
             print 'Running... Current group: ',i,j,k
         	
             ''' 采样 '''
-            phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4), 2*pi)
+            phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time), 2*pi)
 
             ''' Phase量化 '''
             bits_A = quantization_even('Phase',phase_A,size(phase_A),qtype[k],order[j])

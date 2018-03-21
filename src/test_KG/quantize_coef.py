@@ -31,7 +31,7 @@ for i in range(group_num):
         print 'Running... Current group: ',i,j
 
         ''' 采样 '''
-        rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)
+        rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time)
 
         ''' RSSI量化 '''
         bits_A,drop_list_A = quantization_thre(rssi_A,block_size,coef[j])

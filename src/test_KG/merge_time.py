@@ -29,8 +29,8 @@ mtype_num = len(mtype)
 times = zeros(mtype_num)
 
 ''' 采样 '''
-rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.9,0.4)
-phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.9,0.4),2*pi)
+rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time)
+phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time),2*pi)
 
 for i in range(mtype_num):
     
@@ -38,8 +38,8 @@ for i in range(mtype_num):
     begin = datetime.datetime.now()
     
     if mtype[i] == 'RSSI':
-        ''' RSSI Only '''
         for j in range(gro_num):
+            ''' RSSI Only '''
             bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
             bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
             bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
