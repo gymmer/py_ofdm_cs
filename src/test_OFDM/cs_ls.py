@@ -24,8 +24,8 @@ SNR = range(0,31,5)         # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 
 ''' 多组取平均 '''
-gro_num = 100
-SNR_num = len(SNR)
+gro_num    = 100
+SNR_num    = len(SNR)
 CS_MSE     = zeros((gro_num,SNR_num))
 CS_BER     = zeros((gro_num,SNR_num))
 CS_eva_MSE = zeros((gro_num,SNR_num))

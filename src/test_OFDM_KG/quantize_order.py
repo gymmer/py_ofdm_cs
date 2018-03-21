@@ -25,18 +25,18 @@ order = [1,2,3,4]
 qtype = ['natural','gray']
 
 ''' 多组取平均 '''
-gro_num = 100
-ord_num = len(order)
-qty_num = len(qtype)
-bob_MSE = zeros((gro_num,ord_num,qty_num))
-eva_MSE = zeros((gro_num,ord_num,qty_num))
-bob_BER = zeros((gro_num,ord_num,qty_num))
-eva_BER = zeros((gro_num,ord_num,qty_num))
-SC      = zeros((gro_num,ord_num,qty_num))
+group_num = 100
+order_num = len(order)
+qtype_num = len(qtype)
+bob_MSE   = zeros((group_num,order_num,qtype_num))
+eva_MSE   = zeros((group_num,order_num,qtype_num))
+bob_BER   = zeros((group_num,order_num,qtype_num))
+eva_BER   = zeros((group_num,order_num,qtype_num))
+SC        = zeros((group_num,order_num,qtype_num))
 
-for i in range(gro_num):
-    for j in range(ord_num):
-        for k in range(qty_num):
+for i in range(group_num):
+    for j in range(order_num):
+        for k in range(qtype_num):
             print 'Running... Current group: ',i,j,k
             
             pos_A,pos_B,pos_E = agreement(P,{'order':order[j],'qtype':qtype[k]})

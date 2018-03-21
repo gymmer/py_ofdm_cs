@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time = 1
+sampling_time   = 1
 block_size = 25
 coef = [i/10.0 for i in range(10)]
 

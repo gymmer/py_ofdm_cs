@@ -24,16 +24,16 @@ modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 iteration = [0,1,2,3,4]
 
 ''' 多组取平均 '''
-gro_num = 100
-ite_num = len(iteration)
-bob_MSE = zeros((gro_num,ite_num))
-eva_MSE = zeros((gro_num,ite_num))
-bob_BER = zeros((gro_num,ite_num))
-eva_BER = zeros((gro_num,ite_num))
-SC      = zeros((gro_num,ite_num))
+group_num = 100
+itera_num = len(iteration)
+bob_MSE   = zeros((group_num,itera_num))
+eva_MSE   = zeros((group_num,itera_num))
+bob_BER   = zeros((group_num,itera_num))
+eva_BER   = zeros((group_num,itera_num))
+SC        = zeros((group_num,itera_num))
 
-for i in range(gro_num):
-    for j in range(ite_num):
+for i in range(group_num):
+    for j in range(itera_num):
         print 'Running... Current group: ',i,j
         
         pos_A,pos_B,pos_E = agreement(P,{'iteration':iteration[j]})

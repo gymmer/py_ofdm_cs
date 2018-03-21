@@ -24,18 +24,18 @@ modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 right = range(P+1)          # 非法用户猜对导频数
 
 ''' 多组取平均 '''
-gro_num = 100
+group_num = 100
 right_num = len(right)
-lx_MSE  = zeros((gro_num,right_num))
-CS_MSE  = zeros((gro_num,right_num))
-eva_MSE = zeros((gro_num,right_num))
-lx_BER  = zeros((gro_num,right_num))
-CS_BER  = zeros((gro_num,right_num))
-eva_BER = zeros((gro_num,right_num))
-lx_SC   = zeros((gro_num,right_num))
-CS_SC   = zeros((gro_num,right_num))
+lx_MSE    = zeros((group_num,right_num))
+CS_MSE    = zeros((group_num,right_num))
+eva_MSE   = zeros((group_num,right_num))
+lx_BER    = zeros((group_num,right_num))
+CS_BER    = zeros((group_num,right_num))
+eva_BER   = zeros((group_num,right_num))
+lx_SC     = zeros((group_num,right_num))
+CS_SC     = zeros((group_num,right_num))
 
-for i in range(gro_num):
+for i in range(group_num):
     for j in range(right_num):
         print 'Running... Current group: ',i,j
         

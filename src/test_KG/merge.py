@@ -14,16 +14,16 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time = 1
+sampling_time   = 1
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 ''' 多组取平均 '''
-gro_num = 100
+group_num = 100
 mtype_num = len(mtype)
-bmr = zeros((gro_num,mtype_num))
-bgr = zeros((gro_num,mtype_num))
+bmr = zeros((group_num,mtype_num))
+bgr = zeros((group_num,mtype_num))
 
-for i in range(gro_num):
+for i in range(group_num):
     for j in range(mtype_num):
         print 'Running... Current group: ',i,j
         

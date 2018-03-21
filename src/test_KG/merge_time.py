@@ -14,13 +14,13 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time = 1
+sampling_time   = 1
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 ''' 多组取平均 '''
-gro_num = 100
+group_num = 100
 mtype_num = len(mtype)
-times = zeros(mtype_num)
+times     = zeros(mtype_num)
 
 ''' 采样 '''
 rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time)  
@@ -32,7 +32,7 @@ for i in range(mtype_num):
     begin = datetime.datetime.now()
     
     if mtype[i] == 'RSSI':
-        for j in range(gro_num):
+        for j in range(group_num):
             ''' RSSI Only '''
             bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
             bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
@@ -40,13 +40,13 @@ for i in range(mtype_num):
             bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
         
     elif mtype[i] == 'Phase':
-        for j in range(gro_num):
+        for j in range(group_num):
             ''' Phase Only '''
             bits_A_phase = quantization_even(phase_A)
             bits_B_phase = quantization_even(phase_B)
     
     else:
-        for j in range(gro_num):
+        for j in range(group_num):
             ''' RSSI量化 '''
             bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
             bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
@@ -63,7 +63,7 @@ for i in range(mtype_num):
         
     end = datetime.datetime.now()
     # 转化成毫秒ms，并求每组样例的平均耗时。另Alice和Bob同时做量化，因此除2求每个人的耗时
-    times[i] = (end-begin).total_seconds()*1000/gro_num/2
+    times[i] = (end-begin).total_seconds()*1000/group_num/2
 
 ''' 画图 '''
 labels = ['RSSI Only', 'Phase Only', 'Cross', 'AND', 'OR', 'XOR', 'Syn']

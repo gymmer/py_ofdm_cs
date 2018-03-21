@@ -14,16 +14,16 @@ plt.close('all')
     
 ''' 参数 '''
 sampling_period = 1
-sampling_time = range(1,30,1)
+sampling_time   = range(1,30,1)
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 ''' 多组取平均 '''
-gro_num = 1
-st_num = len(sampling_time)
+group_num = 1
+stime_num = len(sampling_time)
 mtype_num = len(mtype)
-times = zeros((st_num,mtype_num))
+times     = zeros((stime_num,mtype_num))
 
-for i in range(st_num):
+for i in range(stime_num):
     
     ''' 采样 '''
     rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time)  
@@ -35,7 +35,7 @@ for i in range(st_num):
         begin = datetime.datetime.now()
         
         if mtype[j] == 'RSSI':
-            for k in range(gro_num):
+            for k in range(group_num):
                 ''' RSSI Only '''
                 bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
                 bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
@@ -43,13 +43,13 @@ for i in range(st_num):
                 bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
             
         elif mtype[j] == 'Phase':
-            for k in range(gro_num):
+            for k in range(group_num):
                 ''' Phase Only '''
                 bits_A_phase = quantization_even(phase_A)
                 bits_B_phase = quantization_even(phase_B)
         
         else:
-            for k in range(gro_num):
+            for k in range(group_num):
                 ''' RSSI量化 '''
                 bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
                 bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
@@ -66,7 +66,7 @@ for i in range(st_num):
             
         end = datetime.datetime.now()
         # 转化成毫秒ms，并求每组样例的平均耗时。另Alice和Bob同时做量化，因此除2求每个人的耗时
-        times[i,j] = (end-begin).total_seconds()*1000/gro_num/2
+        times[i,j] = (end-begin).total_seconds()*1000/group_num/2
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))

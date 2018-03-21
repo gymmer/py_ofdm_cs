@@ -24,16 +24,16 @@ modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 block_size = range(5,41,5)
 
 ''' 多组取平均 '''
-gro_num = 100
-bl_num  = len(block_size)
-bob_MSE = zeros((gro_num,bl_num))
-eva_MSE = zeros((gro_num,bl_num))
-bob_BER = zeros((gro_num,bl_num))
-eva_BER = zeros((gro_num,bl_num))
-SC      = zeros((gro_num,bl_num))
+group_num = 100
+bsize_num = len(block_size)
+bob_MSE   = zeros((group_num,bsize_num))
+eva_MSE   = zeros((group_num,bsize_num))
+bob_BER   = zeros((group_num,bsize_num))
+eva_BER   = zeros((group_num,bsize_num))
+SC        = zeros((group_num,bsize_num))
 
-for i in range(gro_num):
-    for j in range(bl_num):
+for i in range(group_num):
+    for j in range(bsize_num):
         print 'Running... Current group: ',i,j
         
         pos_A,pos_B,pos_E = agreement(P,{'block_size':block_size[j]})

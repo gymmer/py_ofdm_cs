@@ -23,15 +23,15 @@ SNR = 20                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 
 ''' 多组取平均 '''
-gro_num = 100
-P_num = len(P)
-bob_MSE = zeros((gro_num,P_num))
-eva_MSE = zeros((gro_num,P_num))
-bob_BER = zeros((gro_num,P_num))
-eva_BER = zeros((gro_num,P_num))
-SC      = zeros((gro_num,P_num))
+group_num = 100
+P_num     = len(P)
+bob_MSE   = zeros((group_num,P_num))
+eva_MSE   = zeros((group_num,P_num))
+bob_BER   = zeros((group_num,P_num))
+eva_BER   = zeros((group_num,P_num))
+SC        = zeros((group_num,P_num))
 
-for i in range(gro_num):
+for i in range(group_num):
     for j in range(P_num):
         print 'Running... Current group: ',i,j
         

@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time = 1
+sampling_time   = 1
 order = [1,2,3,4]
 qtype = ['natural','gray']
 

@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time = 20
+sampling_time   = 20
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 mtype_num = len(mtype)

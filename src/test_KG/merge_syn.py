@@ -14,16 +14,16 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time = 1
+sampling_time   = 1
 mtype = 'syn'
 w = [i/10.0 for i in range(11)]
 
 ''' 多组取平均 '''
-gro_num = 100
-w_num = len(w)
-bmr = zeros((gro_num,w_num))
+group_num = 100
+w_num     = len(w)
+bmr       = zeros((group_num,w_num))
 
-for i in range(gro_num):
+for i in range(group_num):
     for j in range(w_num):
         print 'Running... Current group: ',i,j
     

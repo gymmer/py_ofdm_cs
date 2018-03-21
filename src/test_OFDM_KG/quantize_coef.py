@@ -24,16 +24,16 @@ modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 coef = [i/10.0 for i in range(10)]
 
 ''' 多组取平均 '''
-gro_num = 100
-cof_num = len(coef)
-bob_MSE = zeros((gro_num,cof_num))
-eva_MSE = zeros((gro_num,cof_num))
-bob_BER = zeros((gro_num,cof_num))
-eva_BER = zeros((gro_num,cof_num))
-SC      = zeros((gro_num,cof_num))
+group_num = 100
+coef_num  = len(coef)
+bob_MSE   = zeros((group_num,coef_num))
+eva_MSE   = zeros((group_num,coef_num))
+bob_BER   = zeros((group_num,coef_num))
+eva_BER   = zeros((group_num,coef_num))
+SC        = zeros((group_num,coef_num))
 
-for i in range(gro_num):
-    for j in range(cof_num):
+for i in range(group_num):
+    for j in range(coef_num):
         print 'Running... Current group: ',i,j
         
         pos_A,pos_B,pos_E = agreement(P,{'coef':coef[j]})
