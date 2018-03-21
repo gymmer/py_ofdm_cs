@@ -20,13 +20,13 @@ qtype = ['natural','gray']
 
 ''' 多组取平均 '''
 group_num = 100
-condi_num = len(order)
+order_num = len(order)
 qtype_num = len(qtype)
-bmr = zeros((group_num,condi_num,qtype_num))
-bgr = zeros((group_num,condi_num,qtype_num))
+bmr = zeros((group_num,order_num,qtype_num))
+bgr = zeros((group_num,order_num,qtype_num))
 
 for i in range(group_num):
-    for j in range(condi_num):
+    for j in range(order_num):
         for k in range(qtype_num):
             print 'Running... Current group: ',i,j,k
         	
