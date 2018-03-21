@@ -3,7 +3,7 @@
 import sys
 import os
 import matplotlib.pyplot as plt
-from numpy import zeros,arange,mod,pi
+from numpy import zeros,arange
 
 sys.path.append('../')
 from util.metric import UST
@@ -21,8 +21,8 @@ mtype_num = len(mtype)
 ust = zeros(mtype_num)
 
 ''' 采样 ''' 
-rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.8,0.4)  
-phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.8,0.4),2*pi)
+rssi_A, rssi_B, rssi_E  = sampling('RSSI',sampling_period,sampling_time)  
+phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time)
     
 ''' RSSI量化 '''
 bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
@@ -34,10 +34,10 @@ bits_A_phase = quantization_even(phase_A)
 
 ''' 合并 '''
 bits_A_cross = merge(bits_A_rssi,bits_A_phase,'cross')
-bits_A_and = merge(bits_A_rssi,bits_A_phase,'and')
-bits_A_or = merge(bits_A_rssi,bits_A_phase,'or')
-bits_A_xor = merge(bits_A_rssi,bits_A_phase,'xor')
-bits_A_syn = merge(bits_A_rssi,bits_A_phase,'syn')
+bits_A_and   = merge(bits_A_rssi,bits_A_phase,'and')
+bits_A_or    = merge(bits_A_rssi,bits_A_phase,'or')
+bits_A_xor   = merge(bits_A_rssi,bits_A_phase,'xor')
+bits_A_syn   = merge(bits_A_rssi,bits_A_phase,'syn')
 
 ''' 评价性能 '''
 ust[0] = UST(bits_A_rssi)

@@ -4,7 +4,7 @@ import sys
 import os
 import datetime
 import matplotlib.pyplot as plt
-from numpy import zeros,mod,pi
+from numpy import zeros
 
 sys.path.append('../')
 from KG import sampling,quantization_even,quantization_thre,remain,merge
@@ -26,8 +26,8 @@ times = zeros((st_num,mtype_num))
 for i in range(st_num):
     
     ''' 采样 '''
-    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time[i])
-    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time[i]),2*pi)
+    rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time)  
+    phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time)
 
     for j in range(mtype_num):
         

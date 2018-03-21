@@ -3,7 +3,7 @@
 import sys
 import os
 import matplotlib.pyplot as plt
-from numpy import zeros,mean,mod,pi
+from numpy import zeros,mean
 
 sys.path.append('../')
 from util.metric import BMR,BGR
@@ -31,7 +31,7 @@ for i in range(group_num):
             print 'Running... Current group: ',i,j,k
         	
             ''' 采样 '''
-            phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time), 2*pi)
+            phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time)
 
             ''' Phase量化 '''
             bits_A = quantization_even(phase_A,qtype[k],order[j])

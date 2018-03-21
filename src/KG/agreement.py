@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from numpy import corrcoef,mod,pi,size
+from numpy import corrcoef
 
 sys.path.append('../')
 from util.function import how_many_equal
@@ -46,8 +46,8 @@ def agreement(P,config={}):
     iteration = config.get('iteration', 2)
 
     ''' 采样 ''' 
-    rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,corr_ab,corr_ae)  
-    phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,corr_ab,corr_ae),2*pi)
+    rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time,corr_ab,corr_ae)  
+    phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time,corr_ab,corr_ae)
     #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]
     #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]
 
