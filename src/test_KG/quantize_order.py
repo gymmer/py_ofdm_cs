@@ -15,7 +15,7 @@ plt.close('all')
 ''' 参数 '''
 sampling_period = 1
 sampling_time   = 1
-order = [1,2,3,4]
+order = [1,2,3,4,5]
 qtype = ['natural','gray']
 
 ''' 多组取平均 '''
@@ -48,7 +48,7 @@ bgr = mean(bgr,0)
 plt.figure(figsize=(8,5))
 plt.plot(order,bmr[:,0],'ko-',label=qtype[0])
 plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
-plt.ylim(0,0.14)
+plt.ylim(0,0.2)
 plt.xlabel('Quantize Order')
 plt.ylabel('BMR')
 plt.title('BMR of different order')

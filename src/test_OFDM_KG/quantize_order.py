@@ -21,7 +21,7 @@ Ncp = 60                    # 循环前缀的长度,Ncp>L
 P = 36                      # 导频数，P<N
 SNR = 20                    # AWGN信道信噪比
 modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
-order = [1,2,3,4]
+order = [1,2,3,4,5]
 qtype = ['natural','gray']
 
 ''' 多组取平均 '''

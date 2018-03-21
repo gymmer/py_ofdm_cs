@@ -3,23 +3,25 @@
 import matplotlib.pyplot as plt
 from numpy import array
 
-order = [1,2,3,4]
+order = [1,2,3,4,5]
 qtype = ['Natural','Gray']
 
-bmr = array([[ 0.03262   ,  0.03237   ],
-       [ 0.04919   ,  0.03219   ],
-       [ 0.07549333,  0.04400667],
-       [ 0.12286   ,  0.06627   ]])
+bmr = array([[ 0.03338   ,  0.03193   ],
+       [ 0.04945   ,  0.032905  ],
+       [ 0.07536667,  0.0433    ],
+       [ 0.12259   ,  0.0653925 ],
+       [ 0.188642  ,  0.104688  ]])
        
 bgr = array([[ 1.,  1.],
        [ 2.,  2.],
        [ 3.,  3.],
-       [ 4.,  4.]])
+       [ 4.,  4.],
+       [ 5.,  5.]])
        
 plt.figure(figsize=(8,5))
-plt.plot(order,bmr[:,0],'k.-',label=qtype[0])
+plt.plot(order,bmr[:,0],'ko-',label=qtype[0])
 plt.plot(order,bmr[:,1],'k^:',label=qtype[1])
-plt.ylim(0,0.14)
+plt.ylim(0,0.2)
 plt.xlabel('Quantize Order')
 plt.ylabel('BMR')
 plt.title('BMR of different order')
@@ -27,7 +29,7 @@ plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(order,bgr[:,0],'k.-',label=qtype[0])
+plt.plot(order,bgr[:,0],'ko-',label=qtype[0])
 plt.plot(order,bgr[:,1],'k^:',label=qtype[1])
 plt.xlabel('Quantize Order')
 plt.ylabel('BGR')
