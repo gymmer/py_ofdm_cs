@@ -3,7 +3,7 @@
 import sys
 import os
 import matplotlib.pyplot as plt
-from numpy import zeros,size,mean
+from numpy import zeros,mean
 
 sys.path.append('../')
 from util.metric import BMR,BGR
@@ -12,17 +12,15 @@ from KG import sampling,quantization_thre,remain
 os.system('cls')
 plt.close('all')
 
-''' 采样参数 '''
+''' 参数 '''
 sampling_period = 1
 sampling_time = 1
-
-''' 量化参数 '''
 block_size = 25
 coef = [i/10.0 for i in range(10)]
 
 ''' 多组取平均 '''
 group_num = 100
-coef_num  = size(coef)
+coef_num  = len(coef)
 bmr = zeros((group_num,coef_num))
 bgr = zeros((group_num,coef_num))
 

@@ -3,7 +3,7 @@
 import sys
 import os
 import matplotlib.pyplot as plt
-from numpy import zeros,size,arange,mod,pi
+from numpy import zeros,arange,mod,pi
 
 sys.path.append('../')
 from util.metric import UST
@@ -12,15 +12,9 @@ from KG import sampling,quantization_even,quantization_thre,remain,merge
 os.system('cls')
 plt.close('all')
 
-''' 采样参数 '''
+''' 参数 '''
 sampling_period = 1
 sampling_time = 20
-
-''' 量化参数 '''
-block_size = 25
-coef = 0.8
-qtype = 'gray'
-order = 1
 mtype = ['RSSI', 'Phase', 'cross', 'and', 'or', 'xor', 'syn']
 
 mtype_num = len(mtype)
@@ -31,12 +25,12 @@ rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time,0.8,0.4)
 phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time,0.8,0.4),2*pi)
     
 ''' RSSI量化 '''
-bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
+bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
+bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
 bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
 
 ''' Phase量化 '''
-bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
+bits_A_phase = quantization_even(phase_A)
 
 ''' 合并 '''
 bits_A_cross = merge(bits_A_rssi,bits_A_phase,'cross')

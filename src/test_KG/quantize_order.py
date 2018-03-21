@@ -3,7 +3,7 @@
 import sys
 import os
 import matplotlib.pyplot as plt
-from numpy import zeros,size,mean,mod,pi
+from numpy import zeros,mean,mod,pi
 
 sys.path.append('../')
 from util.metric import BMR,BGR
@@ -12,18 +12,16 @@ from KG import sampling,quantization_even
 os.system('cls')
 plt.close('all')
 
-''' 采样参数 '''
+''' 参数 '''
 sampling_period = 1
 sampling_time = 1
-
-''' 量化参数 '''
 order = [1,2,3,4]
 qtype = ['natural','gray']
 
 ''' 多组取平均 '''
 group_num = 100
-condi_num = size(order)
-qtype_num = size(qtype)
+condi_num = len(order)
+qtype_num = len(qtype)
 bmr = zeros((group_num,condi_num,qtype_num))
 bgr = zeros((group_num,condi_num,qtype_num))
 
@@ -36,8 +34,8 @@ for i in range(group_num):
             phase_A,phase_B,phase_E = mod(sampling('Phase',sampling_period,sampling_time), 2*pi)
 
             ''' Phase量化 '''
-            bits_A = quantization_even('Phase',phase_A,size(phase_A),qtype[k],order[j])
-            bits_B = quantization_even('Phase',phase_B,size(phase_B),qtype[k],order[j])    
+            bits_A = quantization_even(phase_A,qtype[k],order[j])
+            bits_B = quantization_even(phase_B,qtype[k],order[j])    
             
             ''' 评价性能 '''
             bmr[i,j,k] = BMR(bits_A,bits_B)

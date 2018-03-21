@@ -60,9 +60,9 @@ def agreement(P,config={}):
     bits_E_rssi = remain(bits_E_rssi,drop_list_A,drop_list_E)
     
     ''' Phase量化 '''
-    bits_A_phase = quantization_even('Phase',phase_A,size(phase_A),qtype,order)
-    bits_B_phase = quantization_even('Phase',phase_B,size(phase_B),qtype,order)
-    bits_E_phase = quantization_even('Phase',phase_E,size(phase_E),qtype,order)
+    bits_A_phase = quantization_even(phase_A,qtype,order)
+    bits_B_phase = quantization_even(phase_B,qtype,order)
+    bits_E_phase = quantization_even(phase_E,qtype,order)
     
     ''' 合并 '''
     bits_A = merge(bits_A_rssi,bits_A_phase,mtype)
