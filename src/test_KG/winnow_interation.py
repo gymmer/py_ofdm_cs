@@ -48,7 +48,7 @@ for i in range(group_num):
         bits_B = merge(bits_B_rssi,bits_B_phase,mtype)
         
         ''' 信息协调 '''
-        bits_A, bits_B = reconciliation(bits_A,bits_B,rtype,iteration[j])
+        bits_A,bits_B = reconciliation(bits_A,bits_B,rtype,iteration[j])
         
         ''' 评价性能 '''
         bmr[i,j] = BMR(bits_A,bits_B)

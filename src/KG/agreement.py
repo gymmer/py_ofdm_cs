@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from numpy import corrcoef
 
 sys.path.append('../')
 from util.function import how_many_equal
@@ -48,8 +47,6 @@ def agreement(P,config={}):
     ''' 采样 ''' 
     rssi_A, rssi_B, rssi_E  = sampling('RSSI', sampling_period,sampling_time,corr_ab,corr_ae)  
     phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time,corr_ab,corr_ae)
-    #print 'corrcoef of rssi  between AB and AE:',corrcoef(rssi_A, rssi_B, rowvar=0)[0,1],corrcoef(rssi_A, rssi_E, rowvar=0)[0,1]
-    #print 'corrcoef of phase between AB and AE:',corrcoef(phase_A,phase_B,rowvar=0)[0,1],corrcoef(phase_A,phase_E,rowvar=0)[0,1]
 
     ''' RSSI量化 '''
     bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
@@ -70,7 +67,7 @@ def agreement(P,config={}):
     bits_E = merge(bits_E_rssi,bits_E_phase,mtype)
     
     ''' 信息协调 '''
-    bits_A, bits_B = reconciliation(bits_A,bits_B,rtype,iteration)
+    bits_A,bits_B = reconciliation(bits_A,bits_B,rtype,iteration)
     
     ''' 生成导频 '''
     pos_A = encode(bits_A,P)

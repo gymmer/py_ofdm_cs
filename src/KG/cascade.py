@@ -32,18 +32,28 @@ def randfunc(n,ki):
         f[i,:].sort()
     return f
 
+def reshape_bits(X,Y,k):
+    # 将序列划分成BL个子区间，每个区间长度为k，并对序列做截断，防止不能被整除
+    n = size(X)
+    BL = int(n/k)
+    n = BL*k
+    return X[0:n],Y[0:n]
+
 def cascade(bits_A,bits_B,iteration):
+    '''
+    bits_A: Alice量化生成的密钥
+    bits_B: Bob量化生成的密钥
+    iteration: 算法迭代次数
+    '''
     if iteration == 0:
         return bits_A,bits_B
     
     ''' 第一轮 '''
     inter = 1           # 第几轮迭代
-    n = size(bits_A)
     k1 = 10             # 第一轮的块长度
-    BL = int(n/k1)      # 划分成BL个block
-    n = BL*k1
-    bits_A = bits_A[0:n]
-    bits_B = bits_B[0:n]
+    bits_A,bits_B = reshape_bits(bits_A,bits_B,k1)
+    n = size(bits_A)
+    BL = n/k1
     # 划分成BL个block
     K1_A = bits_A.reshape(BL,k1)
     K1_B = bits_B.reshape(BL,k1)
@@ -57,6 +67,9 @@ def cascade(bits_A,bits_B,iteration):
     K1_A.shape = n
     K1_B.shape = n
     
+    if iteration == 1:
+        return K1_A,K1_B
+
     ''' 以后若干轮 '''
     # 为第二轮迭代做准备
     last_k = k1
@@ -65,10 +78,9 @@ def cascade(bits_A,bits_B,iteration):
     while inter<iteration:
         n = size(last_Ki_A)
         ki = 2*last_k       # 第i轮的块长度i，设为上一轮块长度的2倍
-        BL = int(n/ki)      # 第i轮的划分的块数
-        n = BL*ki
-        last_Ki_A = last_Ki_A[0:n]
-        last_Ki_B = last_Ki_B[0:n]        
+        last_Ki_A,last_Ki_B = reshape_bits(last_Ki_A,last_Ki_B,ki)
+        n = size(last_Ki_A)
+        BL = n/ki
         f = randfunc(n,ki)  # 随机置换函数
         # 对A、B同时用置换函数重排二进制序列
         Ki_A = zeros((BL,ki),dtype=np.int32)
@@ -93,7 +105,4 @@ def cascade(bits_A,bits_B,iteration):
         last_Ki_B = Ki_B
         inter = inter + 1
     # cascade 后，被改正的Ki_A(或Ki_B)与原始的bits_A(或bits_B)相比，被打乱了顺序
-    if iteration == 1:
-        return K1_A,K1_B
-    else:
-        return Ki_A,Ki_B
+    return Ki_A,Ki_B

@@ -65,15 +65,14 @@ def reorgnize_bits(bits,order):
         result[i] = bits[order[i]]
     return result
         
-def winnow(bits_A,bits_B,iteration): 
-    for inter in range(iteration):
-        
-        # 迭代停止的条件：
-        # 1.达到指定的迭代次数。此时bits_A与bits_B仍有可能存在误码
-        # 2.BMR=0。说明bits_B的误比特已经被改正，不必再进行后续迭代。
-        #if BMR(bits_A,bits_B)==0:
-        #    return bits_A,bits_B
-        
+def winnow(bits_A,bits_B,iteration):
+    '''
+    bits_A: Alice量化生成的密钥
+    bits_B: Bob量化生成的密钥
+    iteration: 算法迭代次数
+    m: 第一轮的块长度
+    '''
+    for inter in range(iteration):        
         ''' 进行第inter次迭代 '''
 
         # 二进制序列按照相同的随机顺序进行排序，使错误均匀地随机分布
