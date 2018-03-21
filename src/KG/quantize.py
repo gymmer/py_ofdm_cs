@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from math import floor
 from numpy import size,array,mean,std,append,pi
 from quantization_nbit import *
     
@@ -16,39 +17,19 @@ def quantization_even(samples,qtype='gray',order=1):
     '''
     均匀量化
     samples: 采样点
-    qtype:
-        gray: 均匀量化、格雷编码
-        natural: 均匀量化、自然编码
-    order: 量化阶数，order=1，2，3，4
-        若order=1，则格雷编码与自然编码等价
+    qtype: 编码方式。gray: 格雷编码。natural:自然编码。
+    order: 量化阶数。若order=1，则格雷编码与自然编码等价
     返回值: bit_stream，量化后的比特流
     '''
     
-    if qtype=='natural':
-        if order==4:
-            quantize = naturalCode_4bit
-        elif order==3:
-            quantize = naturalCode_3bit
-        elif order==2:
-            quantize = naturalCode_2bit
-        elif order==1:
-            quantize = Code_1bit                
-    elif qtype=='gray':
-        if order==4:
-            quantize = grayCode_4bit
-        elif order==3:
-            quantize = grayCode_3bit
-        elif order==2:
-            quantize = grayCode_2bit
-        elif order==1:
-            quantize = Code_1bit
-
     bit_stream = array([],dtype=np.int32)
-    minimum,maxmum = 0,2*pi
-    interval = (maxmum-minimum)/(2.0**order)   # 量化间隔
+    minimum,maxmum = 0,2*pi                             # 最大与最小值
+    interval = (maxmum-minimum)/(2.0**order)            # 量化间隔
+    code_array = eval('%s_%dbit_array'%(qtype,order))   # 编码矩阵
     
     for i in range(size(samples)):
-        bit = quantize(minimum,interval,samples[i])
+        index = floor((samples[i]-minimum)/interval)    # 落在第index个区间
+        bit = code_array[index]                         # 该区间的编码
         bit_stream = np.r_[bit_stream,bit]
 
     return bit_stream

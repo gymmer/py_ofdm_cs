@@ -20,7 +20,7 @@ def agreement(P,config={}):
         corr_ae: Alice和Eve的信道测量值的相关系数
         block_size：双阈值量化的子块采样点数
         coef: 双阈值量化的量化系数
-        qtype: 均匀量化的编码方式
+        qtype: 均匀量化的编码方式。gray/natural
         order: 均匀量化的量化阶数
         mtype: 合并类型。RSSI/Phase/cross/and/or/xor
         rtype: 信息协调方式。cascade/winnow
