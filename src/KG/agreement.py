@@ -5,7 +5,7 @@ import sys
 sys.path.append('../')
 from util.function import how_many_equal
 from sampling import sampling
-from quantize import quantization_thre,quantization_even,remain
+from quantize import quantize_ASBG_1bit,quantize_phase,remain
 from merge import merge
 from reconciliation import reconciliation
 from encode import encode
@@ -49,17 +49,17 @@ def agreement(P,config={}):
     phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time,corr_ab,corr_ae)
 
     ''' RSSI量化 '''
-    bits_A_rssi,drop_list_A = quantization_thre(rssi_A,block_size,coef)
-    bits_B_rssi,drop_list_B = quantization_thre(rssi_B,block_size,coef)
-    bits_E_rssi,drop_list_E = quantization_thre(rssi_E,block_size,coef)
+    bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A,block_size,coef)
+    bits_B_rssi,drop_list_B = quantize_ASBG_1bit(rssi_B,block_size,coef)
+    bits_E_rssi,drop_list_E = quantize_ASBG_1bit(rssi_E,block_size,coef)
     bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
     bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
     bits_E_rssi = remain(bits_E_rssi,drop_list_A,drop_list_E)
     
     ''' Phase量化 '''
-    bits_A_phase = quantization_even(phase_A,qtype,order)
-    bits_B_phase = quantization_even(phase_B,qtype,order)
-    bits_E_phase = quantization_even(phase_E,qtype,order)
+    bits_A_phase = quantize_phase(phase_A,qtype,order)
+    bits_B_phase = quantize_phase(phase_B,qtype,order)
+    bits_E_phase = quantize_phase(phase_E,qtype,order)
     
     ''' 合并 '''
     bits_A = merge(bits_A_rssi,bits_A_phase,mtype)

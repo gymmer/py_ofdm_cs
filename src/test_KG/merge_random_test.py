@@ -7,7 +7,7 @@ from numpy import zeros,arange
 
 sys.path.append('../')
 from util.metric import UST
-from KG import sampling,quantization_even,quantization_thre,remain,merge
+from KG import sampling,quantize_phase,quantize_ASBG_1bit,remain,merge
 
 os.system('cls')
 plt.close('all')
@@ -25,12 +25,12 @@ rssi_A, rssi_B, rssi_E  = sampling('RSSI',sampling_period,sampling_time)
 phase_A,phase_B,phase_E = sampling('Phase',sampling_period,sampling_time)
     
 ''' RSSI量化 '''
-bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
-bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
+bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A)
+bits_B_rssi,drop_list_B = quantize_ASBG_1bit(rssi_B)
 bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
 
 ''' Phase量化 '''
-bits_A_phase = quantization_even(phase_A)
+bits_A_phase = quantize_phase(phase_A)
 
 ''' 合并 '''
 bits_A_cross = merge(bits_A_rssi,bits_A_phase,'cross')

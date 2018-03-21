@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from numpy import zeros
 
 sys.path.append('../')
-from KG import sampling,quantization_even,quantization_thre,remain,merge
+from KG import sampling,quantize_phase,quantize_ASBG_1bit,remain,merge
 
 os.system('cls')
 plt.close('all')
@@ -37,28 +37,28 @@ for i in range(stime_num):
         if mtype[j] == 'RSSI':
             for k in range(group_num):
                 ''' RSSI Only '''
-                bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
-                bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
+                bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A)
+                bits_B_rssi,drop_list_B = quantize_ASBG_1bit(rssi_B)
                 bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
                 bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
             
         elif mtype[j] == 'Phase':
             for k in range(group_num):
                 ''' Phase Only '''
-                bits_A_phase = quantization_even(phase_A)
-                bits_B_phase = quantization_even(phase_B)
+                bits_A_phase = quantize_phase(phase_A)
+                bits_B_phase = quantize_phase(phase_B)
         
         else:
             for k in range(group_num):
                 ''' RSSI量化 '''
-                bits_A_rssi,drop_list_A = quantization_thre(rssi_A)
-                bits_B_rssi,drop_list_B = quantization_thre(rssi_B)
+                bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A)
+                bits_B_rssi,drop_list_B = quantize_ASBG_1bit(rssi_B)
                 bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
                 bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
                 
                 ''' Phase量化 '''
-                bits_A_phase = quantization_even(phase_A)
-                bits_B_phase = quantization_even(phase_B)
+                bits_A_phase = quantize_phase(phase_A)
+                bits_B_phase = quantize_phase(phase_B)
                 
                 ''' 合并 '''
                 bits_A = merge(bits_A_rssi,bits_A_phase,mtype[j])

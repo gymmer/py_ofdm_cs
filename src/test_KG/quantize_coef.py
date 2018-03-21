@@ -7,7 +7,7 @@ from numpy import zeros,mean
 
 sys.path.append('../')
 from util.metric import BMR,BGR
-from KG import sampling,quantization_thre,remain
+from KG import sampling,quantize_ASBG_1bit,remain
 
 os.system('cls')
 plt.close('all')
@@ -32,8 +32,8 @@ for i in range(group_num):
         rssi_A,rssi_B,rssi_E = sampling('RSSI',sampling_period,sampling_time)
 
         ''' RSSI量化 '''
-        bits_A,drop_list_A = quantization_thre(rssi_A,block_size,coef[j])
-        bits_B,drop_list_B = quantization_thre(rssi_B,block_size,coef[j])
+        bits_A,drop_list_A = quantize_ASBG_1bit(rssi_A,block_size,coef[j])
+        bits_B,drop_list_B = quantize_ASBG_1bit(rssi_B,block_size,coef[j])
         bits_A = remain(bits_A,drop_list_A,drop_list_B)
         bits_B = remain(bits_B,drop_list_A,drop_list_B)
 
