@@ -16,17 +16,17 @@ plt.close('all')
 sampling_period = 1
 sampling_time   = 1
 mtype = 'cross'
-iteration = [0,1,2,3,4]
-m = 3
+iteration = 2
+m = range(2,9)
 
 ''' 多组取平均 '''
 group_num = 100
-inter_num = len(iteration)
-bmr = zeros((group_num,inter_num))
-bgr = zeros((group_num,inter_num))
+m_num     = len(m)
+bmr = zeros((group_num,m_num))
+bgr = zeros((group_num,m_num))
 
 for i in range(group_num):
-    for j in range(inter_num):
+    for j in range(m_num):
         print 'Running... Current group: ',i,j
         
         ''' 采样 '''
@@ -48,7 +48,7 @@ for i in range(group_num):
         bits_B = merge(bits_B_rssi,bits_B_phase,mtype)
         
         ''' 信息协调 '''
-        bits_A,bits_B = winnow(bits_A,bits_B,iteration[j],m)
+        bits_A,bits_B = winnow(bits_A,bits_B,iteration,m[j])
         
         ''' 评价性能 '''
         bmr[i,j] = BMR(bits_A,bits_B)
@@ -59,17 +59,17 @@ bgr = mean(bgr,0)
 
 ''' 画图 '''
 plt.figure(figsize=(8,5))
-plt.plot(iteration,bmr,'ko-')
-plt.xlabel('Iteration')
+plt.plot(m,bmr,'ko-')
+plt.xlabel('m')
 plt.ylabel('BMR')
-plt.title('BMR of different iteration')
+plt.title('BMR of different m')
 plt.show()
 
 plt.figure(figsize=(8,5))
-plt.plot(iteration,bgr,'ko-',)
-plt.xlabel('Iteration')
+plt.plot(m,bgr,'ko-',)
+plt.xlabel('m')
 plt.ylabel('BGR')
-plt.title('BGR of different iteration')
+plt.title('BGR of different m')
 plt.show()
 
 print 'Program Finished'

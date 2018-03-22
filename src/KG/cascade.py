@@ -39,18 +39,19 @@ def reshape_bits(X,Y,k):
     n = BL*k
     return X[0:n],Y[0:n]
 
-def cascade(bits_A,bits_B,iteration):
+def cascade(bits_A,bits_B,iteration=2,k1=10):
     '''
     bits_A: Alice量化生成的密钥
     bits_B: Bob量化生成的密钥
     iteration: 算法迭代次数
+    k1: 第一轮的块长度
     '''
     if iteration == 0:
         return bits_A,bits_B
     
     ''' 第一轮 '''
     inter = 1           # 第几轮迭代
-    k1 = 10             # 第一轮的块长度
+    k1 = k1             # 第一轮的块长度 
     bits_A,bits_B = reshape_bits(bits_A,bits_B,k1)
     n = size(bits_A)
     BL = n/k1

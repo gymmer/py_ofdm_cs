@@ -7,7 +7,7 @@ from util.function import how_many_equal
 from sampling import sampling_RSSI,sampling_phase
 from quantize import quantize_ASBG_1bit,quantize_phase,remain
 from merge import merge
-from reconciliation import reconciliation
+from winnow import winnow
 from encode import encode
 
 def agreement(P,config={}):
@@ -23,8 +23,8 @@ def agreement(P,config={}):
         qtype: 均匀量化的编码方式。gray/natural
         order: 均匀量化的量化阶数
         mtype: 合并类型。RSSI/Phase/cross/and/or/xor
-        rtype: 信息协调方式。cascade/winnow
         iteration: 信息协调迭代次数
+        m: 汉明码监督位m
     '''
     
     ''' 采样参数 '''
@@ -41,8 +41,8 @@ def agreement(P,config={}):
     mtype = config.get('mtype', 'cross')
     
     ''' 信息协调参数 '''
-    rtype = config.get('rtype', 'winnow')
     iteration = config.get('iteration', 2)
+    m = config.get('m', 3)
 
     ''' 采样 ''' 
     rssi_A, rssi_B, rssi_E  = sampling_RSSI( sampling_period,sampling_time,corr_ab,corr_ae)  
@@ -67,7 +67,7 @@ def agreement(P,config={}):
     bits_E = merge(bits_E_rssi,bits_E_phase,mtype)
     
     ''' 信息协调 '''
-    bits_A,bits_B = reconciliation(bits_A,bits_B,rtype,iteration)
+    bits_A,bits_B = winnow(bits_A,bits_B,iteration,m)
     
     ''' 生成导频 '''
     pos_A = encode(bits_A,P)

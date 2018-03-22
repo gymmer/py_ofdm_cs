@@ -4,6 +4,7 @@ import sys
 import random
 import numpy as np
 from numpy import size,array,transpose,zeros,shape,mod,split,hstack
+from winnow_array import *
 
 sys.path.append('../')
 from util.from_to import from2seq_to10
@@ -45,10 +46,10 @@ def get_S_in_diff_block(bits,diff_bl,H):
     S = split(S,size(diff_bl))
     return S
 
-def get_Sc_in_diff_block(diff_bl,Sa,Sb):
+def get_Sc_in_diff_block(diff_bl,Sa,Sb,m):
     Sc = array([])
     for i in range(size(diff_bl)):
-        Sc = np.r_[Sc, array([mod(Sa[i][j]+Sb[i][j],2) for j in range(3)])]
+        Sc = np.r_[Sc, array([mod(Sa[i][j]+Sb[i][j],2) for j in range(m)])]
     Sc = split(Sc,size(diff_bl))
     return Sc
 
@@ -65,13 +66,17 @@ def reorgnize_bits(bits,order):
         result[i] = bits[order[i]]
     return result
         
-def winnow(bits_A,bits_B,iteration):
+def winnow(bits_A,bits_B,iteration=2,m=3):
     '''
     bits_A: Alice量化生成的密钥
     bits_B: Bob量化生成的密钥
     iteration: 算法迭代次数
-    m: 第一轮的块长度
+    m: 汉明码监督位，决定了分组长度
     '''
+    
+    H = eval('H_%d_array'%m)    # 监督矩阵
+    block_size = 2**m           # 每组的数据长度为
+
     for inter in range(iteration):        
         ''' 进行第inter次迭代 '''
 
@@ -80,9 +85,7 @@ def winnow(bits_A,bits_B,iteration):
         bits_A = reorgnize_bits(bits_A,order)
         bits_B = reorgnize_bits(bits_B,order)
         
-        # 两端同时进行分组，每组的数据长度为2**m（m>2)，通常取m=3
-        m = 3
-        block_size = 2**m       
+        # 两端同时进行分组，每组的数据长度为2**m
         bits_A = split_into_block(bits_A,block_size)
         bits_B = split_into_block(bits_B,block_size)
         
@@ -101,14 +104,13 @@ def winnow(bits_A,bits_B,iteration):
         if size(diff_bl) != 0:
         
             # 对于奇偶校验不同的组，计算各组的伴随式
-            H = array([[0,0,0,1,1,1,1],[0,1,1,0,0,1,1],[1,0,1,0,1,0,1]])    
             Sa = get_S_in_diff_block(bits_A,diff_bl,H)
             Sb = get_S_in_diff_block(bits_B,diff_bl,H)
             
             # 第二次信息交互
             # Alice通过公开信道将其校正子Sa发送给 Bob
             # 对于奇偶校验不同的组，Bob计算Sc = Sa（异或）Sb
-            Sc = get_Sc_in_diff_block(diff_bl,Sa,Sb)
+            Sc = get_Sc_in_diff_block(diff_bl,Sa,Sb,m)
             
             # Sc表示 Alice 和 Bob 第 i 个分组中错误比特的位置。
             # Bob 通过将该位置的位数值取反，纠正该分组的错误
