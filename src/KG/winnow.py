@@ -75,7 +75,7 @@ def winnow(bits_A,bits_B,iteration=2,m=3):
     '''
     
     H = eval('H_%d_array'%m)    # 监督矩阵
-    block_size = 2**m           # 每组的数据长度为
+    block_size = 2**m           # 每组的数据长度
 
     for inter in range(iteration):        
         ''' 进行第inter次迭代 '''

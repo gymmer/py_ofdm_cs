@@ -14,7 +14,7 @@ plt.close('all')
 
 ''' 参数 '''
 sampling_period = 1
-sampling_time   = 1
+sampling_time   = 20
 mtype = 'cross'
 iteration = 2
 m = range(2,9)
