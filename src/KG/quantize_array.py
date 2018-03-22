@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import array
-
-gray_5bit_array = array([
+gray_5bit_array = [
     [0,0,0,0,0],
     [0,0,0,0,1],
     [0,0,0,1,1],
@@ -35,9 +33,9 @@ gray_5bit_array = array([
     [1,0,0,1,1],
     [1,0,0,0,1],
     [1,0,0,0,0]
-])
+]
 
-natural_5bit_array = array([
+natural_5bit_array = [
     [0,0,0,0,0],
     [0,0,0,0,1],
     [0,0,0,1,0],
@@ -70,9 +68,9 @@ natural_5bit_array = array([
     [1,1,1,0,1],
     [1,1,1,1,0],
     [1,1,1,1,1]
-])
+]
 
-gray_4bit_array = array([
+gray_4bit_array = [
     [0,0,0,0],
     [0,0,0,1],
     [0,0,1,1],
@@ -89,9 +87,9 @@ gray_4bit_array = array([
     [1,0,1,1],
     [1,0,0,1],
     [1,0,0,0]
-])
+]
 
-natural_4bit_array = array([
+natural_4bit_array = [
     [0,0,0,0],
     [0,0,0,1],
     [0,0,1,0],
@@ -108,9 +106,9 @@ natural_4bit_array = array([
     [1,1,0,1],
     [1,1,1,0],
     [1,1,1,1]
-])
+]
 
-gray_3bit_array = array([
+gray_3bit_array = [
     [0,0,0],
     [0,0,1],
     [0,1,1],
@@ -119,9 +117,9 @@ gray_3bit_array = array([
     [1,1,1],
     [1,0,1],
     [1,0,0]
-])
+]
 
-natural_3bit_array = array([
+natural_3bit_array = [
     [0,0,0],
     [0,0,1],
     [0,1,0],
@@ -130,23 +128,23 @@ natural_3bit_array = array([
     [1,0,1],
     [1,1,0],
     [1,1,1]
-])
+]
 
-gray_2bit_array = array([
+gray_2bit_array = [
     [0,0],
     [0,1],
     [1,1],
     [1,0]
-])
+]
 
-natural_2bit_array = array([
+natural_2bit_array = [
     [0,0],
     [0,1],
     [1,0],
     [1,1]
-])
+]
 
-gray_1bit_array = natural_1bit_array = array([
+gray_1bit_array = natural_1bit_array = [
     [0],
     [1]
-])
+]

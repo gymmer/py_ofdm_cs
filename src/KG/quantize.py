@@ -8,12 +8,12 @@ from quantize_array import *
 def quantize_even(samples,minimum,maxmum,qtype,order):
     ''' 均匀量化 '''
     bit_stream = array([],dtype=np.int32)
-    interval = (maxmum-minimum)/(2.0**order)            # 量化间隔
-    code_array = eval('%s_%dbit_array'%(qtype,order))   # 编码矩阵
+    interval = (maxmum-minimum)/(2.0**order)                 # 量化间隔
+    code_array = eval('%s_%dbit_array'%(qtype,order))        # 编码矩阵
     
     for i in range(size(samples)):
-        index = floor((samples[i]-minimum)/interval)    # 落在第index个区间
-        bit = code_array[index]                         # 该区间的编码
+        index = int(floor((samples[i]-minimum)/interval))    # 落在第index个区间
+        bit = code_array[index]                              # 该区间的编码
         bit_stream = np.r_[bit_stream,bit]
 
     return bit_stream
