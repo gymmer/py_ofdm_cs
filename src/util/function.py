@@ -5,6 +5,19 @@ import numpy as np
 from numpy import zeros,sqrt,sum,array,shape,nonzero
 from numpy.random import randn,randint
 
+def get_random_pilot(N,P):
+    ''' 生成随机导频序列 '''
+    # 导频插入的位置。取值范围[0,N-1]，不重复的P个随机整数
+    pos = random.sample(range(N),P)
+    pos.sort()
+    return pos
+
+def get_even_pilot(N,interval):
+    ''' 生成均匀导频序列 '''
+    # 导频插入的位置。取值范围[0,N-1]，间隔为interval
+    pos = range(0,N,interval)
+    return pos
+    
 def awgn(X,SNR):
     ''' AWGN信道传输模型 '''
     SNR_log=10**(SNR/10.0)
