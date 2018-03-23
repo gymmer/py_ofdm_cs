@@ -11,7 +11,7 @@ from util.mathematics import fftMatrix
 from util.function import awgn
 from PHY import channel
 
-def transmission(x,SNR,L=dL,K=dK,N=dN,Ncp=dNcp,M=dM,Nt=dNt,Nr=dNr):
+def transmission(x,SNR=dSNR,L=dL,K=dK,N=dN,Ncp=dNcp,M=dM,Nt=dNt,Nr=dNr):
     ''' 
     x:   发送端的发送信号
     SNR: 信噪比

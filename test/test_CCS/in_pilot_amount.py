@@ -16,7 +16,6 @@ plt.close('all')
 ''' 参数 '''
 N = 512                     # 训练序列长度/载波数,满足：L<=N
 P = range(4,60,4)           # 导频数，P<N
-SNR = 20                    # AWGN信道信噪比
 
 ''' 多组取平均 '''
 group_num = 100
@@ -34,9 +33,9 @@ for i in range(group_num):
         pos_A = pos_B = get_random_pilot(N,P[j])
         pos_E = get_random_pilot(N,P[j])
         bits_A,diagram_A,x = sender(pos_A)
-        h_ab,H_ab,y_b = transmission(x,SNR)
+        h_ab,H_ab,y_b = transmission(x)
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,pos_B)
-        h_ae,H_ae,y_e = transmission(x,SNR)
+        h_ae,H_ae,y_e = transmission(x)
         h_eva,H_eva,bits_eva,diagram = receiver(y_e,pos_E)
         bob_MSE[i,j] = MSE(H_ab,H_cs)
         eva_MSE[i,j] = MSE(H_ae,H_eva)   

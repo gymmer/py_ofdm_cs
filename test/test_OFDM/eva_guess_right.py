@@ -15,7 +15,6 @@ plt.close('all')
 
 ''' 参数 '''
 P = 36                      # 导频数，P<N
-SNR = 15                    # AWGN信道信噪比
 right = range(P+1)          # 非法用户猜对导频数
 
 ''' 多组取平均 '''
@@ -41,7 +40,7 @@ for i in range(group_num):
         bits_A,diagram_A,x = sender(pos_A)
         
         ''' 信道传输 '''
-        h_ab,H_ab,y_b = transmission(x,SNR)
+        h_ab,H_ab,y_b = transmission(x)
         
         ''' 理想条件下的信道估计'''
         # 合法用户确切知道发送端导频
@@ -51,7 +50,7 @@ for i in range(group_num):
         h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,pos_B,'CS','from_pos')
         
         ''' 窃听信道 '''
-        h_ae,H_ae,y_e = transmission(x,SNR)
+        h_ae,H_ae,y_e = transmission(x)
         
         ''' 非法用户 '''
         # 非法用户随机猜测导频位置。与发送端的导频图样pos_A相比，非法用户猜对了j个,j取值[0,P)
