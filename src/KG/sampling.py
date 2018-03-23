@@ -21,8 +21,8 @@ def sampling_RSSI(sampling_period,sampling_time,corr_ab=0.9,corr_ae=0.4):
     
     sampling_num = sampling_time*1000/sampling_period
     corr_SNR_dict={
-    0.1:10, 0.2:16, 0.3:20, 0.4:23, 0.5:25,
-    0.6:27, 0.7:30, 0.8:32, 0.9:36, 1.0:1000 }
+        0.1:10, 0.2:16, 0.3:20, 0.4:23, 0.5:25,
+        0.6:27, 0.7:30, 0.8:32, 0.9:36, 1.0:1000 }
 
     try:
         conn = sql.connect(host='localhost',user='root',passwd='11223',db='rssi',port=3306)
@@ -51,8 +51,8 @@ def sampling_phase(sampling_period,sampling_time,corr_ab=0.9,corr_ae=0.4):
     
     sampling_num = sampling_time*1000/sampling_period
     corr_SNR_dict={
-    0.1:6, 0.2:8, 0.3:10, 0.4:12, 0.5:14,
-    0.6:17,   0.7:20,  0.8:23,  0.9:29, 1.0:1000 }
+        0.1:6,  0.2:8,  0.3:10, 0.4:12, 0.5:14,
+        0.6:17, 0.7:20, 0.8:23, 0.9:29, 1.0:1000 }
     samples_A = 2*pi*random(sampling_num)     # [0,2pi)之间均匀分布
     samples_B = mod(awgn(samples_A,corr_SNR_dict[corr_ab]),2*pi)
     samples_E = mod(awgn(samples_A,corr_SNR_dict[corr_ae]),2*pi)
