@@ -11,9 +11,9 @@ from util.mathematics import c
 os.system('cls')
 plt.close('all')
 
-''' 信道参数 '''
-N = 512                     # 训练序列长度/载波数,满足：L<=N
-P = 36                      # 导频数，P<N
+''' 参数 '''
+N = 512
+P = 36
 
 '''
 非法用户猜测导频位置，猜对数的概率

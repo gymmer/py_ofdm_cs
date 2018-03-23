@@ -5,16 +5,17 @@ import numpy as np
 from numpy import size
 from numpy.random import randint
 from numpy.fft import ifft
+from default import *
 
 sys.path.append('../')
 from PHY import conv_code,interlace_code,diagram_mod,normal_coef,insert_OFDM_pilot
 
-def sender (N,Ncp,pos,modulate_type):
+def sender(pos,N=dN,Ncp=dNcp,modulate=dmodulate):
     ''' 
-    N: 子载波数
-    Ncp: 循环前缀长度
-    pos: 导频图样
-    modulate_type: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
+    pos:      导频图样
+    N:        载波数
+    Ncp:      循环前缀长度
+    modulate: 星座调制
     '''
     
     ''' 传输数据的子载波数 '''
@@ -25,7 +26,7 @@ def sender (N,Ncp,pos,modulate_type):
     N_data = N-P
     
     ''' 二进制序列 '''
-    bit_num = N_data*modulate_type          # 总共发送的比特数。对于16QAM，每4个bit编码产生一个星座点，星座点取值[0,15]
+    bit_num = N_data*modulate               # 总共发送的比特数。对于16QAM，每4个bit编码产生一个星座点，星座点取值[0,15]
     bits_orginal = randint(2,size=bit_num)  # 随机产生二进制序列
     
     '''  信源编码：卷积码 '''
@@ -36,10 +37,10 @@ def sender (N,Ncp,pos,modulate_type):
     bits = interlace_code(bits,2,size(bits)/2)
 
     ''' BPSK/QPSK/16QAM调制 '''
-    diagram = diagram_mod(bits,modulate_type)
+    diagram = diagram_mod(bits,modulate)
     
     ''' 星座点归一化 '''
-    X = diagram/normal_coef[modulate_type]
+    X = diagram/normal_coef[modulate]
     
     ''' 插入导频 '''   
     X = insert_OFDM_pilot(X,pos)            # 对于频率选择性信道，选择梳状导频图样

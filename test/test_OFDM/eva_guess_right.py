@@ -13,14 +13,9 @@ from OFDM import sender,transmission,receiver
 os.system('cls')
 plt.close('all')
 
-''' 信道参数 '''
-L = 50                      # 信道长度
-K = 6                       # 稀疏度/多径数，满足:K<<L
-N = 512                     # 训练序列长度/载波数,满足：L<=N
-Ncp = 60                    # 循环前缀的长度,Ncp>L
+''' 参数 '''
 P = 36                      # 导频数，P<N
 SNR = 15                    # AWGN信道信噪比
-modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 right = range(P+1)          # 非法用户猜对导频数
 
 ''' 多组取平均 '''
@@ -43,24 +38,24 @@ for i in range(group_num):
         pos_A,pos_B,pos_E = agreement(P)
         
         ''' 发送端 '''
-        bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
+        bits_A,diagram_A,x = sender(pos_A)
         
         ''' 信道传输 '''
-        h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR)
+        h_ab,H_ab,y_b = transmission(x,SNR)
         
         ''' 理想条件下的信道估计'''
         # 合法用户确切知道发送端导频
-        h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type,'CS','from_pos')
+        h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,pos_A,'CS','from_pos')
 
         ''' 接收端 信道估计'''
-        h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type,'CS','from_pos')
+        h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,pos_B,'CS','from_pos')
         
         ''' 窃听信道 '''
-        h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR)
+        h_ae,H_ae,y_e = transmission(x,SNR)
         
         ''' 非法用户 '''
         # 非法用户随机猜测导频位置。与发送端的导频图样pos_A相比，非法用户猜对了j个,j取值[0,P)
-        h_eva,H_eva,bits_eva,diagram_eva = receiver(y_e,L,K,N,Ncp,pos_A,modulate_type,'CS','%d'%(j))
+        h_eva,H_eva,bits_eva,diagram_eva = receiver(y_e,pos_A,'CS','%d'%(j))
         
         ''' 评价性能 '''
         lx_MSE[i,j]  = MSE(H_ab,H_lx)

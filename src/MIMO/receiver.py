@@ -5,35 +5,29 @@ import numpy as np
 from numpy import dot,transpose,eye,size,zeros
 from numpy.linalg import inv
 from numpy.fft import fft
+from default import *
 
 sys.path.append('../')
 from util.mathematics import fftMatrix,ifftMatrix
-from util.function import guess_pos
 from PHY import OMP,remove_MIMO_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,STBC_decode,interpolation
 
-def receiver(y,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,etype="CS",pos_type="from_pos"):
+def receiver(y,pos,etype=detype,L=dL,K=dK,N=dN,Ncp=dNcp,M=dM,Nt=dNt,Nr=dNr,modulate=dmodulate):
     
     '''
-    y: 接收信号
-    L: 信道长度
-    K: 稀疏度
-    N: 子载波数
-    M: 每帧的OFDM符号数
-    Ncp: 循环前缀长度
-    Nt: 发送天线数
-    Nr: 接收天线数
-    pos: 导频图样
-    demodulate_type: 调制方式。1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
+    y:      接收信号
+    pos:   导频图样
     etype: 'CS' 或 'LS'
-    pos_type：
-        'from_pos'：使用传入的参数 pos 作为导频图样
-        其他（数字类型）：与 pos 相比，猜对了其中【数字】个导频位置。用于：非法用户随机猜测导频位置，此时传入的pos为发送端的导频图样
+    L:     信道长度
+    K:     稀疏度
+    N:     子载波数
+    Ncp:   循环前缀长度
+    M:     每帧的OFDM符号数
+    Nt:    发送天线数
+    Nr:    接收天线数
+    modulate: 调制方式
     '''
     
     P = size(pos)
-    if pos_type != 'from_pos':
-        right_num = int(pos_type)
-        pos = guess_pos(N,P,pos,right_num)
 
     ''' CS/LS重构的信道响应 '''
     re_h = zeros((Nr,Nt,L,M),dtype=np.complex)
@@ -100,10 +94,10 @@ def receiver(y,L,K,N,M,Ncp,Nt,Nr,pos,demodulate_type,etype="CS",pos_type="from_p
     diagram = Y.reshape(-1)
     
     ''' 星座点归一化 '''
-    diagram = diagram*normal_coef[demodulate_type]
+    diagram = diagram*normal_coef[modulate]
     
     ''' BPSK/QPSK/16QAM解调 '''
-    bits = diagram_demod(diagram,demodulate_type)
+    bits = diagram_demod(diagram,modulate)
 
     ''' 解交织 '''
     bits = interlace_decode(bits,8,size(bits)/8)

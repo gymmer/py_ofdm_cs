@@ -13,14 +13,10 @@ from OFDM import sender,transmission,receiver
 os.system('cls')
 plt.close('all')
 
-''' 信道参数 '''
-L = 50                      # 信道长度
-K = 6                       # 稀疏度/多径数，满足:K<<L
+''' 参数 '''
 N = 512                     # 训练序列长度/载波数,满足：L<=N
-Ncp = 60                    # 循环前缀的长度,Ncp>L
 P = 36                      # CS估计导频数，P<N
 SNR = range(0,31,5)         # AWGN信道信噪比
-modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 ptype = ['Random', 'Even']  # 导频图样的类型
 
 ''' 多组取平均 '''
@@ -44,11 +40,11 @@ for i in range(gro_num):
             elif ptype[k] == 'Even':
                 pos_A = pos_B = pos_E = get_even_pilot(N,15)
             
-            bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
-            h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR[j])
-            h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type)
-            h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR[j])
-            h_eva,H_eva,bits_eva,diagram = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type)
+            bits_A,diagram_A,x = sender(pos_A)
+            h_ab,H_ab,y_b = transmission(x,SNR[j])
+            h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,pos_B)
+            h_ae,H_ae,y_e = transmission(x,SNR[j])
+            h_eva,H_eva,bits_eva,diagram = receiver(y_e,pos_E)
             bob_MSE[i,j,k] = MSE(H_ab,H_cs)
             eva_MSE[i,j,k] = MSE(H_ab,H_eva)
             bob_BER[i,j,k] = BMR(bits_A,bits_cs)

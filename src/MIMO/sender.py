@@ -5,19 +5,20 @@ import numpy as np
 from numpy import size
 from numpy.random import randint
 from numpy.fft import ifft
+from default import *
 
 sys.path.append('../')
 from PHY import conv_code,interlace_code,diagram_mod,normal_coef,insert_MIMO_pilot,STBC_code
 
-def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):     
+def sender(pos,N=dN,Ncp=dNcp,M=dM,Nt=dNt,Nr=dNr,modulate=dmodulate):     
     ''' 
-    N: 子载波数
-    M: 每帧的OFDM符号数
-    Ncp: 循环前缀长度
-    Nt: 发送天线数
-    Nr: 接收天线数
-    pos: 导频图样
-    modulate_type: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
+    pos:  导频图样
+    N:    子载波数
+    Ncp:  循环前缀长度
+    M:    每帧的OFDM符号数
+    Nt:   发送天线数
+    Nr:   接收天线数
+    modulate: 星座调制
     '''
     
     ''' 传输数据的子载波数 '''
@@ -32,7 +33,7 @@ def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):
     N_data = N-Nt*P
 
     ''' 二进制序列 '''
-    bit_num = N_data*M*modulate_type            # 总共发送的比特数.对于16QAM，每4个bit编码产生一个星座点，星座点取值[0,15]
+    bit_num = N_data*M*modulate                 # 总共发送的比特数.对于16QAM，每4个bit编码产生一个星座点，星座点取值[0,15]
     bits_orginal = randint(2,size=bit_num)      # 随机产生二进制序列
     
     '''  信源编码：卷积码 '''
@@ -43,10 +44,10 @@ def sender (N,M,Ncp,Nt,Nr,pos,modulate_type):
     bits = interlace_code(bits,8,size(bits)/8)
 
     ''' BPSK/QPSK/16QAM调制 '''
-    diagram = diagram_mod(bits,modulate_type)
+    diagram = diagram_mod(bits,modulate)
     
     ''' 星座点归一化 '''
-    X = diagram/normal_coef[modulate_type]
+    X = diagram/normal_coef[modulate]
     
     ''' 串并转换 '''
     X = X.reshape(-1,M)                         # 横坐标代表时域（OFDM符号），纵坐标代表频域（数据子载波）

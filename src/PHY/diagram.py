@@ -84,40 +84,40 @@ def QAM16_demod(symbol):
         ip = 3
     return QAM16_dict[rp+1j*ip]
     
-def diagram_mod(bits,modulate_type):
+def diagram_mod(bits,modulate):
     '''
     bits: 待调制的输入比特流
-    modulate_type: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
+    modulate: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
     '''
 
     # 对于16QAM，每4个bit编码产生一个星座点。
     # 同理，BPSK为1个bit产生一个星座点，QPSK为2个bit
     # 因此，将输入的比特流，划分成M组
-    M = bits.size/modulate_type
+    M = bits.size/modulate
     bits = array_split(bits, M)
     
     # 对每组的1个/2个/4个bit做星座点映射
-    if modulate_type==1:
+    if modulate==1:
         diagram = [ BPSK_mod(x) for x in bits ]
-    elif modulate_type==2:
+    elif modulate==2:
         diagram = [ QPSK_mod(x) for x in bits ]
-    elif modulate_type==4:
+    elif modulate==4:
         diagram = [ QAM16_mod(x) for x in bits ]
     diagram = hstack(diagram)
     return diagram
 
-def diagram_demod(diagram,demodulate_type):
+def diagram_demod(diagram,demodulate):
     '''
     diagram: 待解调的星座点序列
-    modulate_type: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
+    modulate: 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
     '''
     M = diagram.size
     diagram = array_split(diagram, M)
-    if demodulate_type==1:
+    if demodulate==1:
         bits = [ BPSK_demod(x) for x in diagram ]
-    elif demodulate_type==2:
+    elif demodulate==2:
         bits = [ QPSK_demod(x) for x in diagram ]
-    elif demodulate_type==4:
+    elif demodulate==4:
         bits = [ QAM16_demod(x) for x in diagram ]
     bits = hstack(bits)
     return bits

@@ -13,14 +13,9 @@ from OFDM import sender,transmission,receiver
 os.system('cls')
 plt.close('all')
 
-''' 信道参数 '''
-L = 50                      # 信道长度
-K = 6                       # 稀疏度/多径数，满足:K<<L
-N = 512                     # 训练序列长度/载波数,满足：L<=N
-Ncp = 60                    # 循环前缀的长度,Ncp>L
+''' 参数 '''
 P = 36                      # 导频数，P<N
 SNR = range(0,31,5)         # AWGN信道信噪比
-modulate_type = 4           # 1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
 
 ''' 多组取平均 '''
 gro_num = 100
@@ -42,23 +37,23 @@ for i in range(gro_num):
         pos_A,pos_B,pos_E = agreement(P)
         
         ''' 发送端 '''
-        bits_A,diagram_A,x = sender(N,Ncp,pos_A,modulate_type)
+        bits_A,diagram_A,x = sender(pos_A)
         
         ''' 信道传输 '''
-        h_ab,H_ab,y_b = transmission(x,L,K,N,Ncp,SNR[j])
+        h_ab,H_ab,y_b = transmission(x,SNR[j])
         
         ''' 理想条件下的信道估计'''
         # 合法用户确切知道发送端导频
-        h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,L,K,N,Ncp,pos_A,modulate_type)
+        h_lx,H_lx,bits_lx,diagram_lx = receiver(y_b,pos_A)
     
         ''' 接收端 信道估计'''
-        h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,L,K,N,Ncp,pos_B,modulate_type)
+        h_cs,H_cs,bits_cs,diagram_cs = receiver(y_b,pos_B)
         
         ''' 窃听信道 '''
-        h_ae,H_ae,y_e = transmission(x,L,K,N,Ncp,SNR[j])
+        h_ae,H_ae,y_e = transmission(x,SNR[j])
         
         ''' 非法用户 '''
-        h_eva,H_eva,bits_eva,diagram = receiver(y_e,L,K,N,Ncp,pos_E,modulate_type)
+        h_eva,H_eva,bits_eva,diagram = receiver(y_e,pos_E)
         
         ''' 评价性能 '''
         lx_MSE[i,j]  = MSE(H_ab,H_lx)

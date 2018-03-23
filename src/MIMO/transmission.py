@@ -4,24 +4,24 @@ import sys
 import numpy as np
 from numpy import dot,diag,zeros,kron,eye
 from numpy.fft import fft,ifft
+from default import *
 
 sys.path.append('../')
 from util.mathematics import fftMatrix
 from util.function import awgn
 from PHY import channel
 
-def transmission(x,L,K,N,M,Ncp,Nt,Nr,SNR):
-    
+def transmission(x,SNR,L=dL,K=dK,N=dN,Ncp=dNcp,M=dM,Nt=dNt,Nr=dNr):
     ''' 
-    x: 发送端的发送信号
-    L: 信道长度
-    K: 稀疏度
-    N: 子载波数
-    M: 每帧的OFDM符号数
-    Ncp: 循环前缀长度
-    Nt: 发送天线数
-    Nr: 接收天线数
+    x:   发送端的发送信号
     SNR: 信噪比
+    L:   信道长度
+    K:   稀疏度
+    N:   子载波数
+    Ncp: 循环前缀长度
+    M:   每帧的OFDM符号数
+    Nt:  发送天线数
+    Nr:  接收天线数
     '''
     
     ''' 时域/频域的信道响应'''

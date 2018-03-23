@@ -4,25 +4,26 @@ import sys
 from numpy import dot,transpose,eye,size
 from numpy.linalg import inv
 from numpy.fft import fft
+from default import *
 
 sys.path.append('../')
 from util.mathematics import fftMatrix,ifftMatrix
 from util.function import guess_pos
 from PHY import OMP,remove_OFDM_pilot,diagram_demod,normal_coef,interlace_decode,viterbi_decode,interpolation
 
-def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
+def receiver(y,pos,etype=detype,pos_type=dpos_type,L=dL,K=dK,N=dN,Ncp=dNcp,modulate=dmodulate):
     '''
-    y: 接收信号
-    L: 信道长度
-    K: 稀疏度
-    N: 子载波数
-    Ncp: 循环前缀长度
-    pos: 导频图样
-    demodulate_type: 调制方式。1 -> BPSK,  2 -> QPSK,  4 -> 16QAM
-    etype: 'CS' 或 'LS'
+    y:       接收信号
+    pos:     导频图样
+    etype:   'CS' 或 'LS'
     pos_type：
-        'from_pos'：使用传入的参数 pos 作为导频图样
-        其他（数字类型）：与 pos 相比，猜对了其中【数字】个导频位置。用于：非法用户随机猜测导频位置，此时传入的pos为发送端的导频图样
+             'from_pos'：使用传入的参数 pos 作为导频图样
+             其他（数字类型）：与 pos 相比，猜对了其中【数字】个导频位置。用于：非法用户随机猜测导频位置，此时传入的pos为发送端的导频图样
+    L:        信道长度
+    K:        稀疏度
+    N:        子载波数
+    Ncp:      循环前缀长度
+    modulate: 星座调制
     '''
     
     P = size(pos)
@@ -80,10 +81,10 @@ def receiver(y,L,K,N,Ncp,pos,demodulate_type,etype="CS",pos_type="from_pos"):
     Y = remove_OFDM_pilot(Y,pos)
     
     ''' 星座点归一化 '''
-    diagram = Y*normal_coef[demodulate_type]
+    diagram = Y*normal_coef[modulate]
     
     ''' BPSK/QPSK/16QAM解调 '''
-    bits = diagram_demod(diagram,demodulate_type)
+    bits = diagram_demod(diagram,modulate)
 
     ''' 解交织 '''
     bits = interlace_decode(bits,2,size(bits)/2)
