@@ -34,8 +34,8 @@ for i in range(group_num):
         ''' RSSI量化 '''
         bits_A,drop_list_A = quantize_ASBG_1bit(rssi_A,block_size[j],coef)
         bits_B,drop_list_B = quantize_ASBG_1bit(rssi_B,block_size[j],coef)
-        bits_A = remain(bits_A,drop_list_A,drop_list_B)
-        bits_B = remain(bits_B,drop_list_A,drop_list_B)
+        bits_A = remain(bits_A,drop_list_B)
+        bits_B = remain(bits_B,drop_list_A)
         
         ''' 评价性能 '''
         bmr[i,j] = BMR(bits_A,bits_B)

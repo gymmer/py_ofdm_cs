@@ -2,7 +2,7 @@
 
 import numpy as np
 from math import floor
-from numpy import size,array,mean,std,append,pi
+from numpy import size,array,mean,std,pi
 from quantize_array import *
 
 def quantize_even(samples,minimum,maxmum,qtype,order):
@@ -77,10 +77,14 @@ def quantize_ASBG_1bit(samples,block_size=25,coef=0.8):
       
     return bit_stream,drop_list
 
-def remain(bits,drop_list_A,drop_list_B):
-    drop_list_both = append(drop_list_A,drop_list_B)
+def remain(bits,drop_list_another):
+    # 遍历另一个人的丢弃索引表
+    for i in range(size(drop_list_another)):
+        bits[drop_list_another[i]] = -100
+    
+    # 删除临时填充，只保留双方都不丢弃的索引点
     bits_remain = array([],dtype=bits.dtype)
     for i in range(size(bits)):
-        if i not in drop_list_both:
+        if bits[i] > -1:
             bits_remain = np.r_[bits_remain,bits[i]]
     return bits_remain

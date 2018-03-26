@@ -27,7 +27,7 @@ phase_A,phase_B,phase_E = sampling_phase(sampling_period,sampling_time)
 ''' RSSI量化 '''
 bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A)
 bits_B_rssi,drop_list_B = quantize_ASBG_1bit(rssi_B)
-bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
+bits_A_rssi = remain(bits_A_rssi,drop_list_B)
 
 ''' Phase量化 '''
 bits_A_phase = quantize_phase(phase_A)

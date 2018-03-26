@@ -34,8 +34,8 @@ for i in range(group_num):
         ''' RSSI量化 '''
         bits_A_rssi,drop_list_A = quantize_ASBG_1bit(rssi_A)
         bits_B_rssi,drop_list_B = quantize_ASBG_1bit(rssi_B)
-        bits_A_rssi = remain(bits_A_rssi,drop_list_A,drop_list_B)
-        bits_B_rssi = remain(bits_B_rssi,drop_list_A,drop_list_B)
+        bits_A_rssi = remain(bits_A_rssi,drop_list_B)
+        bits_B_rssi = remain(bits_B_rssi,drop_list_A)
         
         ''' Phase量化 '''
         bits_A_phase = quantize_phase(phase_A)

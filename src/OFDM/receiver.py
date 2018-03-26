@@ -13,12 +13,11 @@ from PHY import OMP,remove_OFDM_pilot,diagram_demod,normal_coef,interlace_decode
 
 def receiver(y,pos,etype=detype,pos_type=dpos_type,L=dL,K=dK,N=dN,Ncp=dNcp,modulate=dmodulate):
     '''
-    y:       接收信号
-    pos:     导频图样
-    etype:   'CS' 或 'LS'
-    pos_type：
-             'from_pos'：使用传入的参数 pos 作为导频图样
-             其他（数字类型）：与 pos 相比，猜对了其中【数字】个导频位置。用于：非法用户随机猜测导频位置，此时传入的pos为发送端的导频图样
+    y:        接收信号
+    pos:      导频图样
+    etype:    'CS' 或 'LS'
+    pos_type: 'from_pos'：使用传入的参数 pos 作为导频图样
+              其他（数字类型）：与 pos 相比，猜对了其中【数字】个导频位置。用于：非法用户随机猜测导频位置，此时传入的pos为发送端的导频图样
     L:        信道长度
     K:        稀疏度
     N:        子载波数
